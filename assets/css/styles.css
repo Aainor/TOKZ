@@ -1,0 +1,50 @@
+:root {
+    --darkcolor: #111110;
+    --redcolor: #e42e18;
+    --lightcolor: #ecf1db;
+}
+
+body {
+    margin: 0; 
+    font-family: 'Playfair Display', serif;
+    background-color: #1c1c1a;
+}
+
+header {
+    display: flex;
+    flex-direction: row; 
+    justify-content: space-between; 
+    align-items: center; 
+    background-color: var(--darkcolor);
+    padding: 1rem 4rem; 
+}
+
+.header-nav {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.logo img {
+    height: 60px; 
+    width: auto;  
+    display: block; 
+    }
+
+nav {
+    display: flex;
+    align-items: center;
+}
+
+nav a {
+    color: var(--lightcolor);
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+    position: relative; 
+    padding: 0 15px;   
+}
+
+nav a:hover {
+    color: var(--redcolor);
+}
