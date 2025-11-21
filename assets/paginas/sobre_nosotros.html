@@ -5,9 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barbería TOKZ</title>
-
-    <link rel="stylesheet" href="/assets/css/style_barberia.css">
-
+    <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
@@ -16,18 +14,40 @@
 
 <body>
 
+    <header>
+        <div class="logo">
+        <img src="../imagenes/Imagen2.png" alt="Logo de TOKZ">
+        </div>
+
+        <button class="menu-toggle" aria-label="Menú Hamburguesa">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/>
+            </svg>
+        </button>
+
+        <nav class="header-nav">
+        <a href="/TOKZ/index.html">Inicio</a>
+        <a class="active" href="#">¿Qué es TOKZ?</a>
+        <a href="#">Servicios</a>
+        <a href="#">Turnos</a>
+        <a href="#">Educacion</a>
+        <a href="#">Multimedia</a>
+        <a href="#">Redes Sociales</a>
+        </nav>
+    </header>
+
     <div class="container">
         <section class="hero-section">
             <div class="image-carousel-wrapper">
                 <div class="owl-carousel owl-theme">
                     <div class="carousel-item">
-                        <img src="/assets/imagenes/Imagen4.png" alt="Equipo de la barbería TOKZ">
+                        <img src="../imagenes/Imagen4.png" alt="Equipo de la barbería TOKZ">
                     </div>
                     <div class="carousel-item">
-                        <img src="/assets/imagenes/Imagen5.png" alt="Barbero 2">
+                        <img src="../imagenes/Imagen5.png" alt="Barbero 2">
                     </div>
                     <div class="carousel-item">
-                        <img src="/assets/imagenes/Imagen6.png" alt="Barbero 3">
+                        <img src="../imagenes/Imagen6.png" alt="Barbero 3">
                     </div>
                 </div>
             </div>
@@ -85,6 +105,14 @@
                 dots: true,
                 nav: false
             });
+        });
+    </script>
+    <script>
+        const menuToggle = document.querySelector('.menu-toggle');
+        const nav = document.querySelector('.header-nav');
+
+        menuToggle.addEventListener('click', () => {
+            nav.classList.toggle('active');
         });
     </script>
 </body>

@@ -14,12 +14,18 @@
 <body>
     <header>
         <div class="logo">
-        <img src="../TOKZ/assets/imagenes/Imagen2.png" alt="Logo de TOKZ">
+        <img src="../TOKZ/assets/imagenes/Imagen3.png" alt="Logo de TOKZ">
         </div>
+
+        <button class="menu-toggle" aria-label="Menú Hamburguesa">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/>
+            </svg>
+        </button>
 
         <nav class="header-nav">
         <a class="active" href="#">Inicio</a>
-        <a href="#">¿Qué es TOKZ?</a>
+        <a href="../TOKZ/assets/paginas/sobre_nosotros.html">¿Qué es TOKZ?</a>
         <a href="../TOKZ/assets/paginas/servicios.html">Servicios</a>
         <a href="#">Turnos</a>
         <a href="#">Educacion</a>
@@ -27,5 +33,14 @@
         <a href="#">Redes Sociales</a>
         </nav>
     </header>
+
+    <script>
+        const menuToggle = document.querySelector('.menu-toggle');
+        const nav = document.querySelector('.header-nav');
+
+        menuToggle.addEventListener('click', () => {
+            nav.classList.toggle('active');
+        });
+    </script>
 </body>
 </html>
