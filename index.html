@@ -14,7 +14,7 @@
 <body>
     <header>
         <div class="logo">
-        <img src="../TOKZ/assets/imagenes/Imagen3.png" alt="Logo de TOKZ">
+        <img src="../TOKZ/assets/imagenes/Imagen2.png" alt="Logo de TOKZ">
         </div>
 
         <button class="menu-toggle" aria-label="Menú Hamburguesa">
@@ -26,7 +26,7 @@
         <nav class="header-nav">
         <a class="active" href="#">Inicio</a>
         <a href="../TOKZ/assets/paginas/sobre_nosotros.html">¿Qué es TOKZ?</a>
-        <a href="../TOKZ/assets/paginas/servicios.html">Servicios</a>
+        <a href="#">Servicios</a>
         <a href="#">Turnos</a>
         <a href="#">Educacion</a>
         <a href="#">Multimedia</a>
@@ -34,13 +34,49 @@
         </nav>
     </header>
 
-    <script>
-        const menuToggle = document.querySelector('.menu-toggle');
-        const nav = document.querySelector('.header-nav');
+    <section class="home-hero">
+        <div class="container hero-grid">
+            <div class="hero-content">
+                <span class="subtitle">EST. 2019 — GUERNICA, PRESIDENTE PERÓN</span>
+                <h1>Soy un apasionado por el detalle y la superación personal.</h1>
+                <p>
+                    Estoy convencido que cortar cabello es un arte y por eso me considero 
+                    un aspirante a buscar siempre la mejor versión de mí mismo y mis clientes. <br>
+                    Actualmente me dedicó a la atención de clientes el salón y a preparar Profesionales en Barberia. 
+                    Hace ya varios años que la Educación en TOKZ BARBER es sinónimo de PROFESIONALISMO Y CONOCIMIENTO, con excelentes resultados y alumnos de gran calidad humana. 
+                </p>
+                <a href="#" class="cta-button">Nuestros Servicios</a>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="container footer-grid">
+            
+            <div class="footer-col">
+                <h3>VISÍTANOS</h3>
+                <p>Combatientes de Malvinas 317 TOKZ BARBERIA,<br>Guernica, Presidente Perón</p>
+                <p class="contact-link">+54 11 6860-6201</p>
+                <p class="contact-link">¡Contactanos por Whatsapp!</p>
+            </div>
 
-        menuToggle.addEventListener('click', () => {
-            nav.classList.toggle('active');
-        });
-    </script>
+            <div class="footer-col">
+                <h3>HORARIOS</h3>
+            </div>
+
+            <div class="footer-col">
+                <h3>SÍGUENOS</h3>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/tokzbarber/" target="_blank" rel="noopener noreferrer">Instagram</a>
+                    <a href="https://www.facebook.com/tokz.barberia/" target="_blank" rel="noopener noreferrer">Facebook</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>2025 © TOKZ BARBER. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="../TOKZ/assets/js/header.js"></script>
 </body>
 </html>

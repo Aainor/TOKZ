@@ -52,7 +52,7 @@
                 </div>
             </div>
             <div class="info-section">
-                <p class="tag">Sobre nosotros</p>
+                <p class="tag">SOBRE NOSOTROS</p>
                 <h1>Una Barberia ubicada en el centro de la ciudad de <span style="color: #e42e18;">Guernica</span></h1>
                 <p>En el año 2019 nace TOKZ BARBER situada en ese momento en la calle Jose Ignacio Rucci. Con un espejo,
                     una mesa ratona y una silla de computadora comence a recibir a mis clientes en el living de mi casa.
@@ -65,7 +65,7 @@
                     <span>- NICOLAS RUIBAL</span>
                 </div>
 
-                <a href="paginas/sobre_nosotros.html" class="call-to-action">Más sobre nosotros</a>
+                <a href="#" class="cta-button">Más sobre nosotros</a>
             </div>
         </section>
 
@@ -91,30 +91,38 @@
         </section>
     </div>
 
+    <footer>
+        <div class="container footer-grid">
+            
+            <div class="footer-col">
+                <h3>VISÍTANOS</h3>
+                <p>Combatientes de Malvinas 317 TOKZ BARBERIA,<br>Guernica, Presidente Perón</p>
+                <p class="contact-link">+54 11 6860-6201</p>
+                <p class="contact-link">¡Contactanos por Whatsapp!</p>
+            </div>
+
+            <div class="footer-col">
+                <h3>HORARIOS</h3>
+            </div>
+
+            <div class="footer-col">
+                <h3>SÍGUENOS</h3>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/tokzbarber/" target="_blank" rel="noopener noreferrer">Instagram</a>
+                    <a href="https://www.facebook.com/tokz.barberia/" target="_blank" rel="noopener noreferrer">Facebook</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>2025 © TOKZ BARBER. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $(".owl-carousel").owlCarousel({
-                items: 1,
-                loop: true,
-                margin: 0,
-                autoplay: true,
-                autoplayTimeout: 3000,
-                autoplayHoverPause: true,
-                dots: true,
-                nav: false
-            });
-        });
-    </script>
-    <script>
-        const menuToggle = document.querySelector('.menu-toggle');
-        const nav = document.querySelector('.header-nav');
-
-        menuToggle.addEventListener('click', () => {
-            nav.classList.toggle('active');
-        });
-    </script>
+    <script src="../js/sobre_nosotros.js"></script>
+    <script src="../js/header.js"></script>
 </body>
 
 </html>
