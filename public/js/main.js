@@ -14,8 +14,9 @@ function loadComponent(elementId, filePath) {
 }
 
 function initHeaderLogic() {
-    console.log("Inicializando lógica del header..."); 
-
+    console.log("Inicializando lógica del header optimizada..."); 
+    
+    const header = document.querySelector('header'); 
     const menuToggle = document.querySelector('.menu-toggle');
     const nav = document.querySelector('.header-nav');
 
@@ -25,12 +26,27 @@ function initHeaderLogic() {
         });
     }
 
-    window.addEventListener('scroll', function() {
-        const header = document.querySelector('header'); 
-        if(header) {
-            header.classList.toggle('header-scrolled', window.scrollY > 50);
-        }
-    });
+    if(header) {
+        let lastKnownScrollPosition = 0;
+        let ticking = false;
+
+        window.addEventListener('scroll', function() {
+            lastKnownScrollPosition = window.scrollY;
+
+            if (!ticking) {
+                window.requestAnimationFrame(function() {
+                    if (lastKnownScrollPosition > 50) {
+                        header.classList.add('header-scrolled');
+                    } else {
+                        header.classList.remove('header-scrolled');
+                    }
+                    ticking = false;
+                });
+
+                ticking = true;
+            }
+        });
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
