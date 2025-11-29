@@ -561,6 +561,85 @@ footer {
         margin: 0 auto 30px auto;
     }
 
+    .container {
+        padding: 120px 20px; 
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .hero-section {
+        padding: 20px 0; 
+    }
+
+    .info-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .info-section h1 {
+        font-size: 2rem; 
+        text-align: center; 
+    }
+
+    .info-section p, 
+    .info-section .tag,
+    .info-section .quote {
+        text-align: center;
+    }
+
+    .info-section .tag {
+        padding-left: 0;
+        display: inline-block;
+        width: 100%;
+    }
+    .info-section .tag::before {
+        display: none; 
+    }
+
+    .call-to-action {
+        display: inline-block;
+        margin-top: 20px;
+        width: auto;
+    }
+
+    .numbers-section {
+        flex-direction: column;
+        align-items: center; 
+        margin-top: 20px;
+    }
+
+    .numbers-section h2{
+        margin-right: 0;
+        text-align: center;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .stats-grid {
+        flex-direction: column; 
+        align-items: center; 
+        gap: 30px; 
+        width: 100%;
+    }
+
+    .stat-item {
+        text-align: center; 
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .stat-item strong {
+        font-size: 3rem; 
+    }
+
+    .stats-grid::before {
+        display: none; 
+    }
+
     .footer-grid {
         flex-direction: column; 
         gap: 50px;
@@ -571,7 +650,7 @@ footer {
     }
     
     footer {
-        padding-top: 50px;
+        padding-top: 10px;
     }
 }
 
