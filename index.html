@@ -4,17 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOKZ</title>
+    <title>TOKZ Barber</title>
+    <base href="/TOKZ">
+    <link rel="icon" href="/public/img/logo.ico" type="image/png">
     <link rel="stylesheet" href="/public/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
 </head>
 
-<body>
+<body class="home-page">
     <div id="header-placeholder"></div>
 <main>
-    <section class="home-hero">
+    <section class="brand-intro">
+            <div class="intro-content">
+                <img src="/public/img/Imagen3.png" alt="TOKZ Barber Logo" class="big-logo">
+                
+                <nav class="intro-nav-links">
+                    <a href="#" class="active">INICIO</a>
+                    <a href="/pages/sobre_nosotros.html">¿QUÉ ES TOKZ?</a> <a href="#">SERVICIOS</a>
+                    <a href="#">TURNOS</a>
+                    <a href="#">EDUCACION</a>
+                    <a href="#">MULTIMEDIA</a>
+                    <a href="#">REDES SOCIALES</a>
+                </nav>
+            </div>
+
+            <a href="#inicio" class="scroll-indicator">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+                    <path d="M480-200 240-440l56-56 184 183 184-183 56 56-240 240Zm0-240L240-680l56-56 184 183 184-183 56 56-240 240Z"/>
+                </svg>
+            </a>
+    </section>
+    <section class="home-hero" id="inicio">
         <div class="container hero-grid">
             <div class="hero-content">
                 <span class="subtitle">EST. 2019 — GUERNICA, PRESIDENTE PERÓN</span>
@@ -33,5 +55,7 @@
     <div id="footer-placeholder"></div>
     
     <script src="/public/js/main.js"></script>
+
+    <script src="/public/js/scroll.js"></script>
 </body>
 </html>

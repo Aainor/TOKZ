@@ -6,6 +6,15 @@
     --lightcolor: #ecf1db;
 }
 
+html, body {
+    scroll-behavior: smooth !important;
+    overflow-x: hidden; 
+}
+
+::-webkit-scrollbar { 
+    display: none; 
+}
+
 body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
@@ -13,6 +22,7 @@ body {
     box-sizing: border-box;
     background-color: #1c1c1a;
     color: #ffffff;
+    scrollbar-width: none;
 }
 
 header {
@@ -443,6 +453,104 @@ footer {
     color: #666;
 }
 
+/* --- ESTILOS EXCLUSIVOS HOME PAGE (INDEX) --- */
+body.home-page header {
+    transform: translateY(-100%); 
+    transition: transform 0.4s ease-in-out, background-color 0.3s;
+}
+
+body.home-page header.header-visible {
+    transform: translateY(0); 
+}
+
+.brand-intro {
+    background-color: #000; 
+    min-height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    border-bottom: 1px solid #333; 
+}
+
+.intro-content {
+    text-align: center;
+    width: 100%;
+    max-width: 900px;
+}
+
+.big-logo {
+    max-width: 500px; 
+    width: 80%;
+    height: auto;
+    display: block;
+    margin: 0 auto 40px auto; 
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
+
+.intro-nav-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 25px;
+}
+
+.intro-nav-links a {
+    color: #fff;
+    text-decoration: none;
+    font-family: 'Roboto', sans-serif; 
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+}
+
+.intro-nav-links a:hover,
+.intro-nav-links a.active {
+    color: var(--redcolor); 
+}
+/* --- - FIN - ESTILOS EXCLUSIVOS HOME PAGE (INDEX) - FIN - --- */
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 20px; 
+    left: 50%;
+    transform: translateX(-50%); 
+    opacity: 0.25; 
+    animation: bounce 2s infinite;
+    cursor: pointer;
+    transition: opacity 0.3s ease, visibility 0.3s;
+    z-index: 10;
+}
+
+.scroll-indicator svg {
+    width: 40px;
+    height: 40px;
+    fill: #fff; 
+}
+
+.scroll-indicator.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    40% {
+        transform: translateX(-50%) translateY(-10px);
+    }
+    60% {
+        transform: translateX(-50%) translateY(-5px);
+    }
+}
 
 @media (max-width: 992px) {
     .hero-content h1 {
@@ -534,6 +642,20 @@ footer {
         width: 100%;
         text-align: center;
         border-bottom: none;
+    }
+
+    .brand-intro {
+        min-height: 100vh;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    .big-logo {
+        max-width: 250px;
+        margin-bottom: 30px;
+    }
+    .intro-nav-links {
+        gap: 25px;
+        flex-direction: column;
     }
 
     .home-hero {
