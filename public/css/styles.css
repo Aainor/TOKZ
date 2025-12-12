@@ -519,7 +519,7 @@ body.home-page header.header-visible {
 
 .scroll-indicator {
     position: absolute;
-    bottom: 20px; 
+    bottom: 1.5vw; 
     left: 50%;
     transform: translateX(-50%); 
     opacity: 0.25; 
