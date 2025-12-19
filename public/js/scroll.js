@@ -2,14 +2,17 @@ function checkScroll() {
     const header = document.querySelector('header');
     const introSection = document.querySelector('.brand-intro');
     const arrow = document.querySelector('.scroll-indicator'); 
+    const accessBtn = document.querySelector('.access-btn'); 
     
     if (header && introSection) {
         const triggerHeight = introSection.offsetHeight - 100;
         
         if (window.scrollY > triggerHeight) {
             header.classList.add('header-visible');
+            if (accessBtn) accessBtn.classList.add('fade-out'); 
         } else {
             header.classList.remove('header-visible');
+            if (accessBtn) accessBtn.classList.remove('fade-out');
         }
 
         if (arrow) {
@@ -28,10 +31,8 @@ window.addEventListener('load', checkScroll);
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
-
         const targetId = this.getAttribute('href');
         const targetElement = document.querySelector(targetId);
-
         if (targetElement) {
             targetElement.scrollIntoView({
                 behavior: 'smooth'

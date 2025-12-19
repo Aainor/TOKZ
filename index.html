@@ -10,23 +10,32 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 
 <body class="home-page">
     <div id="header-placeholder"></div>
 <main>
+    <a href="/pages/login.html" class="access-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
+            <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Zm0-80Zm0 400Z"/>
+        </svg>
+        Acceso
+    </a>
     <section class="brand-intro">
             <div class="intro-content">
                 <img src="/public/img/Imagen3.png" alt="TOKZ Barber Logo" class="big-logo">
                 
                 <nav class="intro-nav-links">
-                    <a href="#" class="active">INICIO</a>
-                    <a href="/pages/sobre_nosotros.html">¿QUÉ ES TOKZ?</a> 
-                    <a href="#">SERVICIOS</a>
-                    <a href="/pages/turnos.html">TURNOS</a>
-                    <a href="#">EDUCACION</a>
-                    <a href="#">MULTIMEDIA</a>
-                    <a href="/pages/redes_sociales.html">REDES SOCIALES</a>
+                    <a href="#inicio" class="active">Inicio</a>
+                    <a href="#sobreNosotros">¿Qué es TOKZ?</a>
+                    <a href="#servicios">Servicios</a>
+                    <a href="#turnos">Turnos</a>
+                    <a href="#multimedia">Multimedia</a>
+                    <a href="#redes">Redes Sociales</a>
+                    <a href="#educacion">Educacion</a>
                 </nav>
             </div>
 
@@ -39,7 +48,7 @@
     <section class="home-hero" id="inicio">
         <div class="container hero-grid">
             <div class="hero-content">
-                <span class="subtitle">EST. 2019 — GUERNICA, PRESIDENTE PERÓN</span>
+                <span class="tag">EST. 2019 — GUERNICA, PRESIDENTE PERÓN</span>
                 <h1>Soy un apasionado por el detalle y la superación personal.</h1>
                 <p>
                     Estoy convencido que cortar cabello es un arte y por eso me considero 
@@ -51,11 +60,174 @@
             </div>
         </div>
     </section>
+
+    <div class="container" id="sobreNosotros">
+        <section class="hero-section">
+            <div class="image-carousel-wrapper">
+                <div class="owl-carousel owl-theme">
+                    <div class="carousel-item">
+                        <img src="/public/img/Imagen4.png" alt="Equipo de la barbería TOKZ">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="/public/img/Imagen5.png" alt="Barbero 2">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="/public/img/Imagen6.png" alt="Barbero 3">
+                    </div>
+                </div>
+            </div>
+            <div class="info-section">
+                <p class="tag">SOBRE NOSOTROS</p>
+                <h1>Una Barberia ubicada en el centro de la ciudad de <span style="color: #AE0E30;">Guernica</span></h1>
+                <p>En el año 2019 nace TOKZ BARBER situada en ese momento en la calle Jose Ignacio Rucci. Con un espejo,
+                    una mesa ratona y una silla de computadora comence a recibir a mis clientes en el living de mi casa.
+                    Poco a poco fue transformandose en una Barberia.</p>
+                <div class="quote">
+                    La idea de TOKZ es una IDENTIDAD. Una idea clave: Servir a los que nos rodean, cuidar la imagen de
+                    nuestro alrededor y la mejora constante: SIEMPRE SE PUEDE CRECER, solo se llega rapido,
+                    pero en equipo llegamos más lejos! Eso es TOKZ, un equipo con las ideas bien claras; nuestro trabajo
+                    habla por nosotros.
+                    <span>- NICOLAS RUIBAL</span>
+                </div>
+
+                <a href="#" class="cta-button">Más sobre nosotros</a>
+            </div>
+        </section>
+
+        <section class="numbers-section">
+            <h2>Nuestra barbería en números:</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <strong>+40</strong> <span>Cortes Diarios</span>
+                </div>
+                <div class="stat-item">
+                    <strong>+20</strong> <span>Reservas Online</span>
+                </div>
+                <div class="stat-item">
+                    <strong>+85</strong> <span>Egresados</span>
+                </div>
+                <div class="stat-item">
+                    <strong>4</strong> <span>Barberos Profesionales</span>
+                </div>
+                <div class="stat-item">
+                    <strong>1</strong> <span>Barbero Junior</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <section id="servicios" class="services-section">
+        <div class="services-intro-content">
+            <span class="tag">¿QUÉ SABEMOS HACER?</span>
+            <h2>Somos expertos en el cuidado de tu imagen</h2>
+            <p>Cada momento en tu vida es único, asegúrate de lucir tu estilo!. Antes de cada momento importante, ¿Qué es lo que hay que hacer? Pasar por tu barbería y emprolijar esa peluca o arreglarse la barba, quizás es momento de disimular esas canas o echarse encima un buen global o claritos ICE 🥶. Conoce todos los servicios que tenemos disponibles para vos. </p>
+            
+            <div class="service-buttons">
+                <a href="#reserva" class="cta-button">RESERVAR TURNO</a>
+                <a href="#detalles" class="cta-button">MÁS SERVICIOS</a>
+            </div>
+        </div>
+
+        <div class="services-grid">
+            <div class="service-card">
+                <img src="/public/img/servicio-corte.jpg" alt="Corte de Cabello">
+                <div class="card-content">
+                    <h3>Corte de Cabello</h3>
+                    <p>El estilo que buscas, preciso y a la moda.</p>
+                    <div class="price-details">
+                        <p class="promo-price">EFECTIVO: $16.000</p>
+                        <p class="full-price">M.Pago/Transf.: $18.000</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <img src="/public/img/servicio-barba.jpg" alt="Corte + Barba">
+                <div class="card-content">
+                    <h3>Corte + Barba</h3>
+                    <p>Combo clásico: look completo e impecable.</p>
+                    <div class="price-details">
+                        <p class="promo-price">EFECTIVO: $18.000</p>
+                        <p class="full-price">M.Pago/Transf.: $20.000</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <img src="/public/img/Imagen7.png" alt="Corte + Diseño">
+                <div class="card-content">
+                    <h3>Corte + Diseño</h3>
+                    <p>Personaliza tu estilo con un diseño único.</p>
+                    <div class="price-details">
+                        <p class="promo-price">EFECTIVO: $18.000</p>
+                        <p class="note">Consulta por diseños complejos.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <img src="/public/img/servicio-global.jpg" alt="Diseño Global">
+                <div class="card-content">
+                    <h3>Diseño Global</h3>
+                    <p>Cambio radical de color y estilo completo.</p>
+                    <div class="price-details">
+                        <p class="promo-price">EFECTIVO: a partir de $60.000</p>
+                        <p class="full-price">M.Pago/Transf.: +$2.000</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="social-card" id="redes">
+        <div class="container social-split-grid">
+            
+            <div class="col-left brand-side">
+                <img src="/public/img/Imagen3.png" alt="TOKZ Barber Logo" class="social-main-logo">
+                
+                <div class="social-icons-wrapper">
+                    <a href="https://www.instagram.com/tokzbarber/" target="_blank" class="social-btn instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://www.facebook.com/tokz.barberia/" target="_blank" class="social-btn facebook">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="vertical-divider"></div>
+
+            <div class="col-right info-side">
+                <div class="shop-image-frame">
+                    <img src="/public/img/Imagen1.png" alt="#Confiá en tu Barber" class="shop-img">
+                </div>
+
+                <div class="info-content">
+                    <h3>VISÍTANOS</h3>
+                    <a href="https://maps.app.goo.gl/gV7XD3oLZNxDD8AC8" target="_blank" class="maps">
+                    <p>Combatientes de Malvinas 317<br>Guernica, Presidente Perón</p>
+                    </a>
+
+                    <div class="contact-block">
+                        <a href="tel:+541168606201" class="contact-row">
+                            <i class="fa-solid fa-phone"></i> +54 11 6860-6201
+                        </a>
+                        <a href="https://wa.me/541168606201" class="contact-row whatsapp">
+                            ¡Escribinos al WhatsApp!
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
 </main>
     <div id="footer-placeholder"></div>
     
     <script src="/public/js/main.js"></script>
-
     <script src="/public/js/scroll.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script src="/public/js/sobre_nosotros.js"></script>
 </body>
 </html>
