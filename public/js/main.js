@@ -1,3 +1,4 @@
+import { db } from './firebase.js';
 function checkPromoOffset() {
     const promoBar = document.getElementById('promoBar');
     const header = document.querySelector('header');
