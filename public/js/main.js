@@ -1,4 +1,4 @@
-import { db } from './firebase.js';
+//import { db } from './firebase.js';
 function checkPromoOffset() {
     const promoBar = document.getElementById('promoBar');
     const header = document.querySelector('header');
@@ -91,6 +91,14 @@ function initHeaderLogic() {
     const menuToggle = document.querySelector('.menu-toggle');
     const nav = document.querySelector('.header-nav');
     const navLinks = document.querySelectorAll('.header-nav a'); 
+    const isHome = window.location.pathname === '/' || window.location.pathname.includes('index.html');
+
+    navLinks.forEach(link => {
+        const target = link.getAttribute('href');
+        if (target && target.startsWith('#') && !isHome) {
+            link.href = '/index.html' + target;
+        }
+    });
 
     if(menuToggle && nav) {
         menuToggle.addEventListener('click', (e) => {

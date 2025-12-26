@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TOKZ Barber</title>
-    <link rel="icon" href="/public/img/logo.ico" type="image/png">
+    <link rel="icon" href="/public/img/iconos/logo.ico" type="image/png">
     <link rel="stylesheet" href="/public/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +18,7 @@
 <body class="home-page">
     <div class="promo-bar" id="promoBar">
         <div class="promo-message">
-            ¡Clientes registrados reciben un <strong>15% de descuento</strong> en su primer reserva!
+            ¡Clientes registrados reciben un <strong>10% de descuento</strong> en su primer reserva!
         </div>
         <button class="promo-close" id="closePromo">&times;</button>
     </div>
@@ -33,7 +33,7 @@
     </a>
     <section class="brand-intro">
             <div class="intro-content">
-                <img src="/public/img/Imagen3.png" alt="TOKZ Barber Logo" class="big-logo">
+                <img src="/public/img/logos/Imagen3.png" alt="TOKZ Barber Logo" class="big-logo">
                 
                 <nav class="intro-nav-links">
                     <a href="#inicio" class="active">Inicio</a>
@@ -44,13 +44,143 @@
                     <a href="#redes">Redes Sociales</a>
                     <a href="#educacion">Educacion</a>
                 </nav>
+            
+    <section class="reviews-section">
+        <div class="google-header">
+            <div class="google-info">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" class="google-logo">
+                <div class="rating-block">
+                    <span class="stars-header">★★★★★</span>
+                    <span class="score">4.9</span>
+                    <span class="count">82 reseñas</span>
+                </div>
+            </div>
+            <a href="https://search.google.com/local/writereview?placeid=ChIJb6-NA9ArvZURYUNQQQle9oE" target="_blank" class="write-btn">Escribí tu reseña</a>
+        </div>
 
-                <div class="reviews-widget-wrapper">
+        <div class="reviews-container">
+            <button class="nav-btn prev-btn" id="prevBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+
+            <div class="reviews-wrapper">
+                <div class="reviews-track" id="track">
+                    
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="user-info">
+                                <div class="avatar">
+                                    <img src="https://lh3.googleusercontent.com/a-/ALV-UjV4nGVwt0E4ZSjGZlEKgqZJHo4b0iW1YOE9KIiIsjNK6rBSVLM=w90-h90-p-rp-mo-br100" alt="Foto de Cliente" onerror="this.style.display='none'">
+                                </div>
+                                <div class="details">
+                                    <h3>Hernan Ponce</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stars">★★★★★ 
+                                        <svg class="verified-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.413-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .495.083.965.238 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z"/>
+                                        </svg>
+                        </div>
+                        <p class="review-text">Excelente el servicio y la calidez humana en cada barbero y peluquero. Super recomendable.</p>
+                    </div>
+
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="user-info">
+                                <div class="avatar" >
+                                    <img src="https://lh3.googleusercontent.com/a-/ALV-UjXpvnMN0mNK2Sf15kjdbjeivXHZw56YBLsaLyeFckqVFQKIeNc=w90-h90-p-rp-mo-br100" alt="Foto de Cliente" onerror="this.style.display='none'">
+                                </div>
+                                <div class="details">
+                                    <h3>Patricio Ares</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stars">★★★★★ 
+                                        <svg class="verified-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.413-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .495.083.965.238 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z"/>
+                                        </svg>
+                        </div>
+                        <p class="review-text">Experiencia siempre barbara, la mejor atención y excelente, la comodidad y el trato.</p>
+                    </div>
+
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="user-info">
+                                <div class="avatar">
+                                    <img src="https://lh3.googleusercontent.com/a-/ALV-UjUSKpUCy9wV42RPyJdaxLc5votukPt4L1yUKTA4z10z-a2Z75hGyQ=w90-h90-p-rp-mo-br100" alt="Foto de Cliente" onerror="this.style.display='none'">
+                                </div>
+                                <div class="details">
+                                    <h3>Micaela Quiroga</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stars">★★★★★ 
+                                        <svg class="verified-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.413-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .495.083.965.238 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z"/>
+                                        </svg>
+                        </div>
+                        <p class="review-text">La mejor barber lejos tienen una paciencia con los chicos q no se ve en ningún lado Gael no los cambia por nada solo ustedes saben cómo domar esa fiera y q le quede un corte hermoso jaja</p>
+                        <button class="read-more-btn" onclick="toggleReview(this)">Ver más</button>
+                    </div>
+
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="user-info">
+                                <div class="avatar" style="background: #1b3577;">L</div>
+                                <div class="details">
+                                    <h3>Luciano Cabañas</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stars">★★★★★ 
+                                        <svg class="verified-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.413-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .495.083.965.238 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z"/>
+                                        </svg>
+                        </div>
+                        <p class="review-text">Desde que entras sos un amigo más, siempre buena atención, buena onda y los mejores cortes, si pasas por TOKZ 💈no vas a querer ir a otro lado…</p>
+                        <button class="read-more-btn" onclick="toggleReview(this)">Ver más</button>
+                    </div>
+
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="user-info">
+                                <div class="avatar">
+                                    <img src="https://lh3.googleusercontent.com/a-/ALV-UjVVRKqL2ANpCaqzUJtJC2Q4pLqmy0n0clPiqU5ulzaTwPNJsdn81g=w90-h90-p-rp-mo-ba2-br100" alt="Foto de Cliente" onerror="this.style.display='none'">
+                                </div>
+                                <div class="details">
+                                    <h3>Silvio Gonzalez</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stars">★★★★★ 
+                                        <svg class="verified-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.413-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .495.083.965.238 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z"/>
+                                        </svg>
+                        </div>
+                        <p class="review-text">Los mejores ! Hace años que me atiendo con ellos y sin duda la mejor atención tanto en lo profesional como personal cada uno de los integrantes del equipo ! Siempre agradecido con mis amigos de TOKZ BARBER!💈…</p>
+                        <button class="read-more-btn" onclick="toggleReview(this)">Ver más</button>
+                    </div>
+
+                </div>
+            </div>
+
+            <button class="nav-btn next-btn" id="nextBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+    </section>
+
+            <!--     <div class="reviews-widget-wrapper">
                     <script defer async src='https://cdn.trustindex.io/loader.js?9a9ab38603d2790bd60622d72e2'></script>
                 </div>
             </div>
  
-        <!--    <a href="#inicio" class="scroll-indicator">
+            <a href="#inicio" class="scroll-indicator">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
                     <path d="M480-200 240-440l56-56 184 183 184-183 56 56-240 240Zm0-240L240-680l56-56 184 183 184-183 56 56-240 240Z"/>
                 </svg>
@@ -67,7 +197,7 @@
                     Actualmente me dedicó a la atención de clientes el salón y a preparar Profesionales en Barberia. 
                     Hace ya varios años que la Educación en TOKZ BARBER es sinónimo de PROFESIONALISMO Y CONOCIMIENTO, con excelentes resultados y alumnos de gran calidad humana. 
                 </p>
-                <a href="#" class="cta-button">Nuestros Servicios</a>
+                <a href="#servicios" class="cta-button">Nuestros Servicios</a>
             </div>
         </div>
     </section>
@@ -77,13 +207,13 @@
             <div class="image-carousel-wrapper">
                 <div class="owl-carousel owl-theme">
                     <div class="carousel-item">
-                        <img src="/public/img/Imagen4.png" alt="Equipo de la barbería TOKZ">
+                        <img src="/public/img/fotos/Imagen4.png" alt="Equipo de la barbería TOKZ">
                     </div>
                     <div class="carousel-item">
-                        <img src="/public/img/Imagen5.png" alt="Barbero 2">
+                        <img src="/public/img/fotos/Imagen5.png" alt="Barbero 2">
                     </div>
                     <div class="carousel-item">
-                        <img src="/public/img/Imagen6.png" alt="Barbero 3">
+                        <img src="/public/img/fotos/Imagen6.png" alt="Barbero 3">
                     </div>
                 </div>
             </div>
@@ -135,13 +265,13 @@
             
             <div class="service-buttons">
                 <a href="#reserva" class="cta-button">RESERVAR TURNO</a>
-                <a href="#detalles" class="cta-button">MÁS SERVICIOS</a>
+                <a href="/pages/servicios.html" class="cta-button">MÁS SERVICIOS</a>
             </div>
         </div>
 
         <div class="services-grid">
             <div class="service-card">
-                <img src="/public/img/servicio-corte.jpg" alt="Corte de Cabello">
+                <img src="/public/img/fotos/servicio-corte.jpg" alt="Corte de Cabello">
                 <div class="card-content">
                     <h3>Corte de Cabello</h3>
                     <p>El estilo que buscas, preciso y a la moda.</p>
@@ -153,7 +283,7 @@
             </div>
 
             <div class="service-card">
-                <img src="/public/img/servicio-barba.jpg" alt="Corte + Barba">
+                <img src="/public/img/fotos/servicio-barba.jpg" alt="Corte + Barba">
                 <div class="card-content">
                     <h3>Corte + Barba</h3>
                     <p>Combo clásico: look completo e impecable.</p>
@@ -165,7 +295,7 @@
             </div>
 
             <div class="service-card">
-                <img src="/public/img/Imagen7.png" alt="Corte + Diseño">
+                <img src="/public/img/fotos/Imagen7.png" alt="Corte + Diseño">
                 <div class="card-content">
                     <h3>Corte + Diseño</h3>
                     <p>Personaliza tu estilo con un diseño único.</p>
@@ -177,7 +307,7 @@
             </div>
 
             <div class="service-card">
-                <img src="/public/img/servicio-global.jpg" alt="Diseño Global">
+                <img src="/public/img/fotos/servicio-global.jpg" alt="Diseño Global">
                 <div class="card-content">
                     <h3>Diseño Global</h3>
                     <p>Cambio radical de color y estilo completo.</p>
@@ -194,7 +324,7 @@
         <div class="container social-split-grid">
             
             <div class="col-left brand-side">
-                <img src="/public/img/Imagen3.png" alt="TOKZ Barber Logo" class="social-main-logo">
+                <img src="/public/img/logos/Imagen3.png" alt="TOKZ Barber Logo" class="social-main-logo">
                 
                 <div class="social-icons-wrapper">
                     <a href="https://www.instagram.com/tokzbarber/" target="_blank" class="social-btn instagram">
@@ -210,7 +340,7 @@
 
             <div class="col-right info-side">
                 <div class="shop-image-frame">
-                    <img src="/public/img/Imagen1.png" alt="#Confiá en tu Barber" class="shop-img">
+                    <img src="/public/img/logos/Imagen1.png" alt="#Confiá en tu Barber" class="shop-img">
                 </div>
 
                 <div class="info-content">
@@ -231,14 +361,20 @@
             </div>
         </div>
     </section>
+    
+    <section id="educacion">
+
+    </section>
 
 </main>
     <div id="footer-placeholder"></div>
     
     <script type="module" src="/public/js/main.js"></script>
     <script src="/public/js/scroll.js"></script>
+    <script src="/public/js/swipe.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
     <script src="/public/js/sobre_nosotros.js"></script>
+    <script src="/public/js/seeMore.js"></script>
 </body>
 </html>
