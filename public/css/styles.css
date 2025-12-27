@@ -18,6 +18,19 @@
     box-sizing: border-box;
 }
 
+#turnos {
+scroll-margin-top: 140px;
+}
+
+#servicios {
+scroll-margin-top: 215px;
+}
+
+#multimedia,
+#redes {
+    scroll-margin-top: 100px;
+}
+
 html,
 body {
     scroll-behavior: smooth !important;
@@ -569,7 +582,6 @@ body.home-page header.header-visible {
     background-image: url('/public/img/texturas/binding-dark.png');
     background-repeat: repeat;
     padding: 80px 0;
-    margin-top: 5vw;
     position: relative;
 }
 
@@ -1672,7 +1684,6 @@ body.home-page header.header-visible {
     padding: 80px 20px;
     background-color: var(--darkcolor);
     text-align: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .work-preview .header-area {
