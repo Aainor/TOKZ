@@ -1,41 +1,47 @@
+i/* Ubicación: public/js/reservas.js
+   Función: Lógica para guardar turnos en la base de datos.
+*/
+
+// 1. Importamos la conexión QUE ACABAMOS DE CREAR (Nota el ./ y el .js)
 import { db } from './firebase.js';
-// 1. IMPORTAMOS LAS LIBRERÍAS (Aquí agregué la de Firestore)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
-      // ESTA ES LA LÍNEA NUEVA IMPORTANTE PARA LA BASE DE DATOS:
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-      // 2. TU CONFIGURACIÓN (La que me pasaste)
-const firebaseConfig = {
-        apiKey: "AIzaSyDkVou02bXWq2qX0QSF1WMVrJMfsW903rM",
-        authDomain: "tokz-barber.firebaseapp.com",
-        projectId: "tokz-barber",
-        storageBucket: "tokz-barber.firebasestorage.app",
-        messagingSenderId: "949051520274",
-        appId: "1:949051520274:web:24b6887eeb15627333efcb",
-        measurementId: "G-4Q111E9FDQ"
-      };
+// 2. Importamos las funciones para GUARDAR datos (addDoc)
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-      // 3. INICIALIZAMOS FIREBASE
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-      
-      // 4. INICIALIZAMOS LA BASE DE DATOS
-const db = getFirestore(app);
+console.log("✅ Sistema de Reservas listo para operar");
 
-      // 5. CÓDIGO DEL BOTÓN (Para probar que guarda en Brasil)
-document.getElementById('btnReservar').addEventListener('click', async () => {
+// 3. Buscamos el botón en el HTML (Asegúrate que tu botón tenga id="btnReservar")
+const btnReservar = document.getElementById('btnReservar');
+
+if (btnReservar) {
+    btnReservar.addEventListener('click', async () => {
         try {
-            alert("Procesando...");
+            // Feedback visual simple
+            const textoOriginal = btnReservar.innerText;
+            btnReservar.innerText = "Procesando...";
+            btnReservar.disabled = true;
+
+            // Guardar en la colección "turnos"
             const docRef = await addDoc(collection(db, "turnos"), {
-                nombre: "Cliente desde Web",
-                fecha: new Date(), // Guarda la hora actual
-                servicio: "Corte y Barba"
+                nombre: "Cliente Web (Prueba)",
+                fecha: new Date(),
+                servicio: "Corte y Barba",
+                estado: "Pendiente"
             });
-            alert("¡Funciona! Se guardó el turno con ID: " + docRef.id);
-            console.log("Documento escrito con ID: ", docRef.id);
+
+            console.log("Turno guardado con ID: ", docRef.id);
+            alert("¡Turno reservado con éxito! ID: " + docRef.id);
+
         } catch (e) {
-            console.error("Error agregando documento: ", e);
-            alert("Error: " + e.message);
+            console.error("Error al reservar: ", e);
+            alert("Error: Hubo un problema al guardar el turno.");
+        } finally {
+            // Restaurar botón
+            btnReservar.innerText = "Reservar Turno";
+            btnReservar.disabled = false;
         }
-});
+    });
+} else {
+    // Esto es normal si estás en una página que no tiene el botón de reservar
+    console.log("ℹ️ No se encontró botón de reserva en esta página.");
+}
