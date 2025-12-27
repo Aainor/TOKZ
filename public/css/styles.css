@@ -1180,6 +1180,7 @@ body.home-page header.header-visible {
 .picture img{
     position: relative;
     max-width: 625px;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.241);
 }
 
 .paragraph {
@@ -1198,6 +1199,19 @@ body.home-page header.header-visible {
 .title p {
     margin-bottom: 25px;
     line-height: 1.5;
+}
+
+.booking-section .tag{
+    color: var(--darkcolor);
+}
+
+.booking-section .tag::before {
+    background-color: var(--darkcolor);
+}
+
+.booking-section .cta-button:hover {
+    color: var(--darkcolor);
+    border: 1px solid var(--darkcolor);
 }
 
 @keyframes float {
