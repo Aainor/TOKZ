@@ -1145,6 +1145,61 @@ body.home-page header.header-visible {
     transition: width 0.3s;
 }
 
+#turnos {
+    position: relative; 
+    background-color: var(--darkcolor);
+    overflow: hidden; 
+    z-index: 1; 
+}
+
+#turnos::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        255deg, 
+        var(--redcolor) 0%, 
+        #5c0618 65%, 
+        var(--bg) 65.1%
+    );
+    z-index: -1; 
+}
+
+.booking-section {
+    min-width: 300px;
+    box-sizing: border-box;
+    padding: 80px 125px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.picture img{
+    position: relative;
+    max-width: 625px;
+}
+
+.paragraph {
+    font-family: 'Playfair Display', serif;
+    font-size: 44px;
+    line-height: 1.2;
+    margin-top: 0;
+    color: white;
+    margin-bottom: 25px;
+}
+
+.title {
+    margin-left: 60px;
+}
+
+.title p {
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
 @keyframes float {
     0% {
         transform: translateY(0px);
