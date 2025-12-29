@@ -21,49 +21,49 @@
     <div id="header-placeholder"></div>
 
     <section class="multimedia-section" id="multimedia">
-        <div class="header-area">
-            <span class="sub-header">Nuestro Portafolio</span>
-            <h2>Multimedia</h2>
+        <div class="header-area fade-in">
+            <span class="sub-header fade-in">Nuestro Portafolio</span>
+            <h2 class="fade-in">Multimedia</h2>
         </div>
 
-        <div class="filter-controls">
+        <div class="filter-controls fade-in">
             <button class="filter-btn active" data-filter="all">Ver Todo</button>
             <button class="filter-btn" data-filter="photo">Fotografías</button>
             <button class="filter-btn" data-filter="video">Videos</button>
         </div>
 
         <div class="multimedia-grid">
-            <div class="gallery-item photo">
+            <div class="gallery-item photo fade-in">
                 <img src="/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (1).png" loading="lazy">
                 <div class="overlay"><i class="fas fa-plus"></i></div>
             </div>
-            <div class="gallery-item photo">
+            <div class="gallery-item photo fade-in">
                 <img src="/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (2).png" loading="lazy">
                 <div class="overlay"><i class="fas fa-plus"></i></div>
             </div>
-            <div class="gallery-item photo">
+            <div class="gallery-item photo fade-in">
                 <img src="/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (3).png" loading="lazy">
                 <div class="overlay"><i class="fas fa-plus"></i></div>
             </div>
-            <div class="gallery-item photo">
+            <div class="gallery-item photo fade-in">
                 <img src="/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (4).png" loading="lazy">
                 <div class="overlay"><i class="fas fa-plus"></i></div>
             </div>
-            <div class="gallery-item photo">
+            <div class="gallery-item photo fade-in">
                 <img src="/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (5).png" loading="lazy">
                 <div class="overlay"><i class="fas fa-plus"></i></div>
             </div>
-            <div class="gallery-item photo">
+            <div class="gallery-item photo fade-in">
                 <img src="/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (6).png" loading="lazy">
                 <div class="overlay"><i class="fas fa-plus"></i></div>
             </div>
-            <div class="gallery-item photo">
+            <div class="gallery-item photo fade-in">
                 <img src="/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (7).png" loading="lazy">
                 <div class="overlay"><i class="fas fa-plus"></i></div>
             </div>
 
             <div class="gallery-item video">
-                <video muted loop preload="metadata">
+                <video muted loop preload="metadata" class="fade-in">
                     <source src="/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/video (1).mp4" type="video/mp4">
                 </video>
                 <div class="overlay"><i class="fas fa-play"></i></div>
@@ -71,11 +71,11 @@
         </div>
 
         <div class="load-more-wrapper">
-            <button class="btn-load-more" id="btnLoadMore">Cargar más contenido</button>
+            <button class="btn-load-more fade-in" id="btnLoadMore">Cargar más contenido</button>
         </div>
     </section>
 
-    <div class="lightbox-modal" id="lightbox">
+    <div class="lightbox-modal fade-in" id="lightbox">
         <div class="lightbox-content" id="lightboxContent"></div>
     </div>
 
@@ -84,6 +84,8 @@
     <script src="/public/js/main.js"></script>
 
     <script src="/public/js/script_multimedia.js"></script>
+
+    <script src="/public/js/guard.js"></script>
 
 </body>
 

@@ -1,9 +1,10 @@
 *:root {
-    --rojo: #AE0E30;
     --blanco: #ffffff;
-    --negro: #1c1c1a;
-    --gris-suave: #333333;
+    --gris-suave: #1c1c1a;
     --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    --darkcolor: #000000;
+    --redcolor: #AE0E30;
+    --bg: #000000;
 }
 
 * {
@@ -13,7 +14,7 @@
 }
 
 body {
-    background-color: var(--negro);
+    background-color: var(--darkcolor);
     color: var(--blanco);
     font-family: 'Roboto', sans-serif;
     line-height: 1.6;
@@ -28,7 +29,7 @@ body {
 
 .header-area {
     text-align: center;
-    margin-bottom: 60px;
+    margin-bottom: 30px;
 }
 
 .header-area h2 {
@@ -40,7 +41,7 @@ body {
 }
 
 .header-area .sub-header {
-    color: var(--rojo);
+    color: var(--redcolor);
     text-transform: uppercase;
     font-weight: 700;
     letter-spacing: 3px;
@@ -72,13 +73,13 @@ body {
 }
 
 .filter-btn:hover {
-    border-color: var(--rojo);
+    border-color: var(--redcolor);
 }
 
 .filter-btn.active {
-    background-color: var(--rojo);
+    background-color: var(--redcolor);
     color: var(--blanco);
-    border-color: var(--rojo);
+    border-color: var(--redcolor);
 }
 
 /* --- GRID MEDIA--- */
@@ -131,7 +132,7 @@ body {
 
 .overlay i {
     font-size: 2rem;
-    color: var(--rojo);
+    color: var(--redcolor);
     transform: scale(0.5);
     transition: transform 0.3s ease;
 }
@@ -148,7 +149,7 @@ body {
 
 .btn-load-more {
     background: transparent;
-    border: 2px solid var(--rojo);
+    border: 2px solid var(--redcolor);
     color: var(--blanco);
     padding: 18px 45px;
     font-family: 'Roboto', sans-serif;
@@ -160,7 +161,7 @@ body {
 }
 
 .btn-load-more:hover {
-    background: var(--rojo);
+    background: var(--redcolor);
     box-shadow: 0 10px 20px rgba(228, 46, 24, 0.2);
 }
 
@@ -208,7 +209,7 @@ body {
 }
 
 .close-lightbox:hover {
-    color: var(--rojo);
+    color: var(--redcolor);
 }
 
 @media (max-width: 768px) {
