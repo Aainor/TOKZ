@@ -109,6 +109,10 @@ body {
     filter: none !important;
 }
 
+.service-card:hover{
+    transform: translateY(-5px);
+}
+
 @media (max-width: 768px) {
 
     body {
