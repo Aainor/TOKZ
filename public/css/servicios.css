@@ -113,6 +113,26 @@ body {
     transform: translateY(-5px);
 }
 
+.service-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%; 
+    background-color: #fff;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; 
+    padding: 10px; 
+}
+
+.price-details {
+    margin-top: auto; 
+    width: 100%; 
+    padding-top: 10px;
+}
+
 @media (max-width: 768px) {
 
     body {
