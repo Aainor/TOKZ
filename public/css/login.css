@@ -1,10 +1,11 @@
 :root {
     --color-bg-main: #050505;
-    --color-bg-card: #111110;
+    --color-bg-card: rgba(20, 20, 20, 0.6);
     --redcolor: #AE0E30;
     --color-text-gray: #aaaaaa;
     --font-primary: 'Montserrat', sans-serif;
-    --font-heading: 'Oswald', sans-serif;
+    --font-heading: 'Playfair Display', serif;;
+
 }
 
 * {
@@ -41,17 +42,19 @@ body {
     padding: 20px;
     width: 100%;
     max-width: 450px;
+    z-index: 10;
 }
 
 .login-box {
     background-color: var(--color-bg-card);
-    padding: 40px;
+    backdrop-filter: blur(15px); 
+    -webkit-backdrop-filter: blur(15px);
+    padding: 20px 40px;
     border-radius: 16px;
-    border: 1px solid rgba(255, 59, 59, 0.1);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.5), 0 0 20px rgba(255, 59, 59, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08); 
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     text-align: center;
     position: relative;
-    overflow: hidden;
 }
 
 .login-box::before {
@@ -65,13 +68,13 @@ body {
 }
 
 .login-header {
-    margin-bottom: 35px;
+    margin-bottom: 30px;
 }
 
 .login-logo {
     width: 120px; 
     height: auto;
-    margin-bottom: 20px; 
+    margin-bottom: 10px; 
     display: block; 
     margin-left: auto;
     margin-right: auto;
@@ -104,7 +107,7 @@ body {
 }
 .input-group label {
     padding: 15px;
-    color: var(--color-text-gray);
+    color: #666;
     font-size: 1.1rem;
     transition: color 0.3s ease;
 }
@@ -136,13 +139,13 @@ body {
 .input-group:focus-within .focus-border { width: 100%; }
 
 .forgot-pass-container {
-    text-align: center;
+    text-align: right;
     margin-bottom: 25px;
 }
-.forgot-pass, .register-link {
-    color: var(--color-text-gray);
+.forgot-pass {
+    color: var(--text-gray);
     text-decoration: none;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     transition: color 0.3s ease;
 }
 .forgot-pass:hover, .register-link:hover { color: var(--redcolor); }
@@ -150,21 +153,22 @@ body {
 .btn-login {
     width: 100%;
     padding: 15px;
-    background-color: var(--redcolor);
-    border: none;
+    background: linear-gradient(90deg, #960b29, var(--redcolor));
+    border: 1px solid transparent;
     border-radius: 8px;
     color: white;
-    font-family: var(--font-heading);
-    font-size: 1.2rem;
-    font-weight: bold;
-    letter-spacing: 1px;
+    font-family: var(--font-primary); 
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
     cursor: pointer;
     transition: all 0.3s ease;
     text-transform: uppercase;
-    border: 1px solid var(--redcolor);
 }
+
 .btn-login:hover {
-    background-color: transparent;
+    border: 1px solid var(--redcolor);
+    background: transparent;
     color: var(--redcolor);
     transform: translateY(-1px);
 }
@@ -185,16 +189,13 @@ body {
 }
 
 #show-register {
-    color: var(--redcolor);
+    color: var(--white);
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
     margin-left: 5px;
 }
-
-#show-register:hover {
-    color: white;
-}
+#show-register:hover { color: var(--redcolor); }
 
 .divider {
     display: flex;
@@ -225,7 +226,7 @@ body {
     border-radius: 8px;
     color: white;
     font-family: var(--font-primary); 
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
     display: flex;
@@ -271,9 +272,16 @@ body {
     transform: translateX(-3px); 
 }
 
+.fade-in {
+    opacity: 0;
+    transform: translateY(50px); 
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    will-change: opacity, transform; 
+}
 
-@media (max-width: 768px) {
-    
+.fade-in.appear {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 @media (max-width: 992px) {
@@ -290,6 +298,10 @@ body {
 
     .login-header h1{
         font-size: 2rem;
+    }
+
+    .login-box::before {
+        margin-top: -5vw;
     }
 
 }
