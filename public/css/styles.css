@@ -9,6 +9,8 @@
     --text-main: #ffffff;
     --text-sec: #aaaaaa;
     --star: #fbbc04;
+
+    --uppercase: 'Montserrat', sans-serif;
 }
 
 .reviews-section,
@@ -711,7 +713,8 @@ body.home-page header.header-visible {
     color: var(--redcolor);
     font-size: 16px;
     margin-bottom: 8px;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--uppercase);
+    text-transform: uppercase;
     margin-top: 0;
 }
 
