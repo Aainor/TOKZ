@@ -1,0 +1,72 @@
+{
+  "corte": {
+    "destacado": 16000,
+    "accesorio": 17000,
+    "tachar": true
+  },
+  "corte_barba": {
+    "destacado": 18000,
+    "accesorio": 19000,
+    "tachar": true
+  },
+  "rapado": {
+    "destacado": 10000,
+    "accesorio": 11000,
+    "tachar": true
+  },
+  "barba": {
+    "destacado": 10000,
+    "accesorio": 11000,
+    "tachar": true
+  },
+  "corte_diseno": {
+    "destacado": 18000,
+    "accesorio": 19000,
+    "tachar": true
+  },
+  "femenino": {
+    "destacado": 16000,
+    "accesorio": 18000,
+    "tachar": true
+  },
+  "claritos": {
+    "destacado": "A partir de $60.000",
+    "accesorio": "Consultar presupuesto",
+    "tachar": false
+  },
+  "global": {
+    "destacado": "A partir de $60.000",
+    "accesorio": "Consultar presupuesto",
+    "tachar": false
+  },
+  "franja": {
+    "destacado": "A partir de $30.000",
+    "accesorio": "Consultar presupuesto",
+    "tachar": false
+  },
+  "curso": {
+    "destacado": "$80.000 x mes",
+    "accesorio": "(1 clase por semana)",
+    "tachar": false
+  },
+  "privado": {
+    "destacado": "$180.000 x mes",
+    "accesorio": " (1 clase por semana)",
+    "tachar": false
+  },
+  "premium": {
+    "destacado": 27000,
+    "accesorio": null,
+    "tachar": false
+  },
+  "vip": {
+    "destacado": 40000,
+    "accesorio": "Persona extra (Máx.10): +$16k",
+    "tachar": false
+  },
+  "evento": {
+    "destacado": "A partir de $180.000",
+    "accesorio": "Consultar presupuesto",
+    "tachar": false
+  }
+}
