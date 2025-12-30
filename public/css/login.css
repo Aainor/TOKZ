@@ -60,11 +60,12 @@ body {
 .login-box::before {
     content: '';
     position: absolute;
-    top: 0;
+    top: 0; 
     left: 0;
     width: 100%;
     height: 3px;
     background: linear-gradient(90deg, transparent, var(--redcolor), transparent);
+    z-index: 10; 
 }
 
 .login-header {
@@ -86,14 +87,37 @@ body {
     text-transform: uppercase;
     letter-spacing: 2px;
     margin-bottom: 5px;
-    line-height: 1.1; 
+    line-height: 0.9; 
 }
+
 .login-header p {
     color: var(--color-text-gray);
     font-size: 0.9rem;
 }
+
+.p{
+    padding-top: 5px;
+}
+
 .text-red {
     color: var(--redcolor);
+}
+.user-text-red {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    overflow: hidden; 
+    padding: 5px 0;
+}
+
+#user-name-display {
+    font-family: var(--font-heading);
+    font-size: clamp(1rem, 5vw, 2rem); 
+    text-transform: uppercase;
+    word-break: break-all; 
+    line-height: 1.2;
+    display: inline-block;
+    max-width: 100%;
 }
 
 .input-group {
@@ -284,6 +308,20 @@ body {
     transform: translateY(0);
 }
 
+.hidden {
+    display: none !important;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+    font-weight: 700;
+    transition: color 0.3s ease;
+}
+
+.cursor-pointer:hover {
+    text-decoration: underline;
+}
+
 @media (max-width: 992px) {
     .login-header h1 { font-size: 2rem; }
 
@@ -301,7 +339,7 @@ body {
     }
 
     .login-box::before {
-        margin-top: -5vw;
+        display: none;
     }
 
 }

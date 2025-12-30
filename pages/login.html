@@ -15,34 +15,34 @@
 </head>
 <body>
     <div class="login-container">
-        <div class="red-glow glow-1"></div>
-        <div class="red-glow glow-2"></div>
+    <div class="red-glow glow-1"></div>
+    <div class="red-glow glow-2"></div>
 
-        <a href="/index.html" class="back-arrow">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
-                <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z"/>
-                </svg>
-        </a>
+    <a href="/index.html" class="back-arrow">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
+            <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z"/>
+        </svg>
+    </a>
 
-        <div class="login-box fade-in">
+    <div class="login-box fade-in">
+        
+        <div id="view-login">
             <div class="login-header">
                 <img src="/public/img/logos/Imagen3.png" alt="Logo Tokz Barber" class="login-logo">
-                
                 <h1>TOKZ <span class="text-red">BARBER</span></h1>
                 <p>Bienvenido, inicia sesión en tu cuenta.</p>
             </div>
 
             <form action="#" method="post" class="login-form">
-                
                 <div class="input-group">
-                    <label for="username"><i class="fa-solid fa-user"></i></label>
-                    <input type="text" id="username" name="username" placeholder="Usuario o Email" required>
+                    <label for="login-user"><i class="fa-solid fa-user"></i></label>
+                    <input type="text" id="login-user" name="username" placeholder="Usuario o Email" required>
                     <span class="focus-border"></span>
                 </div>
 
                 <div class="input-group">
-                    <label for="password"><i class="fa-solid fa-lock"></i></label>
-                    <input type="password" id="password" name="password" placeholder="Contraseña" required>
+                    <label for="login-pass"><i class="fa-solid fa-lock"></i></label>
+                    <input type="password" id="login-pass" name="password" placeholder="Contraseña" required>
                     <span class="focus-border"></span>
                 </div>
 
@@ -51,22 +51,75 @@
                 </div>
 
                 <button type="submit" class="btn-login">INGRESAR</button>
-
             </form>
 
-            <p class="auth-toggle">¿No tienes cuenta? <span id="show-register">Regístrate</span></p>
-                <div class="divider">
-                    <span>o</span>
-                </div>
-                <button class="btn google-btn" id="google-login">
-                    <i class="fab fa-google"></i> Ingresar con Google
-                </button>
+            <p class="auth-toggle">¿No tienes cuenta? <span id="link-to-register" class="cursor-pointer text-red">Regístrate</span></p>
+            
+            <div class="divider"><span>o</span></div>
+            
+            <button class="btn google-btn">
+                <i class="fab fa-google"></i> Ingresar con Google
+            </button>
+        </div>
 
-            <div class="login-footer">
+        <div id="view-register" class="hidden">
+            <div class="login-header">
+                <img src="/public/img/logos/Imagen3.png" alt="Logo Tokz Barber" class="login-logo">
+                <h1>CREAR <span class="text-red">CUENTA</span></h1>
+                <p>Únete a la familia Tokz Barber.</p>
+            </div>
+
+            <form action="#" method="post" class="login-form">
+                <div class="input-group">
+                    <label for="reg-name"><i class="fa-solid fa-id-card"></i></label>
+                    <input type="text" id="reg-name" name="fullname" placeholder="Nombre Completo" required>
+                    <span class="focus-border"></span>
+                </div>
+
+                <div class="input-group">
+                    <label for="reg-email"><i class="fa-solid fa-envelope"></i></label>
+                    <input type="email" id="reg-email" name="email" placeholder="Correo Electrónico" required>
+                    <span class="focus-border"></span>
+                </div>
+
+                <div class="input-group">
+                    <label for="reg-pass"><i class="fa-solid fa-lock"></i></label>
+                    <input type="password" id="reg-pass" name="new-password" placeholder="Contraseña" required>
+                    <span class="focus-border"></span>
+                </div>
+
+                <button type="submit" class="btn-login">REGISTRARSE</button>
+            </form>
+
+            <p class="auth-toggle">¿Ya tienes cuenta? <span id="link-to-login" class="cursor-pointer text-red">Inicia Sesión</span></p>
+        </div>
+
+        <div id="view-user" class="hidden">
+            <div class="login-header">
+                <img src="/public/img/logos/Imagen3.png" alt="Logo Tokz Barber" class="login-logo">
+                <h1>HOLA,</h1>
+                <div class="user-text-red">
+                    <span class="text-red" id="user-name-display">USUARIO</span>
+                </div>
+                <p class="p">Has iniciado sesión correctamente.</p>
+            </div>
+
+            <div class="user-actions" style="margin-top: 2rem;">
+                <p style="margin-bottom: 20px; color: #ccc;">¿Qué deseas hacer hoy?</p>
+                
+                <button class="btn-login" style="margin-bottom: 15px;">RESERVAR TURNO</button>
+                
+                <button class="btn-login" id="btn-logout" style="background: transparent; border: 1px solid var(--redcolor); color: var(--redcolor);">
+                    CERRAR SESIÓN
+                </button>
             </div>
         </div>
+
     </div>
+</div>
+
 <script src="/public/js/goBack.js"></script>
 <script src="/public/js/guard.js"></script>
+<script src="/public/js/auth-logic.js"></script>
 </body>
 </html>
