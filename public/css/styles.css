@@ -1957,3 +1957,26 @@ body.home-page header.header-visible {
         max-width: 250px;
     }
 }
+
+.tag {
+    display: block;
+    color: var(--redcolor);
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 50px;
+}
+
+.tag::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 40px;
+    height: 2px;
+    background-color: var(--redcolor);
+    text-shadow: 2px 2px 0px #000;
+    -webkit-text-stroke: 0.5px black;
+}
