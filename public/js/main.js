@@ -4,27 +4,25 @@ function checkPromoOffset() {
     const brandIntro = document.querySelector('.brand-intro');
     const topMenu = document.querySelector('.intro-nav-links-top');
 
-    const baseTopPosition = 50; 
+    const baseTopPosition = 50;
 
     if (promoBar && getComputedStyle(promoBar).display !== 'none') {
         const barHeight = promoBar.offsetHeight;
-        
-        // Empujamos el header y el menú (que ahora contiene el acceso)
+
         if (header) header.style.top = `${barHeight}px`;
         if (topMenu) topMenu.style.top = `${baseTopPosition + barHeight}px`;
-        
+
         if (brandIntro) {
             brandIntro.style.paddingTop = `${80 + barHeight}px`;
-            brandIntro.style.transition = 'padding-top 0.4s ease'; 
+            brandIntro.style.transition = 'padding-top 0.4s ease';
         }
 
     } else {
-        // Restaurar posiciones originales si no hay barra
         if (header) header.style.top = '0px';
         if (topMenu) topMenu.style.top = `${baseTopPosition}px`;
-        
+
         if (brandIntro) {
-            brandIntro.style.paddingTop = '80px'; 
+            brandIntro.style.paddingTop = '80px';
         }
     }
 }
@@ -37,31 +35,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (closeBtn && promoBar) {
         closeBtn.addEventListener('click', () => {
-            // 1. La barra se va hacia arriba
             promoBar.style.transform = 'translateY(-100%)';
-            
-            // 2. Elementos que deben subir SIMULTÁNEAMENTE
+
             const header = document.querySelector('header');
             const topMenu = document.querySelector('.intro-nav-links-top');
             const brandIntro = document.querySelector('.brand-intro');
 
             if (header) {
-                header.style.transition = 'top 0.4s ease'; 
+                header.style.transition = 'top 0.4s ease';
                 header.style.top = '0px';
             }
-            
+
             if (topMenu) {
-                topMenu.style.top = '30px'; 
+                topMenu.style.top = '30px';
             }
 
             if (brandIntro) {
                 brandIntro.style.paddingTop = '80px';
             }
 
-            // 3. Esperar a que termine la animación antes de ocultar
             setTimeout(() => {
                 promoBar.style.display = 'none';
-            }, 400); 
+            }, 400);
         });
     }
 
@@ -74,8 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const counters = entry.target.querySelectorAll('.counter');
                     counters.forEach((counter) => {
                         const target = +counter.getAttribute('data-target');
-                        const increment = target / 50; 
-                        
+                        const increment = target / 50;
+
                         const updateCounter = () => {
                             const c = +counter.innerText.replace('+', '');
                             if (c < target) {
@@ -92,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }, { threshold: 0.5 });
-        
+
         observer.observe(counterSection);
     }
 });
@@ -105,9 +100,9 @@ function loadComponent(elementId, filePath) {
         })
         .then(data => {
             document.getElementById(elementId).innerHTML = data;
-            
-            if(elementId === 'header-placeholder') {
-                initHeaderLogic(); 
+
+            if (elementId === 'header-placeholder') {
+                initHeaderLogic();
                 checkPromoOffset();
             }
         })
@@ -115,10 +110,10 @@ function loadComponent(elementId, filePath) {
 }
 
 function initHeaderLogic() {
-    const header = document.querySelector('header'); 
+    const header = document.querySelector('header');
     const menuToggle = document.querySelector('.menu-toggle');
     const nav = document.querySelector('.header-nav');
-    const navLinks = document.querySelectorAll('.header-nav a'); 
+    const navLinks = document.querySelectorAll('.header-nav a');
     const isHome = window.location.pathname === '/' || window.location.pathname.includes('index.html');
 
     navLinks.forEach(link => {
@@ -128,15 +123,15 @@ function initHeaderLogic() {
         }
     });
 
-    if(menuToggle && nav) {
+    if (menuToggle && nav) {
         menuToggle.addEventListener('click', (e) => {
-            e.stopPropagation(); 
+            e.stopPropagation();
             nav.classList.toggle('active');
         });
 
         navLinks.forEach(link => {
             link.addEventListener('click', () => {
-                nav.classList.remove('active'); 
+                nav.classList.remove('active');
             });
         });
 
@@ -147,21 +142,21 @@ function initHeaderLogic() {
         });
     }
 
-    if(header) {
+    if (header) {
         let lastKnownScrollPosition = 0;
         let ticking = false;
 
-        window.addEventListener('scroll', function() {
+        window.addEventListener('scroll', function () {
             lastKnownScrollPosition = window.scrollY;
 
             if (!ticking) {
-                window.requestAnimationFrame(function() {
+                window.requestAnimationFrame(function () {
                     if (lastKnownScrollPosition > 50) {
                         header.classList.add('header-scrolled');
                     } else {
                         header.classList.remove('header-scrolled');
                     }
-                
+
                     if (lastKnownScrollPosition > 100 && nav && nav.classList.contains('active')) {
                         nav.classList.remove('active');
                     }
@@ -179,21 +174,45 @@ document.addEventListener("DOMContentLoaded", () => {
     loadComponent('footer-placeholder', '/public/components/footer.html');
 });
 
-// --- Lógica del Slider de Fondo VIP ---
 document.addEventListener("DOMContentLoaded", () => {
     const slides = document.querySelectorAll('.bg-slide');
     let currentSlide = 0;
 
     if (slides.length > 0) {
         setInterval(() => {
-            // Quitar clase active de la actual
             slides[currentSlide].classList.remove('active');
 
-            // Calcular siguiente índice
             currentSlide = (currentSlide + 1) % slides.length;
 
-            // Añadir clase active a la siguiente
             slides[currentSlide].classList.add('active');
         }, 5000); // Cambia cada 5 segundos
     }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    initServiceGallery();
+});
+
+function initServiceGallery() {
+    const cards = document.querySelectorAll('.service-card');
+
+    cards.forEach(card => {
+        const track = card.querySelector('.gallery-track');
+        const prevBtn = card.querySelector('.prev-btn');
+        const nextBtn = card.querySelector('.next-btn');
+
+        if (track && prevBtn && nextBtn) {
+
+            nextBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                track.scrollBy({ left: track.clientWidth, behavior: 'smooth' });
+            });
+
+            prevBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                track.scrollBy({ left: -track.clientWidth, behavior: 'smooth' });
+            });
+        }
+    });
+}
