@@ -94,6 +94,30 @@
             <p class="auth-toggle">¿Ya tienes cuenta? <span id="link-to-login" class="cursor-pointer text-red">Inicia Sesión</span></p>
         </div>
 
+        <div id="view-recovery" class="hidden">
+            <div class="login-header">
+                <img src="/public/img/logos/Imagen3.png" alt="Logo Tokz Barber" class="login-logo">
+                <h1>RECUPERAR <span class="text-red">ACCESO</span></h1>
+                <p>Ingresa tu email para restablecer tu contraseña.</p>
+            </div>
+
+            <form action="#" method="post" class="login-form">
+                <div class="input-group">
+                    <label for="rec-email"><i class="fa-solid fa-envelope"></i></label>
+                    <input type="email" id="rec-email" name="recovery-email" placeholder="Correo Electrónico" required>
+                    <span class="focus-border"></span>
+                </div>
+
+                <button type="submit" class="btn-login">ENVIAR CORREO</button>
+            </form>
+
+            <p class="auth-toggle">
+                <span id="link-back-login" class="cursor-pointer text-red">
+                    <i class="fa-solid fa-arrow-left"></i> Volver a Iniciar Sesión
+                </span>
+            </p>
+        </div>
+
         <div id="view-user" class="hidden">
             <div class="login-header">
                 <img src="/public/img/logos/Imagen3.png" alt="Logo Tokz Barber" class="login-logo">
