@@ -665,6 +665,7 @@ body.home-page header.header-visible {
     line-height: 1.1;
     margin-bottom: 25px;
     color: white;
+    text-align: left;
 }
 
 .services-section p {
@@ -672,6 +673,7 @@ body.home-page header.header-visible {
     line-height: 1.6;
     margin-bottom: 30px;
     font-size: 14px;
+    text-align: left;
 }
 
 .services-grid {
@@ -1566,6 +1568,9 @@ body.home-page header.header-visible {
 }
 
 @media (max-width: 600px) {
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
 
     .review-card {
         flex: 0 0 100%;
@@ -1974,201 +1979,4 @@ body.home-page header.header-visible {
     background-color: var(--redcolor);
     text-shadow: 2px 2px 0px #000;
     -webkit-text-stroke: 0.5px black;
-}
-
-/* SECCIÓN DE SERVICIOS - DISEÑO CENTRADO */
-.services-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 60px 20px;
-    background-color: var(--darkcolor);
-    width: 95%;
-    margin: 60px auto;
-}
-
-.services-intro-content {
-    text-align: center;
-    max-width: 900px;
-    margin-bottom: 50px;
-    width: 100%;
-}
-
-.services-intro-content h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 38px;
-    color: white;
-    margin-bottom: 20px;
-}
-
-.services-intro-content p {
-    color: #999;
-    font-size: 16px;
-    line-height: 1.6;
-}
-
-.services-intro-content .tag {
-    display: inline-block;
-    margin-bottom: 15px;
-}
-
-.services-grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr) !important;
-    gap: 15px;
-    width: 100%;
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-.service-card {
-    background-color: white;
-    padding: 8px;
-    border-bottom: 5px solid var(--redcolor);
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    transition: 0.4s;
-    height: 100%;
-    overflow: hidden;
-}
-
-.service-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-}
-
-.service-gallery {
-    position: relative;
-    width: 100%;
-    height: 220px;
-    overflow: hidden;
-    background-color: #000;
-    margin-bottom: 12px;
-}
-
-.gallery-track {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    height: 100%;
-    scrollbar-width: none;
-}
-
-.gallery-track img {
-    flex: 0 0 100%;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    scroll-snap-align: start;
-}
-
-.gallery-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.6);
-    color: white;
-    border: none;
-    font-size: 16px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 10;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.service-card:hover .gallery-btn {
-    opacity: 1;
-}
-
-.prev-btn {
-    left: 10px;
-}
-
-.next-btn {
-    right: 10px;
-}
-
-.card-content h3 {
-    color: var(--redcolor);
-    font-family: 'Playfair Display', serif;
-    margin: 10px 0;
-    font-size: 18px;
-}
-
-.card-content p {
-    color: #555;
-    font-size: 13px;
-    margin-bottom: 15px;
-}
-
-.price-details {
-    border-top: 1px solid #eee;
-    padding-top: 10px;
-    margin-top: auto;
-}
-
-
-@media (max-width: 1100px) {
-    .services-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        /* 2 por fila en tablets */
-    }
-}
-
-@media (max-width: 650px) {
-
-    .services-section {
-        padding-left: 5px;
-        padding-right: 5px;
-        width: 100%;
-    }
-
-    .services-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 8px;
-    }
-
-    .service-card {
-        padding: 4px;
-        border-bottom-width: 3px;
-    }
-
-    .service-gallery {
-        height: 120px;
-    }
-
-    .card-content h3 {
-        font-size: 13px;
-        margin: 5px 0;
-    }
-
-    .card-content p {
-        font-size: 10px;
-        line-height: 1.2;
-        margin-bottom: 5px;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .price-details {
-        font-size: 11px;
-        padding-top: 5px;
-    }
-
-    .gallery-btn {
-        width: 24px;
-        height: 24px;
-        font-size: 12px;
-        opacity: 1;
-        /* Flechas siempre visibles */
-    }
 }
