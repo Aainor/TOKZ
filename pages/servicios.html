@@ -28,16 +28,46 @@
     <div class="services-grid full-width-grid">
         
         <div class="service-card fade-in">
-            <img src="/public/img/fotos/servicio-corte.jpg" alt="Corte">
-            <div class="card-content">
-                <h3>Corte de Cabello</h3>
-                <p>El estilo que buscas, preciso y a la moda.</p>
-                <div class="price-details" data-id="corte">
-                    <p class="old-price">Cargando...</p> 
-                    <p class="promo-price">Cargando...</p>
-                </div>
+    <div class="gallery-container">
+        <div class="main-image-box">
+            <img id="img-corte" src="/public/img/fotos/servicio-corte.jpg" alt="Corte">
+        </div>
+
+        <div class="thumbnails-row">
+            <div class="thumb active" 
+                 onmouseover="updateGallery('img-corte', '/public/img/fotos/servicio-corte.jpg', this)" 
+                 onclick="updateGallery('img-corte', '/public/img/fotos/servicio-corte.jpg', this)">
+                <img src="/public/img/fotos/servicio-corte.jpg" alt="Vista 1">
+            </div>
+
+            <div class="thumb" 
+                 onmouseover="updateGallery('img-corte', '/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (6).png', this)" 
+                 onclick="updateGallery('img-corte', '/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (6).png', this)">
+                <img src="/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (6).png" alt="Vista 2">
+            </div>
+
+            <div class="thumb" 
+                 onmouseover="updateGallery('img-corte', '/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (4).png', this)" 
+                 onclick="updateGallery('img-corte', '/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (4).png', this)">
+                <img src="/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (4).png" alt="Vista 3">
+            </div>
+            
+            <div class="thumb" 
+                 onmouseover="updateGallery('img-corte', '/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (8).png', this)" 
+                 onclick="updateGallery('img-corte', '/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (8).png', this)">
+                <img src="/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (8).png" alt="Vista 4">
             </div>
         </div>
+    </div>
+    <div class="card-content">
+        <h3>Corte de Cabello</h3>
+        <p>El estilo que buscas, preciso y a la moda.</p>
+        <div class="price-details" data-id="corte">
+            <p class="old-price">Cargando...</p> 
+            <p class="promo-price">Cargando...</p>
+        </div>
+    </div>
+</div>
 
         <div class="service-card fade-in">
             <img src="/public/img/fotos/servicio-barba.jpg" alt="Corte y Barba">
@@ -52,7 +82,7 @@
         </div>
 
         <div class="service-card fade-in">
-            <img class="logoIMG" src="/public/img/logos/Imagen3.png" alt="Barba">
+            <img src="/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (1).png" alt="Barba">
             <div class="card-content">
                 <h3>Arreglo de Barba</h3>
                 <p>Perfilado y mantenimiento.</p>

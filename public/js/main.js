@@ -197,3 +197,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 5000); // Cambia cada 5 segundos
     }
 });
+
+function updateGallery(mainImgId, newSrc, thumbElement) {
+    const mainImg = document.getElementById(mainImgId);
+    if (mainImg) {
+        mainImg.src = newSrc;
+    }
+    const siblings = thumbElement.parentElement.children;
+    for (let i = 0; i < siblings.length; i++) {
+        siblings[i].classList.remove('active');
+    }
+    thumbElement.classList.add('active');
+}
