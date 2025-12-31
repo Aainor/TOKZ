@@ -1,0 +1,9 @@
+
+
+body {
+    background-color: var(--darkcolor);
+    color: var(--edu-light);
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    padding: 100px;
+}
