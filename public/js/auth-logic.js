@@ -1,77 +1,66 @@
+/* Archivo: public/js/auth-logic.js */
+import { auth, provider } from './firebase.js'; // <--- Importante
+import { signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Elementos del DOM (Vistas)
+    // Referencias a tus elementos visuales
     const viewLogin = document.getElementById('view-login');
     const viewRegister = document.getElementById('view-register');
     const viewUser = document.getElementById('view-user');
-    const viewRecovery = document.getElementById('view-recovery'); 
+    const viewRecovery = document.getElementById('view-recovery');
+    const googleBtn = document.querySelector('.google-btn'); // <--- TU BOTÓN
 
-    // 2. Elementos de Navegación (Links/Botones)
-    const linkToRegister = document.getElementById('link-to-register');
-    const linkToLogin = document.getElementById('link-to-login');
-    const linkForgotPass = document.querySelector('.forgot-pass'); 
-    const linkBackLogin = document.getElementById('link-back-login'); 
-    const btnLogout = document.getElementById('btn-logout');
-
-    // 3. Formularios
-    const loginForm = viewLogin.querySelector('form');
-    const recoveryForm = viewRecovery.querySelector('form'); 
-
-    // --- FUNCIÓN MAESTRA DE CAMBIO DE VISTA ---
+    // Función para cambiar pantallas
     function switchView(viewToShow) {
-        // Ocultamos todas primero (fuerza bruta para evitar errores)
         [viewLogin, viewRegister, viewUser, viewRecovery].forEach(el => {
-            el.classList.add('hidden');
+            if(el) el.classList.add('hidden');
         });
-        
-        // Mostramos la elegida
-        viewToShow.classList.remove('hidden');
+        if(viewToShow) viewToShow.classList.remove('hidden');
     }
 
-    // --- EVENT LISTENERS DE NAVEGACIÓN ---
-    
-    // Ir a Registro
-    linkToRegister.addEventListener('click', () => switchView(viewRegister));
-
-    // Ir a Login (desde Registro)
-    linkToLogin.addEventListener('click', () => switchView(viewLogin));
-
-    // Ir a Recuperar Contraseña 
-    linkForgotPass.addEventListener('click', (e) => {
-        e.preventDefault(); // Evita que el link # recargue
-        switchView(viewRecovery);
+    // 1. ESCUCHADOR DE SESIÓN (Detecta si entraste)
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            console.log("Usuario detectado:", user.displayName);
+            // Llenamos el nombre en el HTML si existe el elemento
+            const userNameDisplay = document.getElementById('user-name-display');
+            if(userNameDisplay) userNameDisplay.textContent = user.displayName;
+            switchView(viewUser);
+        } else {
+            switchView(viewLogin);
+        }
     });
 
-    // Volver a Login (desde Recuperar) 
-    linkBackLogin.addEventListener('click', () => switchView(viewLogin));
+    // 2. BOTÓN DE GOOGLE
+    if (googleBtn) {
+        googleBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            console.log("Intentando abrir Google..."); // <--- Mensaje de control
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error("Error al entrar:", error);
+                alert("Error: " + error.message);
+            }
+        });
+    } else {
+        console.error("⚠️ NO ENCUENTRO EL BOTÓN .google-btn");
+    }
+    // --- 3. LOGICA DE CERRAR SESIÓN (Agrega esto al final) ---
+    const btnLogout = document.getElementById('btn-logout');
 
-    // --- LÓGICA SIMULADA ---
-
-    // Login
-    loginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const usernameInput = document.getElementById('login-user').value;
-        document.getElementById('user-name-display').textContent = usernameInput || "CLIENTE";
-        switchView(viewUser);
-    });
-
-    // Logout
-    btnLogout.addEventListener('click', () => {
-        loginForm.reset();
-        switchView(viewLogin);
-    });
-
-    // Recuperación de contraseña (Simulación)
-    recoveryForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const emailRec = document.getElementById('rec-email').value;
-        
-        // ACÁ IRÍA LA LLAMADA A BACKEND (Resend/Brevo)
-        
-        // Feedback visual para el usuario
-        alert(`Hemos enviado un correo de recuperación a: ${emailRec}\n(Revisa tu bandeja de entrada o spam)`);
-        
-        // Opcional: devolver al usuario al login automáticamente
-        recoveryForm.reset();
-        switchView(viewLogin);
-    });
+    if (btnLogout) {
+        btnLogout.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                console.log("Sesión cerrada");
+                alert("Has cerrado sesión correctamente 👋");
+                // La función onAuthStateChanged detectará el cambio y te llevará al Login solo
+            } catch (error) {
+                console.error("Error al salir:", error);
+            }
+        });
+    } else {
+        console.warn("El botón de logout no se encontró en el HTML");
+    }
 });
