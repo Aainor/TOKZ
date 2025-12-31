@@ -1,4 +1,4 @@
-i/* Ubicación: public/js/reservas.js
+/* Ubicación: public/js/reservas.js
    Función: Lógica para guardar turnos en la base de datos.
 */
 

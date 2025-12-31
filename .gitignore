@@ -73,3 +73,6 @@ node_modules/
 
 # Archivos de caché de Firebase
 .firebase/
+
+# Ignorar credenciales para que no se suban a GitHub
+public/js/config-secreta.js
