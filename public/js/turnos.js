@@ -98,14 +98,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // --- FECHA MÍNIMA HOY ---
     const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowFormatted = getLocalDateISO(tomorrow);
+    const todayFormatted = getLocalDateISO(today);
 
     if(datePicker) { 
-        datePicker.min = tomorrowFormatted; 
-        datePicker.value = tomorrowFormatted;
-        bookingData.date = tomorrowFormatted; 
+        datePicker.min = todayFormatted; 
+        datePicker.value = todayFormatted;
+        bookingData.date = todayFormatted; 
     }
 
     // --- AUTH REAL ---
@@ -281,10 +279,32 @@ document.addEventListener('DOMContentLoaded', async () => {
                 btn.className = 'time-btn';
                 btn.textContent = hora;
                 
-                if (allTakenSlots.includes(hora)) {
+                let isPastTime = false;
+                const now = new Date();
+                
+                if (selectedDateStr === getLocalDateISO(now)) {
+                    const [slotHour, slotMin] = hora.split(':').map(Number);
+                    const currentHour = now.getHours();
+                    const currentMin = now.getMinutes();
+
+                    // Si la hora del turno es menor a la actual, O es la misma hora pero ya pasaron los minutos
+                    if (slotHour < currentHour || (slotHour === currentHour && slotMin < currentMin)) {
+                        isPastTime = true;
+                    }
+                }
+                // ------------------------------------------------
+
+                // Agregamos isPastTime a la condición de bloqueo
+                if (allTakenSlots.includes(hora) || isPastTime) {
                     btn.disabled = true;
-                    btn.classList.add('taken'); 
-                    btn.title = "Ocupado";
+                    // Distinguimos visualmente si está ocupado o si ya pasó
+                    if (isPastTime) {
+                        btn.classList.add('past'); // Podés darle estilo grisáceo en CSS
+                        btn.title = "Horario pasado";
+                    } else {
+                        btn.classList.add('taken'); 
+                        btn.title = "Ocupado";
+                    }
                 } else {
                     if (bookingData.time === hora) btn.classList.add('active');
                     btn.addEventListener('click', () => {
@@ -410,7 +430,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const srvName = bookingData.services[serviceIndex];
             serviceTitle.textContent = `Agendando: ${srvName} (${serviceIndex + 1}/${bookingData.services.length})`;
             serviceTitle.style.display = 'block';
-            serviceTitle.style.color = "#D32F2F"; 
+            serviceTitle.style.color = "#AE0E30"; 
         } else {
             serviceTitle.textContent = bookingData.services.length > 1 ? "Agendando todo junto" : "";
             serviceTitle.style.display = bookingData.services.length > 1 ? 'block' : 'none';
@@ -534,7 +554,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (discountAmount > 0) {
                 totalEl.innerHTML = `
                     <span style="text-decoration: line-through; color: #888; font-size: 0.8em; margin-right: 5px;">$${listPrice.toLocaleString()}</span>
-                    <span style="color: #D32F2F;">$${finalPrice.toLocaleString()}</span>
+                    <span style="color: #AE0E30;">$${finalPrice.toLocaleString()}</span>
                 `;
             } else {
                 totalEl.textContent = `$${listPrice.toLocaleString()}`;
@@ -559,19 +579,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (currentStep === 4) {
             btnNext.textContent = "Confirmar Reserva";
-            btnNext.style.backgroundColor = "#D32F2F";
+            btnNext.style.backgroundColor = "#AE0E30";
         } else if (currentStep === 3 && bookingData.mode === 'separate' && serviceIndex < bookingData.services.length - 1) {
             btnNext.textContent = `Siguiente Turno`;
             btnNext.style.backgroundColor = "#333";
         } else {
             btnNext.textContent = "Siguiente";
-            btnNext.style.backgroundColor = "#D32F2F";
+            btnNext.style.backgroundColor = "#AE0E30";
         }
     }
 
 // --- GENERADOR DE HTML (Con Mensaje de Correo) ---
     const generateSummaryHTML = (name, isVip) => {
         let resumenHTML = '';
+        const proNameDisplay = bookingData.professional;
         
         // Calculamos precios
         const precioLista = bookingData.totalPrice;
@@ -589,12 +610,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </span>
                 </li>
             `).join('');
-            resumenHTML = <ul style="list-style: none; padding: 0; margin: 15px 0; text-align: left;">${itemsHTML}</ul>;
+            resumenHTML = `<ul style="list-style: none; padding: 0; margin: 15px 0; text-align: left;">${itemsHTML}</ul>`;
         } else {
             const dateFormatted = bookingData.date ? bookingData.date.split('-').reverse().join('/') : 'Sin fecha';
             resumenHTML = `
                 <div style="padding: 15px; text-align: left; margin: 15px 0;">
-                    <p style="color: #D32F2F; font-size: 0.8rem; text-transform: uppercase; font-weight: bold; margin-bottom: -15px;">Servicios (${bookingData.services.length}):</p>
+                    <p style="color: #AE0E30; font-size: 0.8rem; text-transform: uppercase; font-weight: bold; margin-bottom: -15px;">Servicios (${bookingData.services.length}):</p>
                     <p style="color: white; margin-bottom: 10px; font-weight: 500;">${bookingData.services.join(' + ')}</p>
                     <div style="display: flex; gap: 10px; font-size: 0.9rem; color: #ccc;">
                         <span>📅 ${dateFormatted}</span>
@@ -637,7 +658,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         return `
             <div class="user-summary" style="text-align: center;">
-                <h3 style="color: white; margin: 5px 0 15px 0;">¡Hola, <span style="color: #D32F2F;">${name}</span>!</h3>
+                <h3 style="color: white; margin: 5px 0 15px 0;">¡Hola, <span style="color: #AE0E30;">${name}</span>!</h3>
                 <p style="color: #aaa; font-size: 0.9rem; margin-bottom: -20px;">Este es el resumen de tu reserva:</p>
                 
                 ${resumenHTML}
@@ -656,6 +677,50 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
         `;
     };
+
+    // ==========================================
+    // RENDERIZADO DEL PASO FINAL (SOLO REGISTRADOS)
+    // ==========================================
+    function renderFinalStep() {
+        const finalStepContainer = document.getElementById('step-3'); // OJO: Usamos el contenedor visual del paso final
+        if (!finalStepContainer) return;
+
+        finalStepContainer.innerHTML = ''; // Limpiamos
+        
+        const contentWrapper = document.createElement('div');
+        contentWrapper.className = 'booking-form';
+
+        // CASO 1: USUARIO LOGUEADO (Permitido)
+        if (currentUser) {
+            contentWrapper.innerHTML = `
+                <h2 class="step-title" style="text-align:center; color:white; margin-bottom:20px;">Revisá y Confirmá</h2>
+                ${generateSummaryHTML(currentUser.displayName, true)}
+            `;
+            // Habilitamos el botón de confirmar
+            if(btnNext) {
+                btnNext.style.display = 'block';
+                btnNext.textContent = "Confirmar Reserva";
+                btnNext.disabled = false;
+            }
+        } 
+        // CASO 2: NO LOGUEADO (Bloqueo)
+        else {
+            contentWrapper.innerHTML = `
+                <div style="text-align: center; padding: 30px 10px;">
+                    <h3 style="color: #AE0E30; margin-bottom: 15px;">🔒 Inicio de Sesión Requerido</h3>
+                    <p style="color: #ccc; margin-bottom: 25px;">
+                        Para asegurar tu turno, necesitamos que ingreses a tu cuenta.
+                    </p>
+                    <a href="/pages/login.html" class="cta-button" style="display: inline-block; text-decoration: none; background: #AE0E30; color: white; padding: 12px 25px; border-radius: 5px; font-weight: bold;">
+                        Iniciar Sesión / Registrarme
+                    </a>
+                </div>
+            `;
+            if(btnNext) btnNext.style.display = 'none';
+        }
+        
+        finalStepContainer.appendChild(contentWrapper);
+    }
 
     function updateStep() {
         steps.forEach((s, i) => {
@@ -679,7 +744,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function resetBooking() {
-        bookingData = { services: [], totalPrice: 0, mode: 'together', date: tomorrowFormatted, time: null, professional: 'Cualquiera', appointments: [] };
+        bookingData = { services: [], totalPrice: 0, mode: 'together', date: getLocalDateISO(new Date()), time: null, professional: 'Cualquiera', appointments: [] };
         currentStep = 1; serviceIndex = 0; guestData = null;
         document.querySelectorAll('.qty-val').forEach(el => el.textContent = '0');
         document.querySelectorAll('.minus').forEach(el => el.disabled = true);
