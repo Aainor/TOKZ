@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             // Las keys que querés mostrar en el turnero
-            const availableKeys = ['corte', 'barba', 'corte_barba', 'rapado', 'corte_diseno', 'femenino'];
+            const availableKeys = ['corte', 'barba', 'corte_barba', 'rapado', 'corte_diseno', 'femenino', 'claritos', 'global', 'franja'];
 
             availableKeys.forEach(key => {
                 if (precios[key]) {
@@ -390,31 +390,35 @@ async function renderTimeSlots() {
         }
 
         // ---> SALIENDO DEL PASO 3 (CALENDARIO)
-        if (currentStep === 3 && bookingData.mode === 'separate') {
-    const currentService = bookingData.services[serviceIndex];
-    const finalProName = proSelect.options[proSelect.selectedIndex].text;
+        if (currentStep === 3) {
+            
+            // CASO A: MODO SEPARADO (Varios turnos distintos)
+            if (bookingData.mode === 'separate') {
+                const currentService = bookingData.services[serviceIndex];
+                const finalProName = proSelect.options[proSelect.selectedIndex].text;
 
-    // FIX: Asignación directa por índice. No usamos push.
-    // Si el usuario volvió atrás y editó, esto actualiza la posición correcta.
-    bookingData.appointments[serviceIndex] = {
-        service: currentService,
-        date: bookingData.date,
-        time: bookingData.time,
-        pro: finalProName
-    };
+                bookingData.appointments[serviceIndex] = {
+                    service: currentService,
+                    date: bookingData.date,
+                    time: bookingData.time,
+                    pro: finalProName
+                };
 
-    serviceIndex++; 
+                serviceIndex++; 
 
-    if (serviceIndex < bookingData.services.length) {
-        prepareCalendarStep(); 
-        updateStep(); 
-        return; 
-    } else {
-        currentStep = 4; // Ir a resumen
-    }
-    updateStep();
-    return;
-}
+                if (serviceIndex < bookingData.services.length) {
+                    prepareCalendarStep(); 
+                    updateStep(); 
+                    return; 
+                }
+            }
+
+            // CASO B: MODO JUNTOS O SINGLE (Si llegamos acá, vamos directo al final)
+            // (Esta es la parte que te faltaba, por eso no hacía nada)
+            currentStep = 4;
+            updateStep();
+            return;
+        }
 
         // ---> SALIENDO DEL PASO 4
         if (currentStep === 4) {
