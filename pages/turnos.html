@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/public/css/turnos.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <title>Turnos</title>
+    
 </head>
 <body>
     <div id="header-placeholder"></div>
@@ -175,5 +176,14 @@
     <script src="/public/js/main.js"></script>
     <script type="module" src="/public/js/turnos.js"></script>
     <script src="/public/js/prices.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <script type="text/javascript">
+   (function(){
+      // Reemplazá esto con tu PUBLIC KEY de EmailJS
+      emailjs.init("2D_GFcNd8DvvotnP9");
+   })();
+    </script>
 </body>
 </html>
