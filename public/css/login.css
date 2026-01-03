@@ -322,6 +322,129 @@ body {
     text-decoration: underline;
 }
 
+.bookings-list::-webkit-scrollbar {
+    display: none;
+}
+.bookings-list {
+    -ms-overflow-style: none;  
+    scrollbar-width: none; 
+}
+
+#no-bookings-msg{
+    margin-bottom: 100px;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8); 
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-box {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    width: 90%;
+    max-width: 350px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border-top: 3px solid var(--redcolor);
+}
+
+.modal-box h3 {
+    color: white;
+    margin-bottom: 10px;
+    font-family: var(--font-heading);
+}
+
+.modal-box p {
+    color: #aaa;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.btn-modal {
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    border: none;
+    transition: transform 0.2s;
+    padding: 10px;
+    font-family: var(--font-primary);
+}
+
+.btn-cancel {
+    background: transparent;
+    border: 1px solid #555;
+    color: white;
+}
+
+.btn-confirm {
+    background: var(--redcolor);
+    color: white;
+}
+
+.btn-modal:hover { 
+    border: 1px solid var(--redcolor);
+    background: transparent;
+    color: var(--redcolor);
+    transform: translateY(-1px);
+ }
+
+button:focus, 
+input:focus, 
+a:focus {
+    outline: none; 
+}
+
+.action-stack {
+    display: flex;
+    flex-direction: column; 
+    gap: 15px; 
+    width: 100%;
+    max-width: 320px;
+    margin: 20px auto 0; 
+}
+
+a.btn-login {
+    display: block; 
+    text-align: center;
+    text-decoration: none;
+    line-height: 1.2; 
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--redcolor);
+    color: var(--redcolor);
+}
+.btn-outline:hover {
+    background: rgba(174, 14, 48, 0.1);
+}
+
 @media (max-width: 992px) {
     .login-header h1 { font-size: 2rem; }
 

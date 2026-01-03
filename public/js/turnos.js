@@ -15,12 +15,7 @@ import {
 // ==========================================
 // 2. CONFIGURACIÓN Y ESTADO
 // ==========================================
-const BARBERS_CONFIG = [
-    { id: "any", name: "Cualquiera", days: [1, 2, 3, 4, 5, 6], hours: ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"] },
-    { id: "nico", name: "Nico", days: [2, 3, 4, 5, 6], hours: ["10:00", "11:00", "12:00", "16:00", "17:00", "18:00", "19:00"] },
-    { id: "juan", name: "Juan", days: [4, 5, 6], hours: ["14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"] },
-    { id: "leo", name: "Leo", days: [1, 2, 3, 4, 5], hours: ["09:00", "10:00", "11:00", "12:00", "13:00"] }
-];
+let BARBERS_CONFIG = [];
 
 // Configuración de EmailJS (Cambiá esto por tus IDs)
 const EMAIL_SERVICE_ID = "service_hamvojq"; // Tu Service ID
@@ -32,7 +27,7 @@ function getLocalDateISO(dateObj) {
     return localTime.toISOString().split('T')[0];
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     
     // --- ESTADO ---
     let bookingData = {
@@ -69,6 +64,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const proSelect = document.getElementById('pro-select');
     const datePicker = document.getElementById('date-picker');
     const timeGridContainer = document.getElementById('time-grid-container');
+
+    async function loadBarbersConfig() {
+        try {
+            const response = await fetch('/public/components/barberos.json');
+            if (!response.ok) throw new Error("No se pudo cargar barberos.json");
+            
+            BARBERS_CONFIG = await response.json();
+            
+            if(proSelect) {
+                proSelect.innerHTML = ''; 
+                BARBERS_CONFIG.forEach(barber => {
+                    const option = document.createElement('option');
+                    option.value = barber.id;
+                    option.textContent = barber.name;
+                    proSelect.appendChild(option);
+                });
+                
+                if (bookingData) bookingData.professional = proSelect.options[proSelect.selectedIndex].text;
+            }
+
+        } catch (e) {
+            console.error("Error crítico cargando configuración de barberos:", e);
+            BARBERS_CONFIG = [{ id: "any", name: "Cualquiera", days: [1,2,3,4,5,6], hours: ["10:00", "18:00"] }];
+        }
+    }
+
+    // EJECUTAMOS LA CARGA ANTES DE NADA
+    await loadBarbersConfig();
 
     // Inicializar nombre profesional
     if (proSelect) bookingData.professional = proSelect.options[proSelect.selectedIndex].text;

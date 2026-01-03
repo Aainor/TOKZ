@@ -128,17 +128,50 @@
                 <p class="p">Has iniciado sesión correctamente.</p>
             </div>
 
-            <div class="user-actions" style="margin-top: 2rem;">
-                <p style="margin-bottom: 20px; color: #ccc;">¿Qué deseas hacer hoy?</p>
+            <div class="user-actions action-stack"> <p style="margin-bottom: 10px; color: #ccc;">¿Qué deseas hacer hoy?</p>
+    
+                <a href="/pages/turnos.html" class="btn-login">
+                    RESERVAR TURNO
+                </a>
+
+                <button id="btn-view-bookings" class="btn-login">
+                    MIS TURNOS
+                </button>
                 
-                <button class="btn-login" style="margin-bottom: 15px;">RESERVAR TURNO</button>
-                
-                <button class="btn-login" id="btn-logout" style="background: transparent; border: 1px solid var(--redcolor); color: var(--redcolor);">
+                <button id="btn-logout" class="btn-login btn-outline">
                     CERRAR SESIÓN
                 </button>
+
             </div>
         </div>
 
+        <div id="booking-mod" class="hidden">
+    <div class="login-header">
+        <img src="/public/img/logos/Imagen3.png" alt="Logo Tokz Barber" class="login-logo">
+        <h1>MIS <span class="text-red">TURNOS</span></h1>
+        <p>Gestioná tus próximas citas.</p>
+    </div>
+
+    <div class="bookings-list" style="max-height: 250px; overflow-y: auto; margin: 20px 0; padding-right: 5px;"></div>
+
+        <p class="auth-toggle" style="margin-top: 10px;">
+            <span id="btn-back-dashboard" class="cursor-pointer text-red">
+                <i class="fa-solid fa-arrow-left"></i> Volver
+            </span>
+        </p>
+    </div>
+
+    </div>
+</div>
+
+<div id="delete-modal" class="modal-overlay">
+    <div class="modal-box">
+        <h3>¿CANCELAR TURNO?</h3>
+        <p id="modal-text"></p>
+        <div class="modal-actions">
+            <button class="btn-modal btn-cancel" id="btn-modal-cancel">NO, VOLVER</button>
+            <button class="btn-modal btn-confirm" id="btn-modal-confirm">SÍ, BORRAR</button>
+        </div>
     </div>
 </div>
 
