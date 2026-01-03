@@ -382,18 +382,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (currentStep === 4) {
-            // Validación de invitado
-            if (!currentUser && !guestData) {
-                const nameInput = document.getElementById('guest-name');
-                const mailInput = document.getElementById('guest-mail');
-                if (!nameInput.value || !mailInput.value) { alert("Completá todos los datos."); return; }
-                if (!mailInput.value.includes('@')) { alert("Correo inválido."); return; }
-                
-                guestData = { name: nameInput.value, email: mailInput.value };
-                renderFinalStep();
-                return; 
-            }
-            // Si ya estamos listos, enviamos todo
+            // YA NO NECESITAMOS VALIDAR INVITADO PORQUE EL BOTÓN ESTÁ OCULTO SI NO HAY USER
+            // Directamente mandamos la reserva
             await finalizarReserva();
         }
     });
@@ -508,6 +498,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             console.log("🔥 Guardado en Firebase exitoso.");
 
+            // CALCULO DE PRECIO REAL PARA EL MAIL
+            let precioReal = bookingData.totalPrice;
+            if (currentUser) { // Si es socio, aplicamos el descuento
+                precioReal = bookingData.totalPrice - (bookingData.services.length * 1000);
+                if (precioReal < 0) precioReal = 0;
+            }
+
             // B. ENVIAR EMAIL CON EMAILJS
             // Asegurate que en tu Template de EmailJS tengas variables como {{to_name}}, {{message}}, {{date_info}}, etc.
             const templateParams = {
@@ -516,7 +513,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 service_list: serviciosResumen,
                 date_info: fechaResumen,
                 professional: proResumen,
-                total_price: `$${bookingData.totalPrice}`,
+                total_price: `$${precioReal}`,
                 message: "Gracias por confiar en Staff TOKZ. Te esperamos."
             };
 
@@ -572,6 +569,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         else if (currentStep === 2) ok = true; 
         else if (currentStep === 3) ok = bookingData.time !== null && bookingData.date !== null;
         else ok = true; 
+        if(btnNext) btnNext.style.display = 'block'; 
         btnNext.disabled = !ok;
 
         const footerTotal = document.querySelector('.total-display'); 
