@@ -2072,6 +2072,7 @@ body.home-page header.header-visible {
         left: auto;
         display: block;
         margin-top: 10px;
+        margin-bottom: 50px;
     }
 
     .intro-content {
@@ -2091,38 +2092,40 @@ body.home-page header.header-visible {
 
 @media (max-width: 768px) {
     .vip-overlay {
-        padding: 40px 10px !important;
+
+        min-height: 100vh !important; 
+        min-height: 100dvh !important; 
+        
         display: flex !important;
-        align-items: center !important;
-        height: auto !important;
-        min-height: 85vh !important;
+        align-items: center !important; 
+        justify-content: center !important; 
+        padding: 20px 10px !important; 
+        box-sizing: border-box !important;
     }
 
     .vip-content {
-        width: 92% !important;
+        width: 90% !important;
         max-width: 500px !important;
-        padding: 30px 20px !important;
+        padding: 25px 20px !important;
         height: auto !important;
-        box-sizing: border-box !important;
-        margin: 0 auto !important;
+        margin: 0 !important; /
+        
+        
+        max-height: 90vh !important; 
+        overflow-y: auto !important; 
     }
 
+
     .vip-title {
-        font-size: 1.8rem !important;
+        font-size: 1.6rem !important; 
         line-height: 1.2 !important;
-        word-wrap: break-word !important;
     }
 
     .vip-body-text p {
-        font-size: 1rem !important;
+        font-size: 0.95rem !important;
         line-height: 1.5 !important;
     }
-
-    .vip-separator {
-        margin: 20px auto !important;
-    }
 }
-
 /* educacion*/
 .education-section {
     background-color: var(--darkcolor);
