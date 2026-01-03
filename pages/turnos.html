@@ -1,83 +1,132 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/public/css/styles.css">
     <link rel="stylesheet" href="/public/css/turnos.css">
-    <title>Turnos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <title>Turnos - TOKZ</title>
+
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
-   (function(){
-      // Reemplaza "TU_PUBLIC_KEY" con tu clave pública real de EmailJS
-      emailjs.init("2D_GFcNd8DvvotnP9");
-   })();
-</script>
-</head>
+       (function(){
+          // Pon aquí la Public Key (la de Mauri o la tuya)
+          emailjs.init("TU2D_GFcNd8DvvotnP9"); 
+       })();
+    </script>
+    </head>
 <body>
     <div id="header-placeholder"></div>
 
-    <main style="padding: 100px 20px; min-height: 60vh; background-color: #111;">
-        
-        <div id="booking-wizard" style="display:none; max-width: 600px; margin: 0 auto; background: #1a1a1a; padding: 30px; border-radius: 15px; border: 1px solid #333; color: white;">
-            
-            <div id="step-1">
-                <h2 style="color: var(--redcolor); margin-bottom: 20px;">📅 Paso 1: Elige Fecha y Hora</h2>
-                
-                <label style="display:block; margin-bottom:5px;">Fecha:</label>
-                <input type="date" id="inputDate" style="width: 100%; padding: 12px; margin-bottom: 20px; background: #333; border: 1px solid #555; color: white; border-radius: 5px;">
-                
-                <label style="display:block; margin-bottom:5px;">Hora:</label>
-                <select id="selectTime" style="width: 100%; padding: 12px; margin-bottom: 30px; background: #333; border: 1px solid #555; color: white; border-radius: 5px;">
-                    <option value="">Selecciona hora...</option>
-                    <option value="10:00">10:00 AM</option>
-                    <option value="11:00">11:00 AM</option>
-                    <option value="12:00">12:00 PM</option>
-                    <option value="13:00">01:00 PM</option>
-                    <option value="16:00">04:00 PM</option>
-                    <option value="17:00">05:00 PM</option>
-                    <option value="18:00">06:00 PM</option>
-                    <option value="19:00">07:00 PM</option>
-                </select>
-                
-                <button id="btn-to-step-2" class="cta-button" style="width:100%; cursor: pointer;">BUSCAR BARBEROS</button>
+    <section class="tokz-team">
+        <h2>STAFF TOKZ</h2>
+        <p>Elegí quién se encarga de tu estilo. #ConfiaEnTuBarber</p>
+        <div class="team-grid">
+            <div class="barber-card">
+                <img src="/public/img/fotos/turnos.jpeg" alt="Barbero">
+                <h3>Nico</h3> <p>Barber</p>
             </div>
-
-            <div id="step-2" style="display:none;">
-                <h2 style="color: var(--redcolor); margin-bottom: 10px;">✂️ Paso 2: Elige tu Barbero</h2>
-                <p style="margin-bottom: 20px; color: #ccc;">Para el día <b id="summary-date" style="color:white"></b> a las <b id="summary-time" style="color:white"></b>:</p>
-                
-                <div id="barber-list-container" style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-bottom: 30px;">
-                    </div>
-                
-                <button id="btn-back-1" style="background: transparent; border: 1px solid #666; color: #ccc; padding: 10px 20px; border-radius: 5px; cursor: pointer;">&larr; Atrás</button>
+            <div class="barber-card">
+                <img src="/public/img/fotos/turnos.jpeg" alt="Barbero">
+                <h3>Juan</h3> <p>Barber</p>
             </div>
+            <div class="barber-card">
+                <img src="/public/img/fotos/turnos.jpeg" alt="Barbero">
+                <h3>Leo</h3> <p>Barber</p>
+            </div>
+        </div>
+    </section>
 
-            <div id="step-3" style="display:none; text-align: center;">
-                <h2 style="color: var(--redcolor); margin-bottom: 20px;">✅ Paso 3: Confirmar Turno</h2>
-                
-                <div style="background: #252525; padding: 20px; border-radius: 10px; text-align: left; margin-bottom: 30px;">
-                    <p>📅 <strong>Fecha:</strong> <span id="final-date"></span></p>
-                    <p>⏰ <strong>Hora:</strong> <span id="final-time"></span></p>
-                    <p>✂️ <strong>Barbero:</strong> <span id="final-barber"></span></p>
-                    <p>💈 <strong>Servicio:</strong> Corte Clásico</p>
+    <section class="map">
+        <div class="map-info-container">
+            <span class="tag">¿DÓNDE ESTAMOS?</span>
+            <div class="address-box">
+                <p class="main-address">💈 Combatientes de Malvinas 317, Guernica.</p>
+                <div class="contact-actions">
+                    <a href="https://goo.gl/maps/TU_LINK" target="_blank" class="cta-button">Cómo llegar</a>
                 </div>
-                
-                <button id="btn-confirm-booking" class="cta-button" style="width:100%; background-color: #28a745; border-color: #28a745; cursor: pointer;">CONFIRMAR RESERVA</button>
-                <button id="btn-back-2" style="margin-top: 15px; background: transparent; border: none; color: #888; text-decoration: underline; cursor: pointer;">Volver atrás</button>
             </div>
         </div>
+    </section>
 
-        <div id="login-warning" style="text-align: center; color: white; display: none;">
-            <h2>Inicia sesión para reservar</h2>
-            <p>Necesitamos saber quién eres para guardar tu turno.</p>
-            <a href="/pages/login.html" class="cta-button" style="margin-top: 20px; display: inline-block;">IR AL LOGIN</a>
+    <section class="services-section">
+        <button class="cta-button">Reservar Ahora</button>
+    </section>
+
+    <div id="booking-modal" class="modal-overlay hidden">
+        <div class="wizard-card">
+            <div class="wizard-header">
+                <h3>Reservá tu lugar</h3>
+                <button id="close-modal-btn" class="close-btn">×</button>
+            </div>
+
+            <div class="progress-bar">
+                <div class="step-dot active" data-step="1">ㅤ</div>
+                <div class="step-line"></div>
+                <div class="step-dot" data-step="2">ㅤ</div>
+                <div class="step-line"></div>
+                <div class="step-dot" data-step="3">ㅤ</div>
+            </div>
+
+            <div class="wizard-content">
+                <div id="step-1" class="step-section active">
+                    <h4 class="step-title">Elegí tus servicios</h4>
+                    <div class="services-list"></div>
+                </div>
+
+                <div id="step-mode" class="step-section hidden">
+                    <h4 class="step-title">Tenés múltiples servicios</h4>
+                    <div class="mode-selection-container">
+                        <div class="mode-card selected" id="mode-together" onclick="selectMode('together')">
+                            <h5>🚀 Uno tras otro</h5>
+                        </div>
+                        <div class="mode-card" id="mode-separate" onclick="selectMode('separate')">
+                            <h5>📅 Por separado</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="step-2" class="step-section hidden">
+                    <h4 class="step-title">Elegí profesional y horario</h4>
+                    <h5 id="current-service-title" style="color: #D32F2F;"></h5>
+                    
+                    <div class="date-selector-container">
+                        <label>Fecha:</label>
+                        <input type="date" id="date-picker" class="input-fecha-pro">
+                    </div>
+                    <div class="pro-selector">
+                        <label>Profesional:</label>
+                        <select id="pro-select">
+                            <option value="any">Cualquiera</option>
+                            <option value="nico">Nico</option>
+                            <option value="juan">Juan</option>
+                            <option value="leo">Leo</option>
+                        </select>
+                    </div>
+                    <div class="time-grid" id="time-grid-container"></div>
+                </div>
+
+                <div id="step-3" class="step-section hidden">
+                    <h4 class="step-title">Tus Datos</h4>
+                    <form class="booking-form"></form> </div>
+            </div>
+
+            <div class="wizard-footer">
+                <div class="total-display">
+                    <span>Total:</span> <strong id="total-price">$0</strong>
+                </div>
+                <div class="wizard-actions">
+                    <button id="btn-back" class="btn-secondary hidden">Atrás</button>
+                    <button id="btn-next" class="btn-primary" disabled>Siguiente</button>
+                </div>
+            </div>
         </div>
+    </div>
 
-    </main>
     <div id="footer-placeholder"></div>
     <script src="/public/js/main.js"></script>
+    
     <script type="module" src="/public/js/turnos.js"></script> 
-    <script type="module" src="/public/js/booking.js"></script>
 </body>
 </html>
