@@ -1,9 +1,19 @@
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    overflow-x: hidden; 
+    width: 100%;
+    position: relative; 
+}
+
 body {
     background-color: var(--darkcolor);
     color: var(--edu-light);
     font-family: var(--uppercase);
     line-height: 1.6;
-    padding: 100px;
+    padding: 40px;
 }
 
 .tokz-team {
@@ -56,6 +66,7 @@ body {
     width: 100%;
     height: 100%;
     border-radius: 10px;
+    border-color: transparent;
 }
 
 .map .hours-container{
@@ -399,12 +410,6 @@ body {
     flex-direction: column; 
 } 
 
-@media (min-width: 768px) {
-    .mode-selection-container {
-        flex-direction: row; 
-    }
-}
-
 .mode-card {
     background: #252525;
     border: 1px solid #333;
@@ -539,42 +544,92 @@ body {
 
 @media (max-width: 768px) {
     body {
-        padding: 80px 15px 40px 15px !important; 
-        overflow-x: hidden;
+        margin-top: 30px;
+        padding: 0 !important; 
+        background-color: var(--darkcolor); 
     }
 
     .tokz-team h2, .section-title {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
+        margin-top: 20px;
     }
 
     .map {
-        flex-direction: column-reverse; 
         width: 100%;
-        margin: 0 -15px; 
-        width: calc(100% + 30px);
+        margin: 0; 
+        display: flex;
+        flex-direction: column-reverse;
+    }
+    
+    .map-frame-container {
+        height: 250px;
+        width: 100%;
     }
 
     .map-frame-container {
-        height: 300px; 
         width: 100%;
-    }
-
-    .map-frame-container iframe {
-        border-radius: 0;
+        max-width: 100vw;
     }
 
     .map-info-container {
-        padding: 30px 20px;
+        padding: 20px;
         width: 100%;
-        min-width: 0;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+    .contact-actions {
+        justify-content: center;
+        gap: 0;
     }
 
     .modal-overlay {
-        padding: 0 !important;
-        background: #1a1a1a;
+        padding: 0;
         align-items: flex-end; 
-        z-index: 9999; 
     }
 
-  
+    .wizard-card {
+        max-width: 100%;
+        width: 100%;
+        border-radius: 20px 20px 0 0; 
+        max-height: 90vh; 
+        margin: 0;
+        animation: slideUp 0.3s ease-out; 
+    }
+
+    .wizard-actions {
+        flex-direction: column-reverse; 
+        gap: 15px;
+        width: 100%;
+    }
+
+    .wizard-footer {
+        flex-direction: column;
+    }
+    
+    .total-display{
+        margin-bottom: 10px;
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 15px; 
+        justify-content: center;
+        display: flex;
+    }
+    
+    .service-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .progress-bar {
+        padding-left: 180px;
+    }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
 }

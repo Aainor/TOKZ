@@ -7,6 +7,7 @@
     <title>TOKZ Barber</title>
     <link rel="icon" href="/public/img/iconos/logo.ico" type="image/png">
     <link rel="stylesheet" href="/public/css/styles.css">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -220,53 +221,88 @@
             </div>
 
             <div class="services-grid">
-                <div class="service-card">
-                    <img src="/public/img/fotos/servicio-corte.jpg" alt="Corte de Cabello">
+                <div class="service-card fade-in">
+                    <div class="gallery-container">
+                        <div class="main-image-box">
+                            <img id="img-corte" src="/public/img/fotos/servicio-corte.jpg" alt="Corte">
+                        </div>
+
+                        <div class="thumbnails-row">
+                            <div class="thumb active" 
+                                onmouseover="updateGallery('img-corte', '/public/img/fotos/servicio-corte.jpg', this)" 
+                                onclick="updateGallery('img-corte', '/public/img/fotos/servicio-corte.jpg', this)">
+                                <img src="/public/img/fotos/servicio-corte.jpg" alt="Vista 1">
+                            </div>
+
+                            <div class="thumb" 
+                                onmouseover="updateGallery('img-corte', '/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (6).png', this)" 
+                                onclick="updateGallery('img-corte', '/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (6).png', this)">
+                                <img src="/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (6).png" alt="Vista 2">
+                            </div>
+
+                            <div class="thumb" 
+                                onmouseover="updateGallery('img-corte', '/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (4).png', this)" 
+                                onclick="updateGallery('img-corte', '/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (4).png', this)">
+                                <img src="/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (4).png" alt="Vista 3">
+                            </div>
+                            
+                            <div class="thumb" 
+                                onmouseover="updateGallery('img-corte', '/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (8).png', this)" 
+                                onclick="updateGallery('img-corte', '/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (8).png', this)">
+                                <img src="/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (8).png" alt="Vista 4">
+                            </div>
+                        </div>
+                    </div>
                     <div class="card-content">
                         <h3>Corte de Cabello</h3>
                         <p>El estilo que buscas, preciso y a la moda.</p>
-                        <div class="price-details">
-                            <p class="promo-price">EFECTIVO: $16.000</p>
-                            <p class="full-price">M.Pago/Transf.: $18.000</p>
+                        <div class="price-details" data-id="corte">
+                            <p class="old-price">Cargando...</p> 
+                            <p class="promo-price">Cargando...</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="service-card">
-                    <img src="/public/img/fotos/servicio-barba.jpg" alt="Corte + Barba">
+                <div class="service-card fade-in">
+                    <img src="/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (1).png" alt="Barba">
                     <div class="card-content">
-                        <h3>Corte + Barba</h3>
-                        <p>Combo clásico: look completo e impecable.</p>
-                        <div class="price-details">
-                            <p class="promo-price">EFECTIVO: $18.000</p>
-                            <p class="full-price">M.Pago/Transf.: $20.000</p>
+                        <h3>Arreglo de Barba</h3>
+                        <p>Perfilado y mantenimiento.</p>
+                        <div class="price-details" data-id="barba">
+                            <p class="old-price">Cargando...</p> 
+                            <p class="promo-price">Cargando...</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="service-card">
-                    <img src="/public/img/fotos/Imagen7.png" alt="Corte + Diseño">
+                <div class="service-card fade-in">
+                    <img src="/public/img/fotos/Imagen7.png" alt="Diseño">
                     <div class="card-content">
-                        <h3>Corte + Diseño</h3>
-                        <p>Personaliza tu estilo con un diseño único.</p>
-                        <div class="price-details">
-                            <p class="promo-price">EFECTIVO: $18.000</p>
-                            <p class="note">Consulta por diseños complejos.</p>
+                        <h3>Corte de Cabello <br>+<br> Diseño Freestyle/Realismo</h3>
+                        <p>Personaliza tu estilo.</p>
+                        <div class="price-details" data-id="corte_diseno">
+                            <p class="old-price">Cargando...</p> 
+                            <p class="promo-price">Cargando...</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="service-card">
-                    <img src="/public/img/logos/Imagen3.png" alt="Diseño Global">
+                <div class="service-card fade-in">
+                    <img class="logoIMG" src="/public/img/logos/Imagen3.png" alt="Domicilio">
                     <div class="card-content">
-                        <h3>TOKZ VIP</h3>
-                        <p>Cambio radical de color y estilo completo.</p>
-                        <div class="price-details">
-                            <p class="promo-price">EFECTIVO: a partir de $60.000</p>
-                            <p class="full-price">M.Pago/Transf.: +$2.000</p>
-                        </div>
+                        <h3>VIP a Domicilio</h3>
+                        <p style="font-size: 11px;">
+                            Experiencia TOKZ VIP en la comodidad de tu hogar<br>
+                            • Horarios 24h<br>
+                            • Hasta 10 personas<br>
+                            📍 Zona Sur (GBA)
+                        </p>
+                    <div class="price-details" data-id="vip">
+                        <p class="old-price">Cargando...</p> 
+                        <p class="promo-price">Cargando...</p>
                     </div>
                 </div>
+        </div>
             </div>
         </section>
 
@@ -389,6 +425,8 @@
     <script src="/public/js/sobre_nosotros.js"></script>
     <script src="/public/js/seeMore.js"></script>
     <script src="/public/js/auth-logic.js"></script>
+    <script src="/public/js/prices.js"></script>
+    <script src="/public/js/guard.js"></script>
 
 </body>
 
