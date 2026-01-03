@@ -6,16 +6,78 @@
     <link rel="stylesheet" href="/public/css/styles.css">
     <link rel="stylesheet" href="/public/css/turnos.css">
     <title>Turnos</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+   (function(){
+      // Reemplaza "TU_PUBLIC_KEY" con tu clave pública real de EmailJS
+      emailjs.init("2D_GFcNd8DvvotnP9");
+   })();
+</script>
 </head>
 <body>
     <div id="header-placeholder"></div>
 
-    <section>
-        <a href="" class="cta-button">Reservar</a>
-    </section>
+    <main style="padding: 100px 20px; min-height: 60vh; background-color: #111;">
+        
+        <div id="booking-wizard" style="display:none; max-width: 600px; margin: 0 auto; background: #1a1a1a; padding: 30px; border-radius: 15px; border: 1px solid #333; color: white;">
+            
+            <div id="step-1">
+                <h2 style="color: var(--redcolor); margin-bottom: 20px;">📅 Paso 1: Elige Fecha y Hora</h2>
+                
+                <label style="display:block; margin-bottom:5px;">Fecha:</label>
+                <input type="date" id="inputDate" style="width: 100%; padding: 12px; margin-bottom: 20px; background: #333; border: 1px solid #555; color: white; border-radius: 5px;">
+                
+                <label style="display:block; margin-bottom:5px;">Hora:</label>
+                <select id="selectTime" style="width: 100%; padding: 12px; margin-bottom: 30px; background: #333; border: 1px solid #555; color: white; border-radius: 5px;">
+                    <option value="">Selecciona hora...</option>
+                    <option value="10:00">10:00 AM</option>
+                    <option value="11:00">11:00 AM</option>
+                    <option value="12:00">12:00 PM</option>
+                    <option value="13:00">01:00 PM</option>
+                    <option value="16:00">04:00 PM</option>
+                    <option value="17:00">05:00 PM</option>
+                    <option value="18:00">06:00 PM</option>
+                    <option value="19:00">07:00 PM</option>
+                </select>
+                
+                <button id="btn-to-step-2" class="cta-button" style="width:100%; cursor: pointer;">BUSCAR BARBEROS</button>
+            </div>
 
+            <div id="step-2" style="display:none;">
+                <h2 style="color: var(--redcolor); margin-bottom: 10px;">✂️ Paso 2: Elige tu Barbero</h2>
+                <p style="margin-bottom: 20px; color: #ccc;">Para el día <b id="summary-date" style="color:white"></b> a las <b id="summary-time" style="color:white"></b>:</p>
+                
+                <div id="barber-list-container" style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-bottom: 30px;">
+                    </div>
+                
+                <button id="btn-back-1" style="background: transparent; border: 1px solid #666; color: #ccc; padding: 10px 20px; border-radius: 5px; cursor: pointer;">&larr; Atrás</button>
+            </div>
+
+            <div id="step-3" style="display:none; text-align: center;">
+                <h2 style="color: var(--redcolor); margin-bottom: 20px;">✅ Paso 3: Confirmar Turno</h2>
+                
+                <div style="background: #252525; padding: 20px; border-radius: 10px; text-align: left; margin-bottom: 30px;">
+                    <p>📅 <strong>Fecha:</strong> <span id="final-date"></span></p>
+                    <p>⏰ <strong>Hora:</strong> <span id="final-time"></span></p>
+                    <p>✂️ <strong>Barbero:</strong> <span id="final-barber"></span></p>
+                    <p>💈 <strong>Servicio:</strong> Corte Clásico</p>
+                </div>
+                
+                <button id="btn-confirm-booking" class="cta-button" style="width:100%; background-color: #28a745; border-color: #28a745; cursor: pointer;">CONFIRMAR RESERVA</button>
+                <button id="btn-back-2" style="margin-top: 15px; background: transparent; border: none; color: #888; text-decoration: underline; cursor: pointer;">Volver atrás</button>
+            </div>
+        </div>
+
+        <div id="login-warning" style="text-align: center; color: white; display: none;">
+            <h2>Inicia sesión para reservar</h2>
+            <p>Necesitamos saber quién eres para guardar tu turno.</p>
+            <a href="/pages/login.html" class="cta-button" style="margin-top: 20px; display: inline-block;">IR AL LOGIN</a>
+        </div>
+
+    </main>
     <div id="footer-placeholder"></div>
     <script src="/public/js/main.js"></script>
-    <script type="module" src="/public/js/turnos.js"></script>
+    <script type="module" src="/public/js/turnos.js"></script> 
+    <script type="module" src="/public/js/booking.js"></script>
 </body>
 </html>
