@@ -31,15 +31,81 @@ body {
 }
 
 .team-grid {
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-    gap: 20px;
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    gap: 20px; 
+    padding: 50px 0;
+    flex-wrap: wrap; 
+}
+
+.barber-card {
+    position: relative;
+    width: 240px; 
+    height: 380px; 
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); 
+    cursor: pointer;
+    background: #000; 
+    
+    filter: grayscale(100%); 
+    transform: scale(0.9);
+    opacity: 0.7;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    z-index: 1;
 }
 
 .barber-card img {
-    width: 100%; 
-    border-radius: 10px; 
-    filter: grayscale(1);
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    transition: transform 0.5s ease;
+}
+
+.barber-card.active {
+    filter: grayscale(0%);
+    transform: scale(1.1); 
+    opacity: 1;
+    z-index: 10;
+    box-shadow: 0 0 25px rgba(211, 47, 47, 0.4); 
+    border: 1px solid var(--redcolor); 
+}
+
+.barber-card h3 {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding-top: 20px;
+    z-index: 2;
+    text-shadow: 2px 2px 4px rgba(0,0,0,1);
+}
+
+.barber-card p {
+    position: absolute;
+    bottom: -15px;
+    width: 100%;
+    text-align: center;
+    color: #ccc;
+    font-size: 0.9rem;
+    z-index: 2;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+}
+
+.nico-img {
+    transform: scale(1.5) translateY(15px); 
+    object-position: top center;
+    margin-left: 20px;
+}
+
+.barber-card.active img.nico-img {
+    transform: scale(1.5) translateY(15px);
+}
+
+.barber-card img.ale-img {
+    object-position: 40% top; 
 }
 
 .barber-card h3 {
@@ -77,6 +143,7 @@ body {
     flex: 1;
     min-width: 300px; 
     padding: 40px; 
+    margin-bottom: 80px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -538,6 +605,10 @@ body {
     transform: translateY(-2px);
 }
 
+.services-section {
+    margin-top: -10px;
+}
+
 @media (max-width: 768px) {
     body {
         margin-top: 30px;
@@ -653,4 +724,47 @@ body:has(.modal-overlay:not(.hidden)) {
     overflow: hidden;
     height: 100vh; 
     touch-action: none; 
+}
+
+@media (max-width: 768px) {
+    
+    .team-grid {
+        display: flex;
+        flex-direction: row; 
+        flex-wrap: nowrap;   
+        overflow-x: auto;    
+        scroll-snap-type: x mandatory; 
+        gap: 5px;
+        padding: 40px calc((100vw - 240px) / 2);
+        justify-content: flex-start; 
+        scrollbar-width: none; 
+        -ms-overflow-style: none; 
+    }
+    
+    .team-grid::-webkit-scrollbar {
+        display: none; 
+    }
+
+    .barber-card {
+        flex: 0 0 240px; 
+        width: 240px;
+        height: 380px;
+        scroll-snap-align: center; 
+        transform: scale(0.85); 
+        filter: grayscale(100%) opacity(0.6);
+        margin: 0;
+    }
+
+    .barber-card.active {
+        transform: scale(1.1); 
+        filter: grayscale(0%) opacity(1);
+        z-index: 100;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    }
+    
+    .barber-card img.nico-img,
+    .barber-card.active img.nico-img {
+        transform: scale(1.4) translateY(10px);
+    }
+    
 }

@@ -209,3 +209,74 @@ function updateGallery(mainImgId, newSrc, thumbElement) {
     }
     thumbElement.classList.add('active');
 }
+
+function selectBarber(element) {
+    // 1. Gestión de clases (Visual)
+    // Le sacamos el 'active' a todos
+    document.querySelectorAll('.barber-card').forEach(card => {
+        card.classList.remove('active');
+    });
+
+    // Se lo ponemos al que tocaste
+    element.classList.add('active');
+
+    // 2. LA MAGIA (Movimiento)
+    // Esto obliga al navegador a scrollear suavemente hasta poner este elemento en el centro
+    element.scrollIntoView({
+        behavior: 'smooth', // Animación fluida
+        block: 'nearest',   // Mantiene la verticalidad tranquila
+        inline: 'center'    // CLAVE: Lo alinea al centro horizontalmente
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. BUSCAMOS LA TARJETA DEL JEFE (NICO) USANDO SU CLASE ÚNICA
+    const nicoImg = document.querySelector('.nico-img');
+    const container = document.querySelector('.team-grid');
+    
+    if (!nicoImg || !container) return; // Si no estamos en la página correcta, chau
+
+    const nicoCard = nicoImg.closest('.barber-card'); // Encontramos la tarjeta padre
+    const allCards = document.querySelectorAll('.barber-card');
+
+    // 2. FORZAMOS QUE NICO SEA EL ACTIVO POR DEFECTO (PC Y CELU)
+    // Limpiamos cualquier rastro de otros activos
+    allCards.forEach(c => c.classList.remove('active'));
+    // Coronamos a Nico
+    nicoCard.classList.add('active');
+
+    // 3. SOLO ACTIVAMOS EL "AUTO-SCROLL DETECT" EN CELULARES
+    // En PC no hace falta porque no scrolleas, haces click.
+    if (window.innerWidth <= 768) {
+        
+        // Configuración del detector
+        const observerOptions = {
+            root: container,
+            threshold: 0.5,           // 50% visible
+            rootMargin: "0px -25% 0px -25%" // Margen estricto al centro
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                // Solo cambiamos el activo si el usuario está scrolleando
+                if (entry.isIntersecting) {
+                    allCards.forEach(c => c.classList.remove('active'));
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        // Ponemos a vigilar a todas
+        allCards.forEach(card => observer.observe(card));
+
+        // 4. CENTRADO INICIAL EN CELULAR
+        // Esperamos un pestañeo (100ms) para asegurarnos que cargó el CSS
+        setTimeout(() => {
+            nicoCard.scrollIntoView({ 
+                behavior: 'auto', 
+                block: 'nearest', 
+                inline: 'center' // ¡Esto lo pone en el medio exacto!
+            });
+        }, 100);
+    }
+});

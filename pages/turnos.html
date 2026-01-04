@@ -17,61 +17,63 @@
         <h2>STAFF TOKZ</h2>
         <p>Elegí quién se encarga de tu estilo. #ConfiaEnTuBarber</p>
             <div class="team-grid">
-                
-                <div class="barber-card">
-                    <img src="/public/img/fotos/turnos.jpeg" alt="Barbero">
-                    <h3>barber</h3>
-                    <p>ejemplo</p>
+    
+                <div class="barber-card" onclick="selectBarber(this)">
+                    <img class="ale-img" src="/public/img/barbers/IMG_20251222_201856305_HDR_PORTRAIT.jpg" alt="Barbero">
+                    <h3>Alejandra Sanchez</h3>
+                    <p>Cortes</p>
                 </div>
 
-                <div class="barber-card">
-                    <img src="/public/img/fotos/turnos.jpeg" alt="Barbero">
-                    <h3>barber</h3>
-                    <p>ejemplo</p>
+                <div class="barber-card active" onclick="selectBarber(this)">
+                    <img class="nico-img" src="/public/img/barbers/IMG_20251222_194037210_HDR_PORTRAIT.jpg" alt="Barbero">
+                    <h3>Nicolás Ruibal</h3>
+                    <p>Barba</p>
                 </div>
-                
-                <div class="barber-card">
-                    <img src="/public/img/fotos/turnos.jpeg" alt="Barbero">
-                    <h3>barber</h3>
-                    <p>ejemplo</p>
+
+                <div class="barber-card" onclick="selectBarber(this)">
+                    <img src="/public/img/barbers/IMG_20251222_203742843_HDR_PORTRAIT.jpg" alt="Barbero">
+                    <h3>Lautaro Ribeiro</h3>
+                    <p>Diseño</p>
                 </div>
                 
             </div>
     </section>
-
-    <section class="map">
-    <div class="map-info-container">
-        <span class="tag">¿DÓNDE ESTAMOS?</span>
-        <div class="address-box">
-            <p class="main-address">💈 Combatientes de Malvinas 317, Guernica.</p>
-            
-            <div class="hours-container">
-                <h4>Horarios de Atención</h4>
-                <ul class="hours-list">
-                    <li><span>Lun - Sáb:</span> 09:30 - 14:00 || 16:30 - 20:30</li>
-                    <li><span>Domingos:</span> Cerrado</li>
-                </ul>
-            </div>
-            
-            <div class="contact-actions">
-                <a href="https://www.google.com/maps/dir/?api=1&destination=-34.91845462304865,-58.37899502580087" target="_blank" class="cta-button">
-                    Cómo llegar
-                </a>
-                <a href="https://wa.me/541168606201" target="_blank" class="cta-button">
-                    Escribinos
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <div class="map-frame-container">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3271.5211339388193!2d-58.37898239999999!3d-34.918465000000005!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bd2bd0038daf6f%3A0x81f65e0941504361!2sTOKZ%20BARBERIA!5e0!3m2!1ses!2sar!4v1767292008911!5m2!1ses!2sar" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
-</section>
 
     <section class="services-section">
         <a href="#" class="cta-button">Reservar</a>
     </section>
+
+    <section class="map">
+        <div class="map-info-container">
+            <span class="tag">¿DÓNDE ESTAMOS?</span>
+            <div class="address-box">
+                <p class="main-address">💈 Combatientes de Malvinas 317, Guernica.</p>
+                
+                <div class="hours-container">
+                    <h4>Horarios de Atención</h4>
+                    <ul class="hours-list">
+                        <li><span>Lun - Sáb:</span> 09:30 - 14:00 || 16:30 - 20:30</li>
+                        <li><span>Domingos:</span> Cerrado</li>
+                    </ul>
+                </div>
+                
+                <div class="contact-actions">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=-34.91845462304865,-58.37899502580087" target="_blank" class="cta-button">
+                        Cómo llegar
+                    </a>
+                    <a href="https://wa.me/541168606201" target="_blank" class="cta-button">
+                        Escribinos
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="map-frame-container">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3271.5211339388193!2d-58.37898239999999!3d-34.918465000000005!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bd2bd0038daf6f%3A0x81f65e0941504361!2sTOKZ%20BARBERIA!5e0!3m2!1ses!2sar!4v1767292008911!5m2!1ses!2sar" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </section>
+
+    
 
     <div id="booking-modal" class="modal-overlay hidden">
     <div class="wizard-card">
