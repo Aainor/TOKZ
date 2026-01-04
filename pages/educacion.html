@@ -31,26 +31,65 @@
     </section>
 
     <section class="edu-info-section">
-        <div class="edu-container edu-grid-2-cols">
-            <div class="edu-info-card">
-                <h3><i class="fa-solid fa-user-check text-red"></i> ¿Es para vos?</h3>
-                <ul class="edu-check-list">
-                    <li>Buscas un curso desde cero, bien explicado.</li>
-                    <li>Sos principiante y sentís que te faltan nociones básicas.</li>
-                    <li>Trabajas por intuición y querés consolidar técnica y vocabulario.</li>
-                    <li>Necesitas bases sólidas para formaciones avanzadas.</li>
-                </ul>
-            </div>
+        <div class="edu-container">
             
-            <div class="edu-info-card">
-                <h3><i class="fa-solid fa-bullseye text-red"></i> Objetivo TOKZ</h3>
-                <p>
-                    No solo enseñamos a cortar. Nuestro objetivo es darte bases sólidas para que seas un barbero capaz de <strong>ubicarte en cualquier barbería del mundo</strong> y cumplir con los pedidos del cliente.
-                </p>
-                <p class="edu-mt-20">
-                    <strong>Metodología:</strong> 30 min de Teórico + 2 hs de Práctica por clase.
-                </p>
+            <div class="edu-grid-2-cols">
+                <div class="edu-info-card">
+                    <h3><i class="fa-solid fa-user-check text-red"></i> ¿Es para vos?</h3>
+                    <ul class="edu-check-list">
+                        <li>Buscas un curso desde cero, bien explicado.</li>
+                        <li>Sos principiante y sentís que te faltan nociones básicas.</li>
+                        <li>Trabajas por intuición y querés consolidar técnica y vocabulario.</li>
+                        <li>Necesitas bases sólidas para formaciones avanzadas.</li>
+                    </ul>
+                </div>
+                
+                <div class="edu-info-card">
+                    <h3><i class="fa-solid fa-bullseye text-red"></i> Objetivo TOKZ</h3>
+                    <p>
+                        No solo enseñamos a cortar. Nuestro objetivo es darte bases sólidas para que seas un barbero capaz de <strong>ubicarte en cualquier barbería del mundo</strong> y cumplir con los pedidos del cliente.
+                    </p>
+                    <p class="edu-mt-20">
+                        <strong>Metodología:</strong> 30 min de Teórico + 2 hs de Práctica por clase.
+                    </p>
+                </div>
             </div>
+
+            <div class="edu-info-card edu-mt-30">
+                <h3><i class="fa-solid fa-chalkboard-user text-red"></i> Perfeccionamiento Personalizado Individual</h3>
+                
+                <div class="edu-accordion-wrapper" style="border-top: none; margin-top: 15px; padding-top: 0;">
+                    <button class="edu-accordion-btn" id="privateClassBtn" type="button">
+                        <div class="edu-btn-text-group">
+                            <span class="edu-btn-title">CLASES PRIVADAS</span>
+                            <span class="edu-btn-subtitle">Espacio exclusivo 1 a 1.</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down edu-accordion-icon"></i>
+                    </button>
+                    
+                    <div class="edu-accordion-content" id="privateClassContent">
+                        <div class="edu-accordion-inner">
+                            <div class="edu-highlight-text">
+                                En estas clases privadas trabajaremos puntualmente lo que necesites pulir: desde <strong>técnicas avanzadas de fade</strong> y uso de tijera, hasta diseño de barba. Es un espacio personalizado para atacar tus dudas.
+                            </div>
+                            
+                            <div style="margin: 20px 0; border-top: 1px dashed #333; border-bottom: 1px dashed #333; padding: 15px 0;">
+                                <span style="font-size: 12px; color: #aaa; text-transform: uppercase; display: block; margin-bottom: 5px;">Valor:</span>
+                                <div style="display: flex; flex-direction: column; align-items: flex-start; width: 100%; color: #AE0E30; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 54px; line-height: 1.1;"> 
+                                    $180.000
+                                </div>
+                            </div>
+                            <p>Comunícate por WhatsApp para coordinar temario, fechas y armar un plan de estudio acorde a tus necesidades.</p>
+                            
+                            <div class="edu-private-contact">
+                                <h4>Nicolás Ruibal.</h4>
+                                <p><i class="fa-brands fa-whatsapp text-red"></i> 1168606201</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -113,7 +152,11 @@
                 <div class="edu-price-action-row">
                     <div class="edu-price-box">
                         <span class="label">Cuota Mensual</span>
-                        <span class="amount">$80.000</span>
+                        
+                        <div class="price-details" data-id="curso"> 
+                            <p class="promo-price">Cargando...</p>
+                        </div>
+
                         <span class="note">*Efectivo o Transferencia. No se devuelve dinero.</span>
                     </div>
                     <div class="edu-cta-box">
@@ -148,5 +191,26 @@
     <div id="footer-placeholder"></div>
 
     <script src="/public/js/main.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('privateClassBtn');
+            const content = document.getElementById('privateClassContent');
+            const icon = btn.querySelector('.edu-accordion-icon');
+
+            if(btn && content && icon) {
+                btn.addEventListener('click', function() {
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                        icon.classList.remove('rotate-icon');
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + "px";
+                        icon.classList.add('rotate-icon');
+                    }
+                });
+            }
+        });
+    </script>
+    <script src="/public/js/prices.js"></script>
 </body>
 </html>
