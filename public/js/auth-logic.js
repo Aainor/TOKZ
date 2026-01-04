@@ -136,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // B. FUNCIÓN DE RENDERIZADO
+    // B. FUNCIÓN DE RENDERIZADO (V2 - A Prueba de Fallos)
     function renderBookings() {
         bookingsListContainer.innerHTML = ''; 
 
@@ -144,25 +145,35 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Ordenamos por fecha
-        myTurnos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+        // Ordenamos por fecha (intentando leer ambos campos)
+        myTurnos.sort((a, b) => {
+            const dateA = new Date(a.fecha || a.date);
+            const dateB = new Date(b.fecha || b.date);
+            return dateA - dateB;
+        });
 
         myTurnos.forEach(turno => {
-            let fechaLinda = turno.fecha;
-            if(turno.fecha && turno.fecha.includes('-')) {
-                fechaLinda = turno.fecha.split('-').reverse().join('/');
+            // 1. TRUCO: Leemos en español O en inglés (El Traductor)
+            let fechaReal = turno.fecha || turno.date || "Sin fecha";
+            let horaReal = turno.hora || turno.time || "--:--";
+            let barberoReal = turno.barbero || turno.pro || "Cualquiera";
+            let serviciosReal = turno.services || turno.service || "Servicio";
+
+            // Formateo de fecha lindo (DD/MM/YYYY)
+            if(fechaReal.includes('-')) {
+                fechaReal = fechaReal.split('-').reverse().join('/');
             }
 
-            let nombreServicio = Array.isArray(turno.services) ? turno.services.join(" + ") : turno.services;
-            let nombreBarbero = turno.barbero || turno.pro || "Cualquiera";
+            // Manejo de array de servicios
+            let nombreServicio = Array.isArray(serviciosReal) ? serviciosReal.join(" + ") : serviciosReal;
 
             const itemHTML = `
                 <div class="booking-item" id="card-${turno.id}" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid #AE0E30;">
                     <div class="booking-info" style="text-align: left;">
                         <h4 style="color:white; margin:0 0 5px 0;">${nombreServicio}</h4>
                         <div style="color:#aaa; font-size:0.8rem;">
-                            <div><i class="fa-regular fa-calendar"></i> ${fechaLinda} - ${turno.hora}</div>
-                            <div style="color: #888;">Barbero: ${nombreBarbero}</div>
+                            <div><i class="fa-regular fa-calendar"></i> ${fechaReal} - ${horaReal}</div>
+                            <div style="color: #888;">Barbero: ${barberoReal}</div>
                         </div>
                     </div>
                     <button class="btn-delete-booking" data-id="${turno.id}" style="background:none; border:none; color: #ff4444; cursor:pointer; padding: 10px;">
