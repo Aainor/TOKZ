@@ -55,7 +55,7 @@
                             <div class="rating-block">
                                 <span class="stars-header">★★★★★</span>
                                 <span class="score">4.9</span>
-                                <span class="count">82 reseñas</span>
+                                <span class="count">83 reseñas</span>
                             </div>
                         </div>
                         <a href="https://search.google.com/local/writereview?placeid=ChIJb6-NA9ArvZURYUNQQQle9oE"
@@ -74,7 +74,7 @@
                                 <div class="review-card">
                                     <div class="review-header">
                                         <div class="user-info">
-                                            <div class="avatar">
+                                            <div class="avatar-p">
                                                 <img src="https://lh3.googleusercontent.com/a-/ALV-UjV4nGVwt0E4ZSjGZlEKgqZJHo4b0iW1YOE9KIiIsjNK6rBSVLM=w90-h90-p-rp-mo-br100"
                                                     alt="C" onerror="this.style.display='none'">
                                             </div>
@@ -86,11 +86,12 @@
                                     <div class="stars">★★★★★</div>
                                     <p class="review-text">Excelente el servicio y la calidez humana en cada barbero y
                                         peluquero. Super recomendable.</p>
+                                        <button class="read-more-btn hide-on-mobile" onclick="toggleReview(this)">Ver más</button>
                                 </div>
                                 <div class="review-card">
                                     <div class="review-header">
                                         <div class="user-info">
-                                            <div class="avatar"><img
+                                            <div class="avatar-p"><img
                                                     src="https://lh3.googleusercontent.com/a-/ALV-UjXpvnMN0mNK2Sf15kjdbjeivXHZw56YBLsaLyeFckqVFQKIeNc=w90-h90-p-rp-mo-br100"
                                                     alt="C" onerror="this.style.display='none'"></div>
                                             <div class="details">
@@ -105,7 +106,7 @@
                                 <div class="review-card">
                                     <div class="review-header">
                                         <div class="user-info">
-                                            <div class="avatar"><img
+                                            <div class="avatar-p"><img
                                                     src="https://lh3.googleusercontent.com/a-/ALV-UjUSKpUCy9wV42RPyJdaxLc5votukPt4L1yUKTA4z10z-a2Z75hGyQ=w90-h90-p-rp-mo-br100"
                                                     alt="C" onerror="this.style.display='none'"></div>
                                             <div class="details">
@@ -129,7 +130,57 @@
                                     <div class="stars">★★★★★</div>
                                     <p class="review-text">Desde que entras sos un amigo más, siempre buena atención,
                                         buena onda y los mejores cortes.</p>
+                                    <button class="read-more-btn hide-on-mobile" onclick="toggleReview(this)">Ver más</button>
                                 </div>
+                                <div class="review-card">
+                                    <div class="review-header">
+                                        <div class="user-info">
+                                            <div class="avatar-p"><img
+                                                    src="https://lh3.googleusercontent.com/a-/ALV-UjXyWTsFKhdos_IXixf3FXua3VCIUhexZKyD9uLLopCc1LVoiRQ=w90-h90-p-rp-mo-br100"
+                                                    alt="C" onerror="this.style.display='none'"></div>
+                                            <div class="details">
+                                                <h3>Magno Gon</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="stars">★★★★★</div>
+                                    <p class="review-text">Muy buen lugar, hermoso estéticamente y la buena onda de los chicos nunca falla. 
+                                El dueño Nicolás Ruibal (Barbero del lugar) hizo la perfecta combinación entre los estético y la buena onda 😎</p>
+                                <button class="read-more-btn" onclick="toggleReview(this)">Ver más</button>
+                                </div>
+                                <div class="review-card">
+                                    <div class="review-header">
+                                        <div class="user-info">
+                                            <div class="avatar" style="background: #06a978;">F</div>
+                                            <div class="details">
+                                                <h3>Facundo Jaimez</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="stars">★★★★★</div>
+                                    <p class="review-text">La mejor Barbería que he visto con unos buenos cortes 😎</p>
+                                </div>
+                                <div class="review-card">
+                                    <div class="review-header">
+                                        <div class="user-info">
+                                            <div class="avatar-p">
+                                                <img src="https://lh3.googleusercontent.com/a-/ALV-UjVVRKqL2ANpCaqzUJtJC2Q4pLqmy0n0clPiqU5ulzaTwPNJsdn81g=w90-h90-p-rp-mo-ba2-br100"
+                                                    alt="C" onerror="this.style.display='none'">
+                                            </div>
+                                            <div class="details">
+                                                <h3>Silvio Gonzalez</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="stars">★★★★★</div>
+                                    <p class="review-text">Los mejores ! Hace años que me atiendo con ellos y sin duda la mejor atención tanto en lo profesional 
+                                        como personal cada uno de los integrantes del equipo ! 
+                                        Siempre agradecido con mis amigos de TOKZ BARBER!💈</p>
+                                        <button class="read-more-btn" onclick="toggleReview(this)">Ver más</button>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar" id="progressBar"></div>
                             </div>
                         </div>
 
@@ -141,14 +192,6 @@
                     </div>
                 </section>
             </div>
-
-            <a href="#sobreNosotros" class="scroll-indicator">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                    fill="#e3e3e3">
-                    <path
-                        d="M480-200 240-440l56-56 184 183 184-183 56 56-240 240Zm0-240L240-680l56-56 184 183 184-183 56 56-240 240Z" />
-                </svg>
-            </a>
         </section>
 
         <section id="sobreNosotros" class="about-vip-section">
@@ -160,7 +203,7 @@
             </div>
 
             <div class="about-overlay vip-overlay">
-                <div class="container about-content-centered vip-content">
+                <div class="container about-content-centered vip-content fade-in">
                     <span class="vip-tag"> <strong> TOKZ BARBER | Barberia en constante Evolución. </strong> </span>
                     <h1 class="vip-title">Del living de casa<br>al corazón de Guernica.</h1>
                     <div class="vip-separator"></div>
@@ -181,7 +224,7 @@
 
         <section class="stats-static-bar">
             <div class="container" style="padding: 20px;">
-                <div class="stats-grid" id="counter-section">
+                <div class="stats-grid fade-in" id="counter-section">
                     <div class="stat-item">
                         <strong class="counter" data-target="40">0</strong>
                         <span>Cortes Diarios</span>
@@ -207,7 +250,7 @@
         </section>
 
         <section id="servicios" class="services-section">
-            <div class="services-intro-content">
+            <div class="services-intro-content fade-in">
                 <span class="tag">¿QUÉ SABEMOS HACER?</span>
                 <h2>Somos expertos en el cuidado de tu imagen</h2>
                 <p>Antes de cada momento importante, ¿Qué es lo que hay que hacer? Pasar por tu barbería y emprolijar
@@ -306,10 +349,10 @@
         </section>
 
         <section id="turnos" class="booking-section">
-            <div class="picture">
+            <div class="picture fade-in">
                 <img src="/public/img/fotos/turnos.png" alt="Barberos de TOKZ">
             </div>
-            <div class="title">
+            <div class="title fade-in">
                 <span class="tag">TURNOS</span>
                 <h4 class="paragraph">Personalizá tu reserva con nosotros.</h4>
                 <p>En TOKZ valoramos a nuestros clientes y buscamos brindarles el mejor servicio.<br>Siempre se puede
@@ -320,36 +363,36 @@
         </section>
         
         <section id="multimedia" class="work-preview">
-            <div class="header-area">
+            <div class="header-area fade-in">
                 <span class="sub-header">Conoce más sobre nosotros y nuestro trabajo</span>
                 <h2>Multimedia</h2>
             </div>
 
             <div class="preview-grid">
-                <div class="preview-item">
+                <div class="preview-item fade-in">
                     <img src="/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (1).png" alt="Trabajo de Barbería">
                     <div class="overlay"></div>
                 </div>
 
-                <div class="preview-item">
+                <div class="preview-item fade-in">
                     <img src="/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (2).png" alt="Trabajo de Barbería">
                     <div class="overlay"></div>
                 </div>
 
-                <div class="preview-item">
+                <div class="preview-item fade-in">
                     <img src="/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (3).png" alt="Trabajo de Barbería">
                     <div class="overlay"></div>
                 </div>
             </div>
 
-            <div class="view-more-container">
+            <div class="view-more-container fade-in">
                 <a href="/pages/multimedia.html" class="btn-view-more">Click Aquí</a>
             </div>
         </section>
 
         <section id="educacion" class="services-section education-layout">
 
-            <div class="services-intro-content">
+            <div class="services-intro-content fade-in">
                 <span class="tag">CONVERTITE EN PROFESIONAL</span>
                 <h2>Educación y Cursos</h2>
                 <p>
@@ -364,7 +407,7 @@
                 </div>
             </div>
 
-            <div class="edu-image-wrapper">
+            <div class="edu-image-wrapper fade-in">
                 <img src="/public/img/fotos/educacion.png" alt="Cursos en TOKZ">
             </div>
         </section>
