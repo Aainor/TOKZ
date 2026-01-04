@@ -1,11 +1,19 @@
-// 1. IMPORTACIONES 
-import { auth, provider } from './firebase.js'; 
+// 1. IMPORTACIONES
+import { auth, provider, db } from './firebase.js'; 
 import { signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { 
+    collection, 
+    query, 
+    where, 
+    getDocs, 
+    doc, 
+    deleteDoc 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Iniciando App Integrada...");
 
-    // --- REFERENCIAS DOM  ---
+    // --- REFERENCIAS DOM ---
     const viewLogin = document.getElementById('view-login');
     const viewRegister = document.getElementById('view-register');
     const viewUser = document.getElementById('view-user');
@@ -19,42 +27,51 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnBackDashboard = document.getElementById('btn-back-dashboard');
     const bookingsListContainer = document.querySelector('.bookings-list'); 
 
-    // --- DATOS MOCK ---
-    //ESTOS DATOS DEBEN VENIR AUTOMATIZADOS DE FIREBASE, LOS ESCRITOS ACÁ SON DE PRUEBA PARA CSS
-    let mockTurnos = [
-        { id: 1, servicio: "Corte Degradado", fecha: "15/01", hora: "16:30hs", barber:"Nico" },
-        { id: 2, servicio: "Barba & Perfilado", fecha: "22/01", hora: "10:00hs", barber:"Maurice" }
-    ];
-
-    // --- GESTIÓN DE VISTAS ---
+    // --- GESTIÓN DE VISTAS (Necesaria para navegar) ---
     function switchView(viewToShow) {
-        // Ocultamos todas las posibles vistas
         [viewLogin, viewRegister, viewUser, viewRecovery, viewBooking].forEach(el => {
             if(el) el.classList.add('hidden');
         });
-        
-        // Mostramos la elegida
         if(viewToShow) {
             viewToShow.classList.remove('hidden');
             viewToShow.classList.add('fade-in', 'appear'); 
         }
     }
 
-    // =================
-    // AUTENTICACIÓN 
-    // =================
+    // ==========================================
+    // LOGICA REAL DE FIREBASE
+    // ==========================================
+    
+    let currentUserUid = null;
+    let myTurnos = []; 
+    
+    // Referencias del Modal
+    let itemToDeleteId = null; 
+    const deleteModal = document.getElementById('delete-modal');
+    const modalText = document.getElementById('modal-text');
+    const btnModalCancel = document.getElementById('btn-modal-cancel');
+    const btnModalConfirm = document.getElementById('btn-modal-confirm');
 
-    // 1. ESCUCHADOR DE SESIÓN
+    // ==========================================
+    // 1. AUTENTICACIÓN (LO QUE NO ENCONTRABAS)
+    // ==========================================
+    
+    // ESCUCHADOR DE SESIÓN: Este es el portero del edificio
     onAuthStateChanged(auth, (user) => {
         if (user) {
             console.log("Usuario autenticado:", user.displayName);
             
-            // Lógica UI de usuario
+            // 1. Guardamos quién es el usuario
+            currentUserUid = user.uid;
+            
+            // 2. Cargamos SUS turnos reales
+            loadUserBookings(currentUserUid); 
+
+            // 3. Actualizamos nombre en pantalla
             const userNameDisplay = document.getElementById('user-name-display');
             if(userNameDisplay) userNameDisplay.textContent = user.displayName;
             
-            // IMPORTANTE: Si estamos logueados, vamos al Dashboard (viewUser)
-            // No forzamos viewBooking todavía, el usuario debe navegar ahí.
+            // 4. Mostramos el panel de usuario
             switchView(viewUser);
         } else {
             console.log("No hay usuario, mandando al Login");
@@ -62,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 2. LOGIN GOOGLE
+    // BOTÓN LOGIN GOOGLE
     if (googleBtn) {
         googleBtn.addEventListener('click', async (e) => {
             e.preventDefault();
@@ -75,12 +92,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. LOGOUT
+    // BOTÓN LOGOUT
     if (btnLogout) {
         btnLogout.addEventListener('click', async () => {
             try {
                 await signOut(auth);
-                // onAuthStateChanged se encargará de llevar al login
+                // El onAuthStateChanged nos llevará al login automáticamente
             } catch (error) {
                 console.error("Error Logout:", error);
             }
@@ -88,34 +105,64 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // GESTIÓN DE TURNOS UI
+    // 2. GESTIÓN DE TURNOS (CARGA Y BORRADO)
     // ==========================================
 
-    // Variables globales para el modal
-    let itemToDeleteId = null;
-    const deleteModal = document.getElementById('delete-modal');
-    const modalText = document.getElementById('modal-text');
-    const btnModalCancel = document.getElementById('btn-modal-cancel');
-    const btnModalConfirm = document.getElementById('btn-modal-confirm');
-
-    // Función de renderizado 
-    function renderBookings() {
+    // A. FUNCIÓN PARA CARGAR TURNOS DE FIREBASE
+    async function loadUserBookings(uid) {
         if (!bookingsListContainer) return;
+        bookingsListContainer.innerHTML = '<p style="text-align:center; color:#888;">Cargando tus turnos...</p>';
+
+        try {
+          
+            const q = query(collection(db, "turnos"), where("uid", "==", uid));
+            const querySnapshot = await getDocs(q);
+
+            myTurnos = []; 
+            
+            querySnapshot.forEach((doc) => {
+                myTurnos.push({ 
+                    id: doc.id, 
+                    ...doc.data() 
+                });
+            });
+
+            renderBookings();
+
+        } catch (error) {
+            console.error("Error cargando turnos:", error);
+            bookingsListContainer.innerHTML = '<p style="color:red;">Error al cargar turnos.</p>';
+        }
+    }
+
+    // B. FUNCIÓN DE RENDERIZADO
+    function renderBookings() {
         bookingsListContainer.innerHTML = ''; 
 
-        if (mockTurnos.length === 0) {
-            bookingsListContainer.innerHTML = '<p style="color: #777; text-align: center;">No hay turnos reservados.</p>';
+        if (myTurnos.length === 0) {
+            bookingsListContainer.innerHTML = '<p style="color: #777; text-align: center;">No tenés turnos reservados.</p>';
             return;
         }
 
-        mockTurnos.forEach(turno => {
+        // Ordenamos por fecha
+        myTurnos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+        myTurnos.forEach(turno => {
+            let fechaLinda = turno.fecha;
+            if(turno.fecha && turno.fecha.includes('-')) {
+                fechaLinda = turno.fecha.split('-').reverse().join('/');
+            }
+
+            let nombreServicio = Array.isArray(turno.services) ? turno.services.join(" + ") : turno.services;
+            let nombreBarbero = turno.barbero || turno.pro || "Cualquiera";
+
             const itemHTML = `
-                <div class="booking-item" id="turno-${turno.id}" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid #AE0E30;">
+                <div class="booking-item" id="card-${turno.id}" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid #AE0E30;">
                     <div class="booking-info" style="text-align: left;">
-                        <h4 style="color:white; margin:0 0 5px 0;">${turno.servicio}</h4>
+                        <h4 style="color:white; margin:0 0 5px 0;">${nombreServicio}</h4>
                         <div style="color:#aaa; font-size:0.8rem;">
-                            <div><i class="fa-regular fa-calendar"></i> ${turno.fecha} - ${turno.hora}</div>
-                            <div style="color: #888;">Barbero: ${turno.barber}</div>
+                            <div><i class="fa-regular fa-calendar"></i> ${fechaLinda} - ${turno.hora}</div>
+                            <div style="color: #888;">Barbero: ${nombreBarbero}</div>
                         </div>
                     </div>
                     <button class="btn-delete-booking" data-id="${turno.id}" style="background:none; border:none; color: #ff4444; cursor:pointer; padding: 10px;">
@@ -126,33 +173,51 @@ document.addEventListener('DOMContentLoaded', () => {
             bookingsListContainer.innerHTML += itemHTML;
         });
 
-        // Re-asignar eventos a los nuevos botones de borrar
         attachDeleteEvents();
     }
 
+    // C. EVENTOS DE LOS BOTONES DE BASURA
     function attachDeleteEvents() {
         document.querySelectorAll('.btn-delete-booking').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const id = parseInt(e.currentTarget.getAttribute('data-id'));
-                itemToDeleteId = id;
-                const turnoData = mockTurnos.find(t => t.id === id);
+                itemToDeleteId = e.currentTarget.getAttribute('data-id');
+                const turnoData = myTurnos.find(t => t.id === itemToDeleteId);
+                
                 if(modalText && turnoData) {
-                    modalText.innerHTML = `Vas a eliminar el turno de <b>${turnoData.servicio}</b><br>el día ${turnoData.fecha}.<br><br>¿Estás seguro?`;
+                    let nombreServicio = Array.isArray(turnoData.services) ? turnoData.services[0] : turnoData.services;
+                    modalText.innerHTML = `Vas a cancelar el turno de <b>${nombreServicio}</b>.<br><br>¿Estás seguro?`;
                     if(deleteModal) deleteModal.classList.add('active');
                 }
             });
         });
     }
 
-    // Listeners del Modal
+    // D. CONFIRMAR BORRADO (REAL EN FIREBASE)
     if(btnModalConfirm) {
-        btnModalConfirm.addEventListener('click', () => {
-            if (itemToDeleteId !== null) {
-                mockTurnos = mockTurnos.filter(t => t.id !== itemToDeleteId);
-                console.log("Turno borrado ID:", itemToDeleteId);
-                itemToDeleteId = null;
-                if(deleteModal) deleteModal.classList.remove('active');
-                renderBookings();
+        btnModalConfirm.addEventListener('click', async () => {
+            if (itemToDeleteId) {
+                const originalText = btnModalConfirm.textContent;
+                btnModalConfirm.textContent = "Borrando...";
+
+                try {
+                    // Borrar de Firebase
+                    await deleteDoc(doc(db, "turnos", itemToDeleteId));
+                    console.log("Turno eliminado de DB:", itemToDeleteId);
+
+                    // Borrar de la lista local
+                    myTurnos = myTurnos.filter(t => t.id !== itemToDeleteId);
+                    
+                    renderBookings();
+                    
+                    if(deleteModal) deleteModal.classList.remove('active');
+
+                } catch (error) {
+                    console.error("Error al borrar:", error);
+                    alert("No se pudo borrar el turno. Revisá tu conexión.");
+                } finally {
+                    btnModalConfirm.textContent = originalText;
+                    itemToDeleteId = null;
+                }
             }
         });
     }
@@ -167,14 +232,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- LISTENERS DE NAVEGACIÓN INTERNA ---
     if (btnViewBookings) {
         btnViewBookings.addEventListener('click', () => {
-            renderBookings(); // Renderizamos justo antes de mostrar
+            renderBookings(); 
             switchView(viewBooking);
         });
     }
 
     if (btnBackDashboard) {
         btnBackDashboard.addEventListener('click', () => {
-            switchView(viewUser); // Volver al dashboard
+            switchView(viewUser); 
         });
     }
 });
