@@ -11,35 +11,37 @@ async function cargarPrecios() {
 
             if (data) {
                 const elemDestacado = tarjeta.querySelector('.promo-price');
-                const elemAccesorio = tarjeta.querySelector('.old-price');
+                const elemAccesorio = tarjeta.querySelector('.old-price'); // Puede ser null
 
-                // 1. MANEJO DEL PRECIO GRANDE (DESTACADO)
-                if (data.destacado) {
+                // 1. PRECIO DESTACADO
+                if (elemDestacado && data.destacado) { // Verificamos que exista el elemento
                     elemDestacado.textContent = typeof data.destacado === 'number' 
                         ? `$${data.destacado.toLocaleString('es-AR')}` 
                         : data.destacado;
                 }
 
-                // 2. MANEJO DEL TEXTO CHIQUITO (ACCESORIO)
-                if (data.accesorio) {
-                    const textoAccesorio = typeof data.accesorio === 'number' 
-                        ? `$${data.accesorio.toLocaleString('es-AR')}` 
-                        : data.accesorio;
-                    
-                    elemAccesorio.textContent = textoAccesorio;
-                    elemAccesorio.style.display = 'block';
+                // 2. PRECIO ACCESORIO (Solo si existe el elemento en el HTML)
+                if (elemAccesorio) {
+                    if (data.accesorio) {
+                        const textoAccesorio = typeof data.accesorio === 'number' 
+                            ? `$${data.accesorio.toLocaleString('es-AR')}` 
+                            : data.accesorio;
+                        
+                        elemAccesorio.textContent = textoAccesorio;
+                        elemAccesorio.style.display = 'block';
 
-                    // 3. EL INTERRUPTOR DE TACHADO
-                    if (data.tachar === true) {
-                        elemAccesorio.style.textDecoration = 'line-through';
-                        elemAccesorio.style.color = '#888'; 
+                        if (data.tachar === true) {
+                            elemAccesorio.style.textDecoration = 'line-through';
+                            elemAccesorio.style.color = '#888'; 
+                        } else {
+                            elemAccesorio.style.textDecoration = 'none'; 
+                            elemAccesorio.style.color = '#aaa'; 
+                            elemAccesorio.style.fontSize = '12px'; 
+                        }
                     } else {
-                        elemAccesorio.style.textDecoration = 'none'; 
-                        elemAccesorio.style.color = '#aaa'; 
-                        elemAccesorio.style.fontSize = '12px'; 
+                        // Si no hay dato accesorio, lo ocultamos
+                        elemAccesorio.style.display = 'none';
                     }
-                } else {
-                    elemAccesorio.style.display = 'none';
                 }
             }
         });
