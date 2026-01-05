@@ -71,7 +71,7 @@ h1, h2, h3, h4 {
     z-index: 0; 
 
     /* RUTA BARBERO */
-    background-image: url('/public/img/fondoedu.png');
+    background-image: url('/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (3).webp');
     background-size: cover;
     /* Bajamos la foto tal cual pediste */
     background-position: center -10%; 
@@ -90,7 +90,7 @@ h1, h2, h3, h4 {
     background-color: #000; 
     
     /* RUTA LOGO */
-    background-image: url('/public/img/fondologoedu.png');
+    background-image: url('/public/img/logos/Imagen3.png');
     background-size: 40%; /* Ajusta tamaño logo */
     background-repeat: no-repeat;
     background-position: left center;
