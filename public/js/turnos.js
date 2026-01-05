@@ -1,25 +1,68 @@
 // ==========================================
-// 1. IMPORTACIONES DE FIREBASE
+// 1. IMPORTACIONES
 // ==========================================
+
+// A. TUS CONFIGURACIONES LOCALES (Lo que sí exporta tu archivo)
+import { db, auth } from './firebase.js'; 
+
+// B. HERRAMIENTAS DE AUTENTICACIÓN (Desde Google)
 import { 
-    db, 
-    auth, 
-    onAuthStateChanged, 
+    onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+// C. HERRAMIENTAS DE BASE DE DATOS (Desde Google)
+import { 
     collection, 
     addDoc, 
     query, 
     where, 
-    getDocs 
-} from './firebase.js'; 
-
+    getDocs,
+    doc,        // <--- Ahora sí las traemos desde la fuente oficial
+    getDoc,
+    setDoc,
+    updateDoc,
+    increment 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 // ==========================================
 // 2. CONFIGURACIÓN Y ESTADO
 // ==========================================
 let BARBERS_CONFIG = [];
 
-// Configuración de EmailJS (Cambiá esto por tus IDs)
-const EMAIL_SERVICE_ID = "service_hamvojq"; // Tu Service ID
-const EMAIL_TEMPLATE_ID = "template_qbqjfp6"; // Tu Template ID
+// Configuración de EmailJS
+const EMAIL_SERVICE_ID = "service_hamvojq"; 
+const EMAIL_TEMPLATE_ID = "template_qbqjfp6"; 
+
+// === FUNCIÓN NUEVA PARA GESTIONAR CLIENTES (AUTO-GUARDADO) ===
+async function gestionarCliente(nombre, email) {
+    try {
+        const clientesRef = collection(db, "Clientes"); 
+        const q = query(clientesRef, where("Email", "==", email));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            // Cliente Nuevo
+            await addDoc(clientesRef, {
+                Nombre: nombre,
+                Email: email,
+                Cortes_Totales: 1,
+                Fecha_Registro: new Date()
+            });
+            console.log("✅ Nuevo cliente registrado.");
+        } else {
+            // Cliente Existente
+            const clienteDoc = querySnapshot.docs[0];
+            const clienteRef = doc(db, "Clientes", clienteDoc.id);
+            const cortesActuales = clienteDoc.data().Cortes_Totales || 0;
+            
+            await updateDoc(clienteRef, {
+                Cortes_Totales: cortesActuales + 1
+            });
+            console.log("🔄 Cliente recurrente actualizado.");
+        }
+    } catch (error) {
+        console.error("❌ Error gestionando cliente:", error);
+    }
+}
 
 function getLocalDateISO(dateObj) {
     const offset = dateObj.getTimezoneOffset() * 60000;
@@ -29,10 +72,11 @@ function getLocalDateISO(dateObj) {
 
 document.addEventListener('DOMContentLoaded', async () => {
     
-    // --- ESTADO ---
+    // --- ESTADO MODIFICADO PARA MANEJAR DOBLE PRECIO ---
     let bookingData = {
         services: [],      
-        totalPrice: 0,
+        totalVip: 0,      // Acumulador precio con descuento (Destacado)
+        totalRegular: 0,  // Acumulador precio full (Accesorio)
         mode: 'together',  
         date: null,
         time: null,
@@ -43,7 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let currentStep = 1;
     let serviceIndex = 0; 
     let guestData = null;
-    let currentUser = null; // Ahora arranca vacío, esperamos a Auth
+    let currentUser = null; 
 
     // --- DOM ---
     const modal = document.getElementById('booking-modal');
@@ -80,23 +124,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                     option.textContent = barber.name;
                     proSelect.appendChild(option);
                 });
-                
                 if (bookingData) bookingData.professional = proSelect.options[proSelect.selectedIndex].text;
             }
-
         } catch (e) {
             console.error("Error crítico cargando configuración de barberos:", e);
             BARBERS_CONFIG = [{ id: "any", name: "Cualquiera", days: [1,2,3,4,5,6], hours: ["10:00", "18:00"] }];
         }
     }
 
-    // EJECUTAMOS LA CARGA ANTES DE NADA
     await loadBarbersConfig();
 
-    // Inicializar nombre profesional
     if (proSelect) bookingData.professional = proSelect.options[proSelect.selectedIndex].text;
 
-    // --- FECHA MÍNIMA HOY ---
     const today = new Date();
     const todayFormatted = getLocalDateISO(today);
 
@@ -106,7 +145,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         bookingData.date = todayFormatted; 
     }
 
-    // --- AUTH REAL ---
     onAuthStateChanged(auth, (user) => { 
         if (user) {
             currentUser = user;
@@ -114,10 +152,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             currentUser = null;
         }
-        updateUI(); // Para actualizar precios si es VIP
+        updateUI(); 
     });
 
-    // --- EVENTOS MODAL ---
     if(openBtn) openBtn.addEventListener('click', (e) => {
         e.preventDefault();
         modal.classList.remove('hidden');
@@ -125,7 +162,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if(closeBtn) closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
 
     // ==========================================
-    // CARGA DE SERVICIOS (Igual que antes)
+    // CARGA DE SERVICIOS (LÓGICA DE PRECIOS CORREGIDA)
     // ==========================================
     async function renderServicesFromJSON() {
         try {
@@ -144,15 +181,27 @@ document.addEventListener('DOMContentLoaded', async () => {
             availableKeys.forEach(key => {
                 if (precios[key]) {
                     const item = precios[key];
-                    const rawPrice = (typeof item.destacado === 'number') ? item.destacado : item.precio; 
-                    const price = Number(rawPrice) || 0; 
+                    
+                    // --- NUEVA LÓGICA DE PRECIOS ---
+                    // 'destacado' es el precio VIP (con descuento)
+                    // 'accesorio' es el precio Regular (sin descuento)
+                    // Si no hay 'accesorio', usamos 'destacado' como fallback
+                    const vipPrice = Number(item.destacado) || 0;
+                    const rawRegular = Number(item.accesorio);
+                    const regularPrice = !isNaN(rawRegular) ? rawRegular : vipPrice;
+
                     const finalName = SERVICE_NAMES[key] || key.toUpperCase();
 
+                    // Guardamos ambos precios en los atributos del HTML
                     const html = `
-                        <div class="service-row" data-id="${key}" data-price="${price}" data-name="${finalName}">
+                        <div class="service-row" 
+                             data-id="${key}" 
+                             data-vip="${vipPrice}" 
+                             data-regular="${regularPrice}" 
+                             data-name="${finalName}">
                             <div class="srv-info">
                                 <span class="srv-name">${finalName}</span>
-                                <span class="srv-price">$${price.toLocaleString('es-AR')}</span>
+                                <span class="srv-price">$${vipPrice.toLocaleString('es-AR')}</span>
                             </div>
                             <div class="quantity-control">
                                 <button class="qty-btn minus" disabled>-</button>
@@ -175,7 +224,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const plus = row.querySelector('.plus');
             const valSpan = row.querySelector('.qty-val');
             const name = row.getAttribute('data-name');
-            const price = parseInt(row.getAttribute('data-price'));
+            
+            // Leemos los dos precios
+            const vipPrice = parseInt(row.getAttribute('data-vip'));
+            const regularPrice = parseInt(row.getAttribute('data-regular'));
 
             plus.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -184,8 +236,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 valSpan.textContent = currentQty;
                 minus.disabled = false;
                 row.classList.add('selected-active'); 
+                
                 bookingData.services.push(name);
-                bookingData.totalPrice += price;
+                
+                // Sumamos a los acumuladores por separado
+                bookingData.totalVip += vipPrice;
+                bookingData.totalRegular += regularPrice;
+
                 checkModeCompatibility();
                 updateUI();
             });
@@ -203,7 +260,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const index = bookingData.services.indexOf(name);
                     if (index > -1) {
                         bookingData.services.splice(index, 1);
-                        bookingData.totalPrice -= price;
+                        
+                        // Restamos de los acumuladores
+                        bookingData.totalVip -= vipPrice;
+                        bookingData.totalRegular -= regularPrice;
                     }
                     checkModeCompatibility();
                     updateUI();
@@ -246,7 +306,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const currentProName = proSelect.options[proSelect.selectedIndex].text;
         const barber = BARBERS_CONFIG.find(b => b.id === proId) || BARBERS_CONFIG[0];
 
-        // Validar día disponible del barbero
         const dateObj = new Date(selectedDateStr + 'T00:00:00'); 
         const dayOfWeek = dateObj.getDay(); 
         if (dayOfWeek === 0 || !barber.days.includes(dayOfWeek)) {
@@ -255,7 +314,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         try {
-            // 1. Consulta REAL a Firebase
             const q = query(
                 collection(db, "turnos"),
                 where("date", "==", selectedDateStr),
@@ -265,7 +323,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const querySnapshot = await getDocs(q);
             const dbTakenSlots = querySnapshot.docs.map(doc => doc.data().time);
 
-            // 2. Sumamos los seleccionados localmente (si es modo separado)
             const localTakenSlots = bookingData.appointments
                 .filter(appt => appt.date === selectedDateStr && appt.pro === currentProName)
                 .map(appt => appt.time);
@@ -287,19 +344,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const currentHour = now.getHours();
                     const currentMin = now.getMinutes();
 
-                    // Si la hora del turno es menor a la actual, O es la misma hora pero ya pasaron los minutos
                     if (slotHour < currentHour || (slotHour === currentHour && slotMin < currentMin)) {
                         isPastTime = true;
                     }
                 }
-                // ------------------------------------------------
 
-                // Agregamos isPastTime a la condición de bloqueo
                 if (allTakenSlots.includes(hora) || isPastTime) {
                     btn.disabled = true;
-                    // Distinguimos visualmente si está ocupado o si ya pasó
                     if (isPastTime) {
-                        btn.classList.add('past'); // Podés darle estilo grisáceo en CSS
+                        btn.classList.add('past'); 
                         btn.title = "Horario pasado";
                     } else {
                         btn.classList.add('taken'); 
@@ -382,8 +435,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (currentStep === 4) {
-            // YA NO NECESITAMOS VALIDAR INVITADO PORQUE EL BOTÓN ESTÁ OCULTO SI NO HAY USER
-            // Directamente mandamos la reserva
             await finalizarReserva();
         }
     });
@@ -435,17 +486,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnNext.textContent = "Procesando...";
         btnNext.disabled = true;
 
-        // 1. Obtener datos finales del usuario
         let finalName = currentUser ? currentUser.displayName : guestData.name;
         let finalMail = currentUser ? currentUser.email : guestData.email;
         let finalUid = currentUser ? currentUser.uid : "guest";
 
-        // 2. Preparar el String de Servicios para el Email
+        // Determinamos el precio final real AHORA
+        const isVip = currentUser && currentUser.uid !== "guest";
+        const precioFinalReserva = isVip ? bookingData.totalVip : bookingData.totalRegular;
+
         let serviciosResumen = "";
         let fechaResumen = "";
         let proResumen = "";
 
-        // Lógica de datos
         if (bookingData.mode === 'together') {
             let pName = bookingData.professional.includes("Cualquiera") ? "Cualquiera" : bookingData.professional;
             serviciosResumen = bookingData.services.join(", ");
@@ -453,12 +505,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             proResumen = pName;
         } else {
             serviciosResumen = "Paquete Multi-Turno: " + bookingData.services.join(" + ");
-            // En modo separado, hacemos un resumen de texto para el mail
             fechaResumen = bookingData.appointments.map(a => `${a.service} el ${a.date} (${a.time}) con ${a.pro}`).join(" || ");
             proResumen = "Varios Profesionales";
         }
 
-        // Datos comunes para Firebase
         const baseData = {
             uid: finalUid,
             clientName: finalName,
@@ -468,25 +518,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
 
         try {
-            // A. GUARDAR EN FIREBASE (Ahora sí es real)
+            // A. GUARDAR EN FIREBASE
             if (bookingData.mode === 'together') {
                 let pName = bookingData.professional.includes("Cualquiera") ? "Cualquiera" : bookingData.professional;
                 await addDoc(collection(db, "turnos"), {
                     ...baseData,
                     services: bookingData.services,
-                    total: bookingData.totalPrice,
+                    total: precioFinalReserva, // Precio Correcto
                     date: bookingData.date,
                     time: bookingData.time,
                     pro: pName,
                     type: 'pack'
                 });
             } else {
-                // Si es por separado, guardamos un documento por cada turno
                 const promises = bookingData.appointments.map(appt => {
                     return addDoc(collection(db, "turnos"), {
                         ...baseData,
                         services: [appt.service], 
-                        total: 0, // Podrías dividir el precio si quisieras
+                        total: 0, // En multi-turno el precio total puede ir en 0 o dividido
                         date: appt.date,
                         time: appt.time,
                         pro: appt.pro,
@@ -496,31 +545,51 @@ document.addEventListener('DOMContentLoaded', async () => {
                 await Promise.all(promises);
             }
 
-            console.log("🔥 Guardado en Firebase exitoso.");
+           console.log("🔥 Guardado en Firebase exitoso.");
+            
+            // --- LÓGICA CORREGIDA PARA GESTIÓN DE CLIENTES ---
+            if (currentUser) {
+                try {
+                    // Usamos el UID como ID del documento (Práctica recomendada en Firebase)
+                    const clientRef = doc(db, "Clientes", currentUser.uid);
+                    const clientSnap = await getDoc(clientRef);
 
-            // CALCULO DE PRECIO REAL PARA EL MAIL
-            let precioReal = bookingData.totalPrice;
-            if (currentUser) { // Si es socio, aplicamos el descuento
-                precioReal = bookingData.totalPrice - (bookingData.services.length * 1000);
-                if (precioReal < 0) precioReal = 0;
+                    if (clientSnap.exists()) {
+                        // SI YA EXISTE: Solo incrementamos el contador atómicamente
+                        await updateDoc(clientRef, {
+                            Cortes_Totales: increment(1)
+                        });
+                        console.log("🔄 Cliente recurrente actualizado (Contador +1).");
+                    } else {
+                        // SI NO EXISTE: Lo creamos con datos iniciales
+                        await setDoc(clientRef, {
+                            Nombre: currentUser.displayName || finalName,
+                            Email: currentUser.email || finalMail,
+                            Cortes_Totales: 1,
+                            Fecha_Registro: new Date()
+                        });
+                        console.log("✅ Nuevo cliente registrado en la colección Clientes.");
+                    }
+                } catch (e) {
+                    console.error("❌ Error gestionando cliente en DB:", e);
+                }
             }
+ 
 
             // B. ENVIAR EMAIL CON EMAILJS
-            // Asegurate que en tu Template de EmailJS tengas variables como {{to_name}}, {{message}}, {{date_info}}, etc.
             const templateParams = {
                 to_name: finalName,
                 to_email: finalMail,
                 service_list: serviciosResumen,
                 date_info: fechaResumen,
                 professional: proResumen,
-                total_price: `$${precioReal}`,
+                total_price: `$${precioFinalReserva}`,
                 message: "Gracias por confiar en Staff TOKZ. Te esperamos."
             };
 
             await emailjs.send(EMAIL_SERVICE_ID, EMAIL_TEMPLATE_ID, templateParams);
             console.log("📧 Email enviado exitosamente.");
 
-            // C. UI FINAL
             alert(`¡Reserva confirmada ${finalName}! Te enviamos un correo con los detalles.`);
             modal.classList.add('hidden');
             resetBooking();
@@ -536,25 +605,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function recalculateTotal() {
-        let listPrice = bookingData.totalPrice; 
-        let finalPrice = listPrice;
-        let discountAmount = 0;
+        // Obtenemos los dos totales acumulados
+        const totalVip = bookingData.totalVip;
+        const totalRegular = bookingData.totalRegular;
+        
+        let displayPrice = totalRegular; // Por defecto mostramos precio lista
+        let showCrossed = false;
 
+        // Si es usuario VIP
         if (currentUser && currentUser.uid !== "guest") {
-            discountAmount = bookingData.services.length * 1000;
-            finalPrice = listPrice - discountAmount;
-            if (finalPrice < 0) finalPrice = 0;
+            displayPrice = totalVip;
+            // Solo tachamos si hay diferencia real
+            if (totalRegular > totalVip) {
+                showCrossed = true;
+            }
         }
 
         const totalEl = document.getElementById('total-price');
         if (totalEl) {
-            if (discountAmount > 0) {
+            if (showCrossed) {
                 totalEl.innerHTML = `
-                    <span style="text-decoration: line-through; color: #888; font-size: 0.8em; margin-right: 5px;">$${listPrice.toLocaleString()}</span>
-                    <span style="color: #AE0E30;">$${finalPrice.toLocaleString()}</span>
+                    <span style="text-decoration: line-through; color: #888; font-size: 0.8em; margin-right: 5px;">$${totalRegular.toLocaleString()}</span>
+                    <span style="color: #AE0E30;">$${displayPrice.toLocaleString()}</span>
                 `;
             } else {
-                totalEl.textContent = `$${listPrice.toLocaleString()}`;
+                totalEl.textContent = `$${displayPrice.toLocaleString()}`;
             }
         }
     }
@@ -587,18 +662,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-// --- GENERADOR DE HTML (Con Mensaje de Correo) ---
     const generateSummaryHTML = (name, isVip) => {
         let resumenHTML = '';
         const proNameDisplay = bookingData.professional;
         
-        // Calculamos precios
-        const precioLista = bookingData.totalPrice;
-        const precioFinal = isVip ? 
-            (bookingData.totalPrice - (bookingData.services.length * 1000)) : 
-            bookingData.totalPrice;
+        // Usamos los acumuladores correctos
+        const precioLista = bookingData.totalRegular;
+        const precioFinal = isVip ? bookingData.totalVip : bookingData.totalRegular;
 
-        // 1. Generar lista de servicios
         if (bookingData.mode === 'separate') {
             let itemsHTML = bookingData.appointments.map(appt => `
                 <li style="margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px;">
@@ -624,7 +695,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
         }
 
-        // 2. Generar bloque de PRECIO
         let precioHTML = '';
         if (isVip && precioFinal < precioLista) {
             precioHTML = `
@@ -643,7 +713,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
         }
 
-        // 3. GENERAR MENSAJE DE CORREO (Solo para invitados)
         let emailMsg = '';
         if (!isVip && guestData) {
             emailMsg = `
@@ -676,32 +745,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
     };
 
-    // ==========================================
-    // RENDERIZADO DEL PASO FINAL (SOLO REGISTRADOS)
-    // ==========================================
     function renderFinalStep() {
-        const finalStepContainer = document.getElementById('step-3'); // OJO: Usamos el contenedor visual del paso final
+        const finalStepContainer = document.getElementById('step-3'); 
         if (!finalStepContainer) return;
 
-        finalStepContainer.innerHTML = ''; // Limpiamos
+        finalStepContainer.innerHTML = ''; 
         
         const contentWrapper = document.createElement('div');
         contentWrapper.className = 'booking-form';
 
-        // CASO 1: USUARIO LOGUEADO (Permitido)
         if (currentUser) {
             contentWrapper.innerHTML = `
                 <h2 class="step-title" style="text-align:center; color:white; margin-bottom:20px;">Revisá y Confirmá</h2>
                 ${generateSummaryHTML(currentUser.displayName, true)}
             `;
-            // Habilitamos el botón de confirmar
             if(btnNext) {
                 btnNext.style.display = 'block';
                 btnNext.textContent = "Confirmar Reserva";
                 btnNext.disabled = false;
             }
         } 
-        // CASO 2: NO LOGUEADO (Bloqueo)
         else {
             contentWrapper.innerHTML = `
                 <div style="text-align: center; padding: 30px 10px;">
@@ -742,7 +805,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function resetBooking() {
-        bookingData = { services: [], totalPrice: 0, mode: 'together', date: getLocalDateISO(new Date()), time: null, professional: 'Cualquiera', appointments: [] };
+        // Reiniciamos ambos contadores
+        bookingData = { services: [], totalVip: 0, totalRegular: 0, mode: 'together', date: getLocalDateISO(new Date()), time: null, professional: 'Cualquiera', appointments: [] };
         currentStep = 1; serviceIndex = 0; guestData = null;
         document.querySelectorAll('.qty-val').forEach(el => el.textContent = '0');
         document.querySelectorAll('.minus').forEach(el => el.disabled = true);
