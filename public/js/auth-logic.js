@@ -1,4 +1,6 @@
+// ==========================================
 // 1. IMPORTACIONES
+// ==========================================
 import { auth, provider, db } from './firebase.js'; 
 import { signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { 
@@ -7,6 +9,8 @@ import {
     where, 
     getDocs, 
     doc, 
+    setDoc,
+    getDoc,
     deleteDoc 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -27,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnBackDashboard = document.getElementById('btn-back-dashboard');
     const bookingsListContainer = document.querySelector('.bookings-list'); 
 
-    // --- GESTIÓN DE VISTAS (Necesaria para navegar) ---
+    // --- GESTIÓN DE VISTAS ---
     function switchView(viewToShow) {
         [viewLogin, viewRegister, viewUser, viewRecovery, viewBooking].forEach(el => {
             if(el) el.classList.add('hidden');
@@ -53,25 +57,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnModalConfirm = document.getElementById('btn-modal-confirm');
 
     // ==========================================
-    // 1. AUTENTICACIÓN (LO QUE NO ENCONTRABAS)
+    // 1. AUTENTICACIÓN (ESCUCHADOR DE SESIÓN)
     // ==========================================
     
-    // ESCUCHADOR DE SESIÓN: Este es el portero del edificio
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => { 
         if (user) {
             console.log("Usuario autenticado:", user.displayName);
             
-            // 1. Guardamos quién es el usuario
-            currentUserUid = user.uid;
-            
-            // 2. Cargamos SUS turnos reales
-            loadUserBookings(currentUserUid); 
+            // --- GUARDAR USUARIO EN DB AL LOGUEARSE ---
+            try {
+                const userRef = doc(db, "Clientes", user.uid);
+                const userSnap = await getDoc(userRef);
 
-            // 3. Actualizamos nombre en pantalla
+                if (!userSnap.exists()) {
+                    // Si es la primera vez que entra, lo creamos
+                    await setDoc(userRef, {
+                        Nombre: user.displayName,
+                        Email: user.email,
+                        Cortes_Totales: 0, // Empieza en 0
+                        Fecha_Registro: new Date()
+                    });
+                    console.log("✅ Usuario nuevo creado en DB al iniciar sesión.");
+                } else {
+                    console.log("👋 El usuario ya existe en la DB.");
+                }
+            } catch (error) {
+                console.error("Error al registrar usuario en DB:", error);
+            }
+            // ------------------------------------------------
+            
+            currentUserUid = user.uid;
+            loadUserBookings(currentUserUid);
+
             const userNameDisplay = document.getElementById('user-name-display');
             if(userNameDisplay) userNameDisplay.textContent = user.displayName;
             
-            // 4. Mostramos el panel de usuario
             switchView(viewUser);
         } else {
             console.log("No hay usuario, mandando al Login");
@@ -79,7 +99,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // BOTÓN LOGIN GOOGLE
+    // BOTÓN LOGOUT
+    if (btnLogout) {
+        btnLogout.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+            } catch (error) {
+                console.error("Error Logout:", error);
+            }
+        });
+    }
+
+    // BOTÓN LOGIN GOOGLE (Faltaba este evento en tu código pegado)
     if (googleBtn) {
         googleBtn.addEventListener('click', async (e) => {
             e.preventDefault();
@@ -88,18 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 console.error("Error Auth:", error);
                 alert("Error: " + error.message);
-            }
-        });
-    }
-
-    // BOTÓN LOGOUT
-    if (btnLogout) {
-        btnLogout.addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                // El onAuthStateChanged nos llevará al login automáticamente
-            } catch (error) {
-                console.error("Error Logout:", error);
             }
         });
     }
@@ -114,7 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
         bookingsListContainer.innerHTML = '<p style="text-align:center; color:#888;">Cargando tus turnos...</p>';
 
         try {
-          
             const q = query(collection(db, "turnos"), where("uid", "==", uid));
             const querySnapshot = await getDocs(q);
 
@@ -136,7 +154,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // B. FUNCIÓN DE RENDERIZADO
-    // B. FUNCIÓN DE RENDERIZADO (V2 - A Prueba de Fallos)
     function renderBookings() {
         bookingsListContainer.innerHTML = ''; 
 
@@ -145,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Ordenamos por fecha (intentando leer ambos campos)
+        // Ordenamos por fecha
         myTurnos.sort((a, b) => {
             const dateA = new Date(a.fecha || a.date);
             const dateB = new Date(b.fecha || b.date);
@@ -153,18 +170,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         myTurnos.forEach(turno => {
-            // 1. TRUCO: Leemos en español O en inglés (El Traductor)
             let fechaReal = turno.fecha || turno.date || "Sin fecha";
             let horaReal = turno.hora || turno.time || "--:--";
             let barberoReal = turno.barbero || turno.pro || "Cualquiera";
             let serviciosReal = turno.services || turno.service || "Servicio";
 
-            // Formateo de fecha lindo (DD/MM/YYYY)
             if(fechaReal.includes('-')) {
                 fechaReal = fechaReal.split('-').reverse().join('/');
             }
 
-            // Manejo de array de servicios
             let nombreServicio = Array.isArray(serviciosReal) ? serviciosReal.join(" + ") : serviciosReal;
 
             const itemHTML = `
@@ -203,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // D. CONFIRMAR BORRADO (REAL EN FIREBASE)
+    // D. CONFIRMAR BORRADO
     if(btnModalConfirm) {
         btnModalConfirm.addEventListener('click', async () => {
             if (itemToDeleteId) {
@@ -211,13 +225,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnModalConfirm.textContent = "Borrando...";
 
                 try {
-                    // Borrar de Firebase
                     await deleteDoc(doc(db, "turnos", itemToDeleteId));
                     console.log("Turno eliminado de DB:", itemToDeleteId);
 
-                    // Borrar de la lista local
                     myTurnos = myTurnos.filter(t => t.id !== itemToDeleteId);
-                    
                     renderBookings();
                     
                     if(deleteModal) deleteModal.classList.remove('active');

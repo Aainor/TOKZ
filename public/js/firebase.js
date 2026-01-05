@@ -23,7 +23,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
-
+//
 // --- ESTO ES LO NUEVO: CONEXIÓN AL EMULADOR ---
 // Si la página se abrió en "localhost" o "127.0.0.1", usamos el emulador.
 if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
