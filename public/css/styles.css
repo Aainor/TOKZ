@@ -225,7 +225,7 @@ header.header-scrolled {
 
 .about-new-design {
     position: relative;
-    background-image: url('/public/img/fotos/turnos.jpeg');
+    background-image: url('/public/img/fotos/turnos.webp');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
