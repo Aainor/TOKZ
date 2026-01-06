@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="/public/img/iconos/favicon.webp" type="image/png">
+    <link rel="icon" href="/public/img/iconos/favicon.png" type="image/png">
     <link rel="stylesheet" href="/public/css/styles.css">
     <link rel="stylesheet" href="/public/css/turnos.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
     <title>Turnos</title>
-    
+
 </head>
+
 <body>
     <div id="header-placeholder"></div>
 
@@ -17,27 +21,27 @@
 
         <h2>STAFF TOKZ</h2>
         <p>Elegí quién se encarga de tu estilo. #ConfiaEnTuBarber</p>
-            <div class="team-grid">
-    
-                <div class="barber-card" onclick="selectBarber(this)">
-                    <img class="ale-img" src="/public/img/barbers/ale.webp" alt="Barbero">
-                    <h3>Alejandra Sanchez</h3>
-                    <p>Cortes</p>
-                </div>
+        <div class="team-grid">
 
-                <div class="barber-card active" onclick="selectBarber(this)">
-                    <img class="nico-img" src="/public/img/barbers/nico.webp" alt="Barbero">
-                    <h3>Nicolás Ruibal</h3>
-                    <p>Barba</p>
-                </div>
-
-                <div class="barber-card" onclick="selectBarber(this)">
-                    <img src="/public/img/barbers/lauty.webp" alt="Barbero">
-                    <h3>Lautaro Ribeiro</h3>
-                    <p>Diseño</p>
-                </div>
-                
+            <div class="barber-card" onclick="selectBarber(this)">
+                <img class="ale-img" src="/public/img/barbers/ale.webp" alt="Barbero">
+                <h3>Alejandra Sanchez</h3>
+                <p>Cortes</p>
             </div>
+
+            <div class="barber-card active" onclick="selectBarber(this)">
+                <img class="nico-img" src="/public/img/barbers/nico.webp" alt="Barbero">
+                <h3>Nicolás Ruibal</h3>
+                <p>Barba</p>
+            </div>
+
+            <div class="barber-card" onclick="selectBarber(this)">
+                <img src="/public/img/barbers/lauty.webp" alt="Barbero">
+                <h3>Lautaro Ribeiro</h3>
+                <p>Diseño</p>
+            </div>
+
+        </div>
     </section>
 
     <section class="services-section fade-in" id="reserva">
@@ -49,7 +53,7 @@
             <span class="tag">¿DÓNDE ESTAMOS?</span>
             <div class="address-box">
                 <p class="main-address">💈 Combatientes de Malvinas 317, Guernica.</p>
-                
+
                 <div class="hours-container">
                     <h4>Horarios de Atención</h4>
                     <ul class="hours-list">
@@ -57,9 +61,10 @@
                         <li><span>Domingos:</span> Cerrado</li>
                     </ul>
                 </div>
-                
+
                 <div class="contact-actions">
-                    <a href="https://www.google.com/maps/dir/?api=1&destination=-34.91845462304865,-58.37899502580087" target="_blank" class="cta-button">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=-34.91845462304865,-58.37899502580087"
+                        target="_blank" class="cta-button">
                         Cómo llegar
                     </a>
                     <a href="https://wa.me/541168606201" target="_blank" class="cta-button">
@@ -70,110 +75,113 @@
         </div>
 
         <div class="map-frame-container fade-in">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3271.5211339388193!2d-58.37898239999999!3d-34.918465000000005!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bd2bd0038daf6f%3A0x81f65e0941504361!2sTOKZ%20BARBERIA!5e0!3m2!1ses!2sar!4v1767292008911!5m2!1ses!2sar" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3271.5211339388193!2d-58.37898239999999!3d-34.918465000000005!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bd2bd0038daf6f%3A0x81f65e0941504361!2sTOKZ%20BARBERIA!5e0!3m2!1ses!2sar!4v1767292008911!5m2!1ses!2sar"
+                allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
     </section>
 
-    
+
 
     <div id="booking-modal" class="modal-overlay hidden">
-    <div class="wizard-card">
-        
-        <div class="wizard-header">
-            <h3>Reservá tu lugar</h3>
-            <button id="close-modal-btn" class="close-btn">&times;</button>
-        </div>
+        <div class="wizard-card">
 
-        <div class="progress-bar">
-            <div class="step-dot active" data-step="1">ㅤ</div>
-            <div class="step-line"></div>
-            <div class="step-dot" data-step="2">ㅤ</div>
-            <div class="step-line"></div>
-            <div class="step-dot" data-step="3">ㅤ</div>
-        </div>
-
-        <div class="wizard-content">
-            
-           <div id="step-1" class="step-section active">
-    <h4 class="step-title">Elegí tus servicios</h4>
-    
-    <div class="services-list"></div>
-    
-</div>
-
-            <div id="step-mode" class="step-section hidden">
-    <h4 class="step-title">Tenés múltiples servicios</h4>
-    <p style="color: #888; text-align: center; margin-bottom: 20px;">¿Cómo preferís organizarlos?</p>
-    
-    <div class="mode-selection-container">
-        <div class="mode-card selected" id="mode-together" onclick="selectMode('together')">
-            <div class="mode-icon">🚀</div>
-            <div class="mode-info">
-                <h5>Uno tras otro</h5>
-                <p>Todo junto en una sola visita. Ideal para ahorrar tiempo.</p>
+            <div class="wizard-header">
+                <h3>Reservá tu lugar</h3>
+                <button id="close-modal-btn" class="close-btn">&times;</button>
             </div>
-            
-        </div>
 
-        <div class="mode-card" id="mode-separate" onclick="selectMode('separate')">
-            <div class="mode-icon">📅</div>
-            <div class="mode-info">
-                <h5>Por separado</h5>
-                <p>Elegí días u horarios distintos para cada servicio.</p>
+            <div class="progress-bar">
+                <div class="step-dot active" data-step="1">ㅤ</div>
+                <div class="step-line"></div>
+                <div class="step-dot" data-step="2">ㅤ</div>
+                <div class="step-line"></div>
+                <div class="step-dot" data-step="3">ㅤ</div>
             </div>
-            
-        </div>
-    </div>
-</div>
 
-            <div id="step-2" class="step-section hidden">
-                <h4 class="step-title">Elegí profesional y horario</h4>
-                <h5 id="current-service-title" style="color: #D32F2F; margin-bottom: 15px;"></h5>
-                
-                <div class="date-selector-container" style="margin-bottom: 20px;">
-                    <label style="color:white; display:block; margin-bottom:5px;">Fecha del turno:</label>
-                    <input type="date" id="date-picker" class="input-fecha-pro">
+            <div class="wizard-content">
+
+                <div id="step-1" class="step-section active">
+                    <h4 class="step-title">Elegí tus servicios</h4>
+
+                    <div class="services-list"></div>
+
                 </div>
 
-            <div class="pro-selector" style="margin-bottom: 20px;">
-                <label style="color:white;">Profesional:</label>
-                <select id="pro-select">
-                    <option value="any">Cualquiera (Más horarios)</option>
-                    <option value="nico">Nico</option>
-                    <option value="juan">Juan</option>
-                    <option value="leo">Leo</option>
-                </select>
-            </div>
+                <div id="step-mode" class="step-section hidden">
+                    <h4 class="step-title">Tenés múltiples servicios</h4>
+                    <p style="color: #888; text-align: center; margin-bottom: 20px;">¿Cómo preferís organizarlos?</p>
 
-            <div class="time-grid" id="time-grid-container"></div>
-            </div>
+                    <div class="mode-selection-container">
+                        <div class="mode-card selected" id="mode-together" onclick="selectMode('together')">
+                            <div class="mode-icon">🚀</div>
+                            <div class="mode-info">
+                                <h5>Uno tras otro</h5>
+                                <p>Todo junto en una sola visita. Ideal para ahorrar tiempo.</p>
+                            </div>
 
+                        </div>
 
+                        <div class="mode-card" id="mode-separate" onclick="selectMode('separate')">
+                            <div class="mode-icon">📅</div>
+                            <div class="mode-info">
+                                <h5>Por separado</h5>
+                                <p>Elegí días u horarios distintos para cada servicio.</p>
+                            </div>
 
-            <div id="step-3" class="step-section hidden">
-                <h4 class="step-title">Tus Datos</h4>
-                <form class="booking-form">
-                    <input type="text" placeholder="Nombre completo" required>
-                    <input type="mail" placeholder="Correo electrónico" required>
-                    <div class="login-promo">
-                        <p>🔒 ¿Ya tenés cuenta? <a href="#">Ingresá</a> para ahorrar $1000 en cada servicio reservado.</p>
+                        </div>
                     </div>
-                </form>
-            </div>
-        </div>
+                </div>
 
-        <div class="wizard-footer">
-            <div class="total-display">
-                <span>Total:</span>
-                <strong id="total-price">$0</strong>
+                <div id="step-2" class="step-section hidden">
+                    <h4 class="step-title">Elegí profesional y horario</h4>
+                    <h5 id="current-service-title" style="color: #D32F2F; margin-bottom: 15px;"></h5>
+
+                    <div class="date-selector-container" style="margin-bottom: 20px;">
+                        <label style="color:white; display:block; margin-bottom:5px;">Fecha del turno:</label>
+                        <input type="date" id="date-picker" class="input-fecha-pro">
+                    </div>
+
+                    <div class="pro-selector" style="margin-bottom: 20px;">
+                        <label style="color:white;">Profesional:</label>
+                        <select id="pro-select">
+                            <option value="any">Cualquiera (Más horarios)</option>
+                            <option value="nico">Nico</option>
+                            <option value="juan">Juan</option>
+                            <option value="leo">Leo</option>
+                        </select>
+                    </div>
+
+                    <div class="time-grid" id="time-grid-container"></div>
+                </div>
+
+
+
+                <div id="step-3" class="step-section hidden">
+                    <h4 class="step-title">Tus Datos</h4>
+                    <form class="booking-form">
+                        <input type="text" placeholder="Nombre completo" required>
+                        <input type="mail" placeholder="Correo electrónico" required>
+                        <div class="login-promo">
+                            <p>🔒 ¿Ya tenés cuenta? <a href="#">Ingresá</a> para ahorrar $1000 en cada servicio
+                                reservado.</p>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="wizard-actions">
-                <button id="btn-back" class="btn-secondary hidden">Atrás</button>
-                <button id="btn-next" class="btn-primary" disabled>Siguiente</button>
+
+            <div class="wizard-footer">
+                <div class="total-display">
+                    <span>Total:</span>
+                    <strong id="total-price">$0</strong>
+                </div>
+                <div class="wizard-actions">
+                    <button id="btn-back" class="btn-secondary hidden">Atrás</button>
+                    <button id="btn-next" class="btn-primary" disabled>Siguiente</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <div id="footer-placeholder"></div>
     <script src="/public/js/main.js"></script>
@@ -183,10 +191,11 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
     <script type="text/javascript">
-   (function(){
-      // Reemplazá esto con tu PUBLIC KEY de EmailJS
-      emailjs.init("2D_GFcNd8DvvotnP9");
-   })();
+        (function () {
+            // Reemplazá esto con tu PUBLIC KEY de EmailJS
+            emailjs.init("2D_GFcNd8DvvotnP9");
+        })();
     </script>
 </body>
+
 </html>

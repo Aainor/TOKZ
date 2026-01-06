@@ -71,7 +71,7 @@ h1, h2, h3, h4 {
     z-index: 0; 
 
     /* RUTA BARBERO */
-    background-image: url('/public/img/FOTOS Y VIDEOS DE MULTIMEDIA/multimedia (3).webp');
+    background-image: url('/public/img/fotos/educacion.webp');
     background-size: cover;
     /* Bajamos la foto tal cual pediste */
     background-position: center -10%; 
