@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - TOKZ Barber</title>
-    <link rel="icon" href="/public/img/iconos/favicon.png" type="image/png">
+    <link rel="icon" href="/public/img/iconos/favicon.webp" type="image/png">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -72,6 +72,29 @@
 
             </div>
         </div>
+        <div id="view-barber" class="hidden fade-in" style="text-align: center; padding: 20px;">
+        <div class="dashboard-header" style="margin-top:40px; margin-bottom: 20px;">
+            <p style="color:#aaa; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem;">Staff Tokz</p>
+            <h2 style="color:white; font-size: 2rem;">Hola, <span id="barber-name-display" style="color:#AE0E30;">Colega</span></h2>
+            <p style="color:#ccc;">Esta es tu agenda actualizada:</p>
+        </div>
+
+        <div class="barber-bookings-list" style="max-width: 600px; margin: 0 auto 30px auto; padding: 0 15px;">
+            <p style="color:#666;">Cargando...</p>
+        </div>
+
+        <div style="margin-bottom:15px;">
+            <button id="btn-refresh-barber" class="cta-button" style="background:none; border: 1px solid #444; padding: 8px 20px; font-size: 0.9rem; cursor: pointer; color: white;">
+                <i class="fa-solid fa-rotate-right"></i> Actualizar Agenda
+            </button>
+        </div>
+
+        <div style="margin-bottom:50px;">
+            <button id="btn-logout-barber" class="cta-button" style="background:#333; font-size: 0.9rem; cursor: pointer;">
+                Cerrar Sesión
+            </button>
+        </div>
+    </div>
 
         <div id="booking-mod" class="hidden">
     <div class="login-header">
