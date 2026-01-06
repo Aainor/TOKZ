@@ -27,7 +27,7 @@ import {
 // 2. CONFIGURACIÓN Y ESTADO
 // ==========================================
 let BARBERS_CONFIG = [];
-
+let PRICES_DB = {};
 // Configuración de EmailJS
 const EMAIL_SERVICE_ID = "service_hamvojq"; 
 const EMAIL_TEMPLATE_ID = "template_qbqjfp6"; 
@@ -191,6 +191,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const regularPrice = !isNaN(rawRegular) ? rawRegular : vipPrice;
 
                     const finalName = SERVICE_NAMES[key] || key.toUpperCase();
+                    
+                    PRICES_DB[finalName] = { vip: vipPrice, regular: regularPrice };
 
                     // Guardamos ambos precios en los atributos del HTML
                     const html = `
@@ -532,10 +534,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
             } else {
                 const promises = bookingData.appointments.map(appt => {
+                    // 1. Buscamos el precio en nuestra memoria
+                    const preciosServicio = PRICES_DB[appt.service] || { vip: 0, regular: 0 };
+                    const precioIndividual = isVip ? preciosServicio.vip : preciosServicio.regular;
+
                     return addDoc(collection(db, "turnos"), {
                         ...baseData,
                         services: [appt.service], 
-                        total: 0, // En multi-turno el precio total puede ir en 0 o dividido
+                        total:precioIndividual, // En multi-turno el precio total puede ir en 0 o dividido
                         date: appt.date,
                         time: appt.time,
                         pro: appt.pro,
