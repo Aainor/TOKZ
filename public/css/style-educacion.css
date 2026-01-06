@@ -71,12 +71,13 @@ h1, h2, h3, h4 {
     z-index: 0; 
 
     /* RUTA BARBERO */
-    background-image: url('/public/img/fotos/educacion.webp');
-    background-size: cover;
+    background-image: url('/public/img/IMAGENES/horizontales/hori\ \(12\).webp');
+    background-size: contain;
     /* Bajamos la foto tal cual pediste */
-    background-position: center -10%; 
+    background-position: right 50px; 
 }
 
+/* 2. IMAGEN IZQUIERDA (EL LOGO) - ARRIBA Y NEGRA */
 /* 2. IMAGEN IZQUIERDA (EL LOGO) - ARRIBA Y NEGRA */
 .edu-hero-bg-left {
     position: absolute;
@@ -91,18 +92,23 @@ h1, h2, h3, h4 {
     
     /* RUTA LOGO */
     background-image: url('/public/img/logos/Imagen3.png');
-    background-size: 40%; /* Ajusta tamaño logo */
+    background-size:25%; /* Ajusta tamaño logo */
     background-repeat: no-repeat;
-    background-position: left center;
+    background-position: 200px center;
 
-    /* EL CORTE DIAGONAL */
-    clip-path: polygon(0 0, 60% 0, 40% 100%, 0% 100%);
+    /* --- CAMBIO AQUÍ --- */
+
+    /* 1. BORRAMOS O COMENTAMOS EL CLIP-PATH (El corte duro) */
+    /* clip-path: polygon(0 0, 60% 0, 40% 100%, 0% 100%); */
     
-    /* BORDE ROJO EN EL CORTE */
-    filter: drop-shadow(4px 0 0 var(--edu-red));
+    /* 2. AGREGAMOS MÁSCARA DE DEGRADADO (El borde difuminado) */
+    /* Esto crea una transición suave de opaco a transparente en diagonal */
+    -webkit-mask-image: linear-gradient(105deg, black 45%, transparent 60%);
+    mask-image: linear-gradient(105deg, black 45%, transparent 60%);
+    
+    /* 3. EL FILTRO SE MANTIENE (Ahora creará un resplandor rojo difuso) */
+    filter: drop-shadow(4px 0 5px var(--edu-red)); /* Le agregué 5px de desenfoque al rojo también */
 }
-
-/* 3. CAPA DE OSCURIDAD (SOLO SOBRE EL BARBERO) */
 .edu-hero::after {
     content: '';
     position: absolute;
@@ -110,16 +116,54 @@ h1, h2, h3, h4 {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Sombra suave */
+    background: rgba(0, 0, 0, 0.4); /* Sombra un poco más suave para que contraste el texto */
     z-index: 2;
     pointer-events: none;
 }
 
-/* 4. TEXTO */
+/* 4. TEXTO HERO (MODIFICADO) */
 .edu-hero-content {
     position: relative;
     z-index: 3;
 }
+
+/* Subtítulo Hero */
+.edu-hero-content .edu-subtitle {
+    font-size: 20px; /* Aumentado */
+    /* Trazo negro y sombra */
+    text-shadow: 
+        -1px -1px 0 #000,  
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000,
+         3px 3px 5px rgba(0,0,0,0.8); /* Sombra difuminada */
+}
+
+/* Título Principal H1 Hero */
+.edu-hero-content h1 {
+    font-size: 60px; /* Aumentado considerablemente */
+    /* Trazo negro más grueso y sombra */
+    text-shadow: 
+        -2px -2px 0 #000,  
+         2px -2px 0 #000,
+        -2px  2px 0 #000,
+         2px  2px 0 #000,
+         4px 4px 8px rgba(0,0,0,0.9);
+}
+
+/* Párrafo Introductorio Hero */
+.edu-instructor-intro {
+    font-size: 18px; /* Aumentado */
+    font-weight: 500; /* Un poco más grueso para legibilidad */
+    /* Trazo negro y sombra */
+    text-shadow: 
+        -1px -1px 0 #000,  
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000,
+         2px 2px 4px rgba(0,0,0,0.8);
+}
+
 
 /* LISTA MENTORES */
 .edu-mentors-marquee {
@@ -294,7 +338,7 @@ h1, h2, h3, h4 {
 .edu-price-action-row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start; /* Alineación superior */
     border-top: 1px solid #333;
     padding-top: 30px;
 }
@@ -302,6 +346,7 @@ h1, h2, h3, h4 {
 .edu-price-box {
     display: flex;
     flex-direction: column;
+    flex: 1; /* Toma el espacio disponible */
 }
 
 .edu-price-box .label {
@@ -318,6 +363,8 @@ h1, h2, h3, h4 {
 
 .edu-cta-box {
     text-align: right;
+    flex: 0 0 auto; /* No crece, mantiene su tamaño */
+    margin-left: 30px;
 }
 
 .cert-note {
@@ -378,6 +425,7 @@ h1, h2, h3, h4 {
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
+    /* --- 1. REGLAS QUE YA TENÍAS (MANTENLAS) --- */
     .edu-grid-2-cols,
     .edu-milestone-grid,
     .edu-syllabus-columns,
@@ -393,17 +441,59 @@ h1, h2, h3, h4 {
 
     .edu-cta-box {
         text-align: center;
-        margin-top: 20px;
+        margin-top: 30px;
+        margin-left: 0;
     }
 
-    .edu-hero h1 {
-        font-size: 36px;
+    /* Ajuste de textos */
+    .edu-hero-content h1 {
+        font-size: 38px; /* Un poco más chico para que no rompa la pantalla */
+    }
+    .edu-hero-content .edu-subtitle,
+    .edu-instructor-intro {
+         font-size: 16px;
     }
 
     .edu-price-box {
         align-items: center;
+        text-align: center;
+    }
+    
+    /* Centrar textos de precios */
+    .edu-accordion-inner .edu-hardcoded-price,
+    .edu-accordion-inner .label,
+    .edu-accordion-inner .note,
+    .edu-private-contact {
+         text-align: center !important;
+    }
+
+    /* --- 2. EL ARREGLO NUEVO PARA LOS FONDOS (LO QUE FALTABA) --- */
+    
+    /* Foto del Barbero: Llenar pantalla y centrar */
+    .edu-hero-bg-right {
+        background-size: cover !important; 
+        background-position: center center !important; 
+        opacity: 0.5; /* Un poco más oscuro para leer el texto */
+    }
+
+    /* Logo: Centrado y más grande */
+    .edu-hero-bg-left {
+        background-position: center center !important; 
+        background-size: 60% !important; 
+        /* Difuminado vertical para celular */
+        -webkit-mask-image: linear-gradient(180deg, black 30%, transparent 90%) !important;
+        mask-image: linear-gradient(180deg, black 30%, transparent 90%) !important;
+        opacity: 0.8;
     }
 }
+    
+    /* Centrar textos de precios en móvil */
+    .edu-accordion-inner .edu-hardcoded-price,
+    .edu-accordion-inner .label,
+    .edu-accordion-inner .note,
+    .edu-private-contact {
+         text-align: center !important;
+    }
 
 /* --- ESTILOS PARA EL ACORDEÓN --- */
 .edu-accordion-wrapper {
@@ -455,6 +545,7 @@ h1, h2, h3, h4 {
     color: var(--edu-red);
     transition: transform 0.3s ease;
     font-size: 16px;
+    margin-left: 15px; /* Separación del icono */
 }
 
 .edu-accordion-content {
@@ -504,30 +595,7 @@ h1, h2, h3, h4 {
     transform: rotate(180deg);
 }
 
-/* --- ESTILOS DE PRECIO --- */
-.price-details {
-    display: flex;
-    flex-direction: column; 
-    align-items: flex-start;
-    margin-top: 5px;
-    width: 100%;
-}
-
-.price-details, 
-.price-details * { 
-    color: #AE0E30;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
-    font-size: 54px;
-    line-height: 1.1;
-    margin: 0;
-    padding: 0;
-}
-
-.price-details .promo-price,
-.price-details .promo-price * {
-    font-size: 42px;
-    color: #AE0E30 !important; 
-    font-weight: bold;
-    line-height: 1;
-}
+/* --- ESTILOS DE PRECIO (Eliminados o ajustados) --- */
+/* Los estilos .price-details anteriores se han eliminado porque
+   ahora usamos estilos en línea en el HTML para los precios fijos,
+   o clases utilitarias nuevas como .edu-hardcoded-price si fuera necesario. */

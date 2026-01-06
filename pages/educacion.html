@@ -9,6 +9,18 @@
     <link rel="stylesheet" href="/public/css/styles.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        .mentor-link {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .mentor-link:hover {
+            color: #AE0E30; /* Se pondrán rojos al pasar el mouse */
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
 
@@ -58,7 +70,7 @@
                     <button class="edu-accordion-btn" type="button">
                         <div class="edu-btn-text-group">
                             <span class="edu-btn-title">CURSO INICIAL DE BARBERÍA</span>
-                            <span class="edu-btn-subtitle">Duración: 6 a 12 meses</span>
+                            <span class="edu-btn-subtitle" style="line-height: 1.4;">Duración: 6 meses - Clases los días Miércoles de 14h a 16:30h - Inscripcion ABIERTA TODO EL AÑO -</span>
                         </div>
                         <i class="fa-solid fa-chevron-down edu-accordion-icon"></i>
                     </button>
@@ -67,13 +79,13 @@
                         <div class="edu-accordion-inner">
                             <div class="edu-course-header">
                                 <div class="edu-course-meta">
-                                    <span><i class="fa-solid fa-clock text-red"></i> Duración: 6 a 12 meses</span>
-                                    <span><i class="fa-solid fa-calendar-days text-red"></i> Martes (14h) • Miércoles (14h) • Jueves (7h)</span>
+                                    <span><i class="fa-solid fa-clock text-red"></i> Duración: 6 meses</span>
+                                    <span><i class="fa-solid fa-calendar-days text-red"></i> Miércoles (14h a 16:30h)</span>
                                 </div>
                             </div>
 
                             <div class="edu-milestones-area">
-                                <h4><i class="fa-solid fa-stairs"></i> Tu Evolución Estimada</h4>
+                                <h4><i class="fa-solid fa-stairs"></i> Resultados garantizados en:</h4>
                                 <div class="edu-milestone-grid">
                                     <div class="edu-milestone">
                                         <span class="m-number">4</span>
@@ -96,10 +108,13 @@
                                         <p>Listo para trabajar y desarrollar tu propia clientela.</p>
                                     </div>
                                 </div>
+                                <p style="text-align: center; margin-top: 25px; color: white; font-weight: bold; font-size: 16px;">
+                                    "Incluye certificado tamaño A4 impreso y firmado"
+                                </p>
                             </div>
 
                             <div class="edu-syllabus-area">
-                                <h4><i class="fa-solid fa-list-ol"></i> Temario del Curso</h4>
+                                <h4><i class="fa-solid fa-list-ol"></i> Plan de estudios</h4>
                                 <ul class="edu-syllabus-columns">
                                     <li>1. Diagnóstico y Herramientas</li>
                                     <li>2. Corte Americano (Teórico/Práctico)</li>
@@ -119,12 +134,15 @@
 
                             <div class="edu-price-action-row">
                                 <div class="edu-price-box">
-                                    <span class="label">Cuota Mensual</span>
-                                    <div class="price-details" data-id="curso"> 
-                                        <p class="promo-price">Cargando...</p>
-                                        <p class="old-price"></p> 
+                                    <span class="label" style="font-size: 15px; color: white; margin-bottom: 10px; display:block;">La inversión para tu formación profesional es de..</span>
+                                    
+                                    <div class="edu-hardcoded-price">
+                                        <div style="color: #AE0E30; font-family: 'Montserrat', sans-serif; font-size: 46px; font-weight: 700; line-height: 1;">$90.000</div>
+                                        <div style="color: #fff; font-family: 'Montserrat', sans-serif; font-size: 18px; margin-top: 5px;">o <span style="color: #AE0E30; font-weight: 700; font-size: 32px;">$80.000</span> en efectivo.</div>
                                     </div>
-                                    <span class="note">*Efectivo o Transferencia. No se devuelve dinero.</span>
+
+                                    <span class="note" style="display:block; margin-top: 10px; font-size: 13px;">(Valor x 4 clases)</span>
+                                    <span class="note" style="display:block; margin-top: 5px; color: #AE0E30; font-weight: bold; font-size: 13px;">No se devuelve el dinero bajo ninguna condición.</span>
                                 </div>
                                 <div class="edu-cta-box">
                                     <a href="https://wa.me/541168606201?text=Hola,%20quiero%20inscribirme%20al%20Curso%20Inicial" class="cta-button">QUIERO INSCRIBIRME</a>
@@ -138,7 +156,7 @@
                 <div class="edu-accordion-wrapper" style="border-top: none;">
                     <button class="edu-accordion-btn" type="button">
                         <div class="edu-btn-text-group">
-                            <span class="edu-btn-title">CLASES PRIVADAS</span>
+                            <span class="edu-btn-title">PERFECCIONAMIENTO PRIVADO</span>
                             <span class="edu-btn-subtitle">Espacio exclusivo 1 a 1.</span>
                         </div>
                         <i class="fa-solid fa-chevron-down edu-accordion-icon"></i>
@@ -150,19 +168,30 @@
                                 En estas clases privadas trabajaremos puntualmente lo que necesites pulir: desde <strong>técnicas avanzadas de fade</strong> y uso de tijera, hasta diseño de barba. Es un espacio personalizado para atacar tus dudas.
                             </div>
                             
-                            <div class="price-details" data-id="privado" style="margin: 20px 0; border-top: 1px dashed #333; border-bottom: 1px dashed #333; padding: 15px 0;">
-                                <span style="font-size: 12px; color: #aaa; text-transform: uppercase; display: block; margin-bottom: 5px;">Valor por mes:</span>
-                                <div style="display: flex; flex-direction: column; align-items: flex-start; width: 100%; color: #AE0E30; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 54px; line-height: 1.1;"> 
-                                    $180.000
+                            <div style="margin: 20px 0; border-top: 1px dashed #333; border-bottom: 1px dashed #333; padding: 20px 0; text-align: left;">
+                                <span style="font-size: 15px; color: white; text-transform: uppercase; display: block; margin-bottom: 5px; font-family: 'Montserrat', sans-serif;">
+                                    La inversión para este perfeccionamiento privado y personalizado es de...
+                                </span>
+                                <span style="font-size: 13px; color: #aaa; display: block; margin-bottom: 15px;">(Valor x 4 clases)</span>
+
+                                <div class="edu-hardcoded-price">
+                                    <div style="color: #AE0E30; font-family: 'Montserrat', sans-serif; font-size: 52px; font-weight: 700; line-height: 1;">$240.000</div>
+                                    <div style="color: #fff; font-family: 'Montserrat', sans-serif; font-size: 18px; margin-top: 5px;">o <span style="color: #AE0E30; font-weight: 700; font-size: 36px;">$200.000</span> en efectivo.</div>
                                 </div>
-                                <p class="old-price"></p>
+
+                                <div style="margin-top: 25px; margin-bottom: 10px;">
+                                    <div class="edu-cta-box">
+                                        <a href="https://wa.me/541168606201?text=Hola,%20quiero%20inscribirme%20al%20Perfeccionamiento%20Privado" class="cta-button">QUIERO INSCRIBIRME</a>
+                                        <p class="cert-note"><i class="fa-solid fa-certificate"></i> Incluye Certificado de Asistencia al aprobar examen final.</p>
+                                    </div>
+                                </div>
                             </div>
 
                             <p>Comunícate por WhatsApp para coordinar temario, fechas y armar un plan de estudio acorde a tus necesidades.</p>
                             
                             <div class="edu-private-contact">
                                 <h4>Nicolás Ruibal.</h4>
-                                <p><i class="fa-brands fa-whatsapp text-red"></i> 1168606201</p>
+                            
                             </div>
                         </div>
                     </div>
@@ -178,23 +207,42 @@
             <p class="edu-tools-intro">No obligamos a comprar marcas específicas. En la clase 1 te asesoramos. Alumnos tienen descuentos y cuotas en nuestra tienda.</p>
             
             <div class="edu-tools-list-styled">
-                <span>Máquina de Corte (Wahl Matrix)</span>
-                <span>Patillera (Cuchilla T)</span>
-                <span>Navaja y Filos</span>
-                <span>Cepillo de Fade</span>
+                <span>Máquina de Corte. (Con peines 0 ½ y 1 ½, palanca guía, de preferencia que comparta la MATRIZ WAHL)</span>
+                <span>Patillera (Cuchilla en T)</span>
+                <span>Navaja (Filos de Navaja)</span>
+                <span>Cepillo de Fade (Tipo Andis)</span>
                 <span>Pelusera y Talco</span>
                 <span>Capa de corte</span>
                 <span>Rociador</span>
                 <span>Peine de Corte</span>
-                <span>Tijera filo navaja</span>
+                <span>Tijera de filo navaja</span>
                 <span>Tijera de Pulir</span>
             </div>
         </div>
 
         <div class="edu-mentors-marquee">
-            <p class="edu-mentors-label">Formado con:</p>
+            <p class="edu-mentors-label">Mis métodos son una recopilación de lo aprendido con grandes maestros:</p>
+            
             <div class="edu-mentors-list">
-                <span>Stelly Cañete(@stellyca)</span> • <span>Carlos Acevedo (@carlosacevedooficial)</span> • <span>Micael Insaurralde(@micaelinsaurralde)</span> • <span>Emanuel Roda(@swag_barber)</span> • <span>Martín Valor(@kingsizebarbershop)</span> • <span>Joaquin Morales(@debarrio_barber_tatoo)</span> • <span>Ezequiel Moreno Y Nico Moreno(@morenosbarberclub)</span> • <span>Franco Sánchez(@polemicolook)</span> • <span>Maximiliano Torres(@maximiliano_torrez)</span> • <span>Ubbe (@ubbe07)</span> • <span>Enzo Aballay(@enzourbancuts)</span> • <span>Facu Navajas(@facu_nvj)</span> • <span>Diego Navajas (@diegonavajas79)</span> • <span>Irán Recalde (@iran_recalde)</span> • <span>@rulasbyjohannapizzotti @marcelo.nasra @pivotpoint.ar</span> • <span>@benditas_ @polemico_look</span>
+                <span><a href="https://www.instagram.com/stellyca" target="_blank" class="mentor-link">Stelly Cañete(@stellyca)</a></span> • 
+                <span><a href="https://www.instagram.com/carlosacevedooficial" target="_blank" class="mentor-link">Carlos Acevedo (@carlosacevedooficial)</a></span> • 
+                <span><a href="https://www.instagram.com/micaelinsaurralde" target="_blank" class="mentor-link">Micael Insaurralde(@micaelinsaurralde)</a></span> • 
+                <span><a href="https://www.instagram.com/swag_barber" target="_blank" class="mentor-link">Emanuel Roda(@swag_barber)</a></span> • 
+                <span><a href="https://www.instagram.com/kingsizebarbershop" target="_blank" class="mentor-link">Martín Valor(@kingsizebarbershop)</a></span> • 
+                <span><a href="https://www.instagram.com/debarrio_barber_tatoo" target="_blank" class="mentor-link">Joaquin Morales(@debarrio_barber_tatoo)</a></span> • 
+                <span><a href="https://www.instagram.com/morenosbarberclub" target="_blank" class="mentor-link">Ezequiel Moreno Y Nico Moreno(@morenosbarberclub)</a></span> • 
+                <span><a href="https://www.instagram.com/polemicolook" target="_blank" class="mentor-link">Franco Sánchez(@polemicolook)</a></span> • 
+                <span><a href="https://www.instagram.com/maximiliano_torrez" target="_blank" class="mentor-link">Maximiliano Torres(@maximiliano_torrez)</a></span> • 
+                <span><a href="https://www.instagram.com/ubbe07" target="_blank" class="mentor-link">Ubbe (@ubbe07)</a></span> • 
+                <span><a href="https://www.instagram.com/enzourbancuts" target="_blank" class="mentor-link">Enzo Aballay(@enzourbancuts)</a></span> • 
+                <span><a href="https://www.instagram.com/facu_nvj" target="_blank" class="mentor-link">Facu Navajas(@facu_nvj)</a></span> • 
+                <span><a href="https://www.instagram.com/diegonavajas79" target="_blank" class="mentor-link">Diego Navajas (@diegonavajas79)</a></span> • 
+                <span><a href="https://www.instagram.com/iran_recalde" target="_blank" class="mentor-link">Irán Recalde (@iran_recalde)</a></span> • 
+                <span><a href="https://www.instagram.com/rulasbyjohannapizzotti" target="_blank" class="mentor-link">@rulasbyjohannapizzotti</a></span> 
+                <span><a href="https://www.instagram.com/marcelo.nasra" target="_blank" class="mentor-link">@marcelo.nasra</a></span> 
+                <span><a href="https://www.instagram.com/pivotpoint.ar" target="_blank" class="mentor-link">@pivotpoint.ar</a></span> • 
+                <span><a href="https://www.instagram.com/benditas_" target="_blank" class="mentor-link">@benditas_</a></span> 
+                <span><a href="https://www.instagram.com/polemico_look" target="_blank" class="mentor-link">@polemico_look</a></span>
             </div>
         </div>
     </section>
@@ -228,6 +276,5 @@
             }
         });
     </script>
-    <script src="/public/js/prices.js"></script>
-</body>
+    </body>
 </html>
