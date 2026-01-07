@@ -4,7 +4,8 @@
     --redcolor: #AE0E30;
     --color-text-gray: white;
     --font-primary: 'Montserrat', sans-serif;
-    --font-heading: 'Playfair Display', serif;;
+    --font-heading: 'Playfair Display', serif;
+    ;
 
 }
 
@@ -35,8 +36,18 @@ body {
     opacity: 0.15;
     z-index: -1;
 }
-.glow-1 { top: 10%; left: 20%; background-color: var(--redcolor); }
-.glow-2 { bottom: 10%; right: 20%; background-color: var(--redcolor); }
+
+.glow-1 {
+    top: 10%;
+    left: 20%;
+    background-color: var(--redcolor);
+}
+
+.glow-2 {
+    bottom: 10%;
+    right: 20%;
+    background-color: var(--redcolor);
+}
 
 .login-container {
     padding: 20px;
@@ -47,12 +58,12 @@ body {
 
 .login-box {
     background-color: var(--color-bg-card);
-    backdrop-filter: blur(15px); 
+    backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     padding: 20px 40px;
     border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.08); 
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     text-align: center;
     position: relative;
 }
@@ -60,12 +71,12 @@ body {
 .login-box::before {
     content: '';
     position: absolute;
-    top: 0; 
+    top: 0;
     left: 0;
     width: 100%;
     height: 3px;
     background: linear-gradient(90deg, transparent, var(--redcolor), transparent);
-    z-index: 10; 
+    z-index: 10;
 }
 
 .login-header {
@@ -73,10 +84,10 @@ body {
 }
 
 .login-logo {
-    width: 120px; 
+    width: 120px;
     height: auto;
-    margin-bottom: 10px; 
-    display: block; 
+    margin-bottom: 10px;
+    display: block;
     margin-left: auto;
     margin-right: auto;
 }
@@ -87,7 +98,7 @@ body {
     text-transform: uppercase;
     letter-spacing: 2px;
     margin-bottom: 5px;
-    line-height: 0.9; 
+    line-height: 0.9;
 }
 
 .login-header p {
@@ -95,26 +106,27 @@ body {
     font-size: 0.9rem;
 }
 
-.p{
+.p {
     padding-top: 5px;
 }
 
 .text-red {
     color: var(--redcolor);
 }
+
 .user-text-red {
     width: 100%;
     display: flex;
     justify-content: center;
-    overflow: hidden; 
+    overflow: hidden;
     padding: 5px 0;
 }
 
 #user-name-display {
     font-family: var(--font-heading);
-    font-size: clamp(1rem, 5vw, 2rem); 
+    font-size: clamp(1rem, 5vw, 2rem);
     text-transform: uppercase;
-    word-break: break-all; 
+    word-break: break-all;
     line-height: 1.2;
     display: inline-block;
     max-width: 100%;
@@ -129,12 +141,14 @@ body {
     align-items: center;
     transition: all 0.3s ease;
 }
+
 .input-group label {
     padding: 15px;
     color: #666;
     font-size: 1.1rem;
     transition: color 0.3s ease;
 }
+
 .input-group input {
     width: 100%;
     background: none;
@@ -145,11 +159,19 @@ body {
     font-family: var(--font-primary);
     font-size: 1rem;
 }
-.input-group input::placeholder { color: #666; }
+
+.input-group input::placeholder {
+    color: #666;
+}
+
 .input-group:focus-within {
     background-color: #222;
 }
-.input-group:focus-within label { color: var(--redcolor); }
+
+.input-group:focus-within label {
+    color: var(--redcolor);
+}
+
 .focus-border {
     position: absolute;
     bottom: 0;
@@ -160,19 +182,27 @@ body {
     transition: width 0.4s ease;
     border-radius: 0 0 8px 8px;
 }
-.input-group:focus-within .focus-border { width: 100%; }
+
+.input-group:focus-within .focus-border {
+    width: 100%;
+}
 
 .forgot-pass-container {
     text-align: right;
     margin-bottom: 25px;
 }
+
 .forgot-pass {
     color: var(--text-gray);
     text-decoration: none;
     font-size: 0.8rem;
     transition: color 0.3s ease;
 }
-.forgot-pass:hover, .register-link:hover { color: var(--redcolor); }
+
+.forgot-pass:hover,
+.register-link:hover {
+    color: var(--redcolor);
+}
 
 .btn-login {
     width: 100%;
@@ -181,7 +211,7 @@ body {
     border: 1px solid transparent;
     border-radius: 8px;
     color: white;
-    font-family: var(--font-primary); 
+    font-family: var(--font-primary);
     font-size: 1rem;
     font-weight: 700;
     letter-spacing: 2px;
@@ -196,7 +226,10 @@ body {
     color: var(--redcolor);
     transform: translateY(-1px);
 }
-.btn-login:active { transform: translateY(1px); }
+
+.btn-login:active {
+    transform: translateY(1px);
+}
 
 .login-footer {
     margin-top: 30px;
@@ -219,14 +252,17 @@ body {
     transition: all 0.3s ease;
     margin-left: 5px;
 }
-#show-register:hover { color: var(--redcolor); }
+
+#show-register:hover {
+    color: var(--redcolor);
+}
 
 .divider {
     display: flex;
     align-items: center;
     text-align: center;
     margin: 20px 0;
-    color: #666; 
+    color: #666;
     font-size: 0.85rem;
     text-transform: uppercase;
 }
@@ -245,18 +281,18 @@ body {
 .google-btn {
     width: 100%;
     padding: 12px;
-    background-color: #1a1a1a; 
+    background-color: #1a1a1a;
     border: 1px solid #333;
     border-radius: 8px;
     color: white;
-    font-family: var(--font-primary); 
+    font-family: var(--font-primary);
     font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px; 
+    gap: 10px;
     transition: all 0.3s ease;
 }
 
@@ -279,11 +315,11 @@ body {
     position: absolute;
     top: 20px;
     left: 20px;
-    color: var(--color-text-gray); 
+    color: var(--color-text-gray);
     font-size: 1.2rem;
     text-decoration: none;
     transition: all 0.3s ease;
-    z-index: 10; 
+    z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -293,14 +329,14 @@ body {
 
 .back-arrow:hover {
     color: var(--redcolor);
-    transform: translateX(-3px); 
+    transform: translateX(-3px);
 }
 
 .fade-in {
     opacity: 0;
-    transform: translateY(50px); 
+    transform: translateY(50px);
     transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-    will-change: opacity, transform; 
+    will-change: opacity, transform;
 }
 
 .fade-in.appear {
@@ -325,20 +361,23 @@ body {
 .bookings-list::-webkit-scrollbar {
     display: none;
 }
+
 .bookings-list {
-    -ms-overflow-style: none;  
-    scrollbar-width: none; 
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
-#no-bookings-msg{
+#no-bookings-msg {
     margin-bottom: 100px;
 }
 
 .modal-overlay {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.8); 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(5px);
     display: flex;
     justify-content: center;
@@ -362,7 +401,7 @@ body {
     text-align: center;
     width: 90%;
     max-width: 350px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     border-top: 3px solid var(--redcolor);
 }
 
@@ -407,33 +446,33 @@ body {
     color: white;
 }
 
-.btn-modal:hover { 
+.btn-modal:hover {
     border: 1px solid var(--redcolor);
     background: transparent;
     color: var(--redcolor);
     transform: translateY(-1px);
- }
+}
 
-button:focus, 
-input:focus, 
+button:focus,
+input:focus,
 a:focus {
-    outline: none; 
+    outline: none;
 }
 
 .action-stack {
     display: flex;
-    flex-direction: column; 
-    gap: 15px; 
+    flex-direction: column;
+    gap: 15px;
     width: 100%;
     max-width: 320px;
-    margin: 20px auto 0; 
+    margin: 20px auto 0;
 }
 
 a.btn-login {
-    display: block; 
+    display: block;
     text-align: center;
     text-decoration: none;
-    line-height: 1.2; 
+    line-height: 1.2;
 }
 
 .btn-outline {
@@ -441,23 +480,26 @@ a.btn-login {
     border: 1px solid var(--redcolor);
     color: var(--redcolor);
 }
+
 .btn-outline:hover {
     background: rgba(174, 14, 48, 0.1);
 }
 
 @media (max-width: 992px) {
-    .login-header h1 { font-size: 2rem; }
-
-    .login-box {
-    background-color: transparent; 
-    border: none;
-    box-shadow: none;
-    padding: 0; 
-    width: 100%;
-    position: static;
+    .login-header h1 {
+        font-size: 2rem;
     }
 
-    .login-header h1{
+    .login-box {
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        width: 100%;
+        position: static;
+    }
+
+    .login-header h1 {
         font-size: 2rem;
     }
 
@@ -469,7 +511,9 @@ a.btn-login {
 
 
 @media (max-width: 768px) {
-    html, body {
+
+    html,
+    body {
         height: 100%;
         width: 100%;
         position: fixed;
@@ -477,11 +521,11 @@ a.btn-login {
     }
 
     .login-container {
-        padding: 20px; 
+        padding: 20px;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        height: 100%; 
+        height: 100%;
     }
 
     .login-box {
@@ -493,20 +537,21 @@ a.btn-login {
     }
 
     .login-header {
-        margin-bottom: 20px; 
+        margin-bottom: 20px;
     }
+
     .login-header h1 {
         font-size: 1.8rem;
     }
 
     .input-group {
-        margin-bottom: 15px; 
-        background-color: rgba(26, 26, 26, 0.8); 
+        margin-bottom: 15px;
+        background-color: rgba(26, 26, 26, 0.8);
     }
 
     .input-group input {
-        padding: 15px; 
-        font-size: 1rem; 
+        padding: 15px;
+        font-size: 1rem;
     }
 
     .forgot-pass-container {
@@ -514,21 +559,315 @@ a.btn-login {
     }
 
     .forgot-pass {
-        font-size: 0.75rem; 
+        font-size: 0.75rem;
     }
 
     .btn-login {
-        padding: 10px; 
-        font-size: 1rem; 
+        padding: 10px;
+        font-size: 1rem;
         max-width: 50%;
     }
 
-    .login-footer { margin-top: 10px; font-size: 0.7rem; }
+    .login-footer {
+        margin-top: 10px;
+        font-size: 0.7rem;
+    }
 
     .back-arrow {
         top: 15px;
         left: 15px;
         font-size: 1.1rem;
     }
+
+    /* AJUSTES PARA FULLCALENDAR EN LOGIN */
+    #calendar-barber {
+        color: white;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    /* Títulos y botones del calendario */
+    .fc-toolbar-title {
+        font-size: 1.2rem !important;
+        text-transform: uppercase;
+    }
+
+    .fc-button-primary {
+        background-color: #AE0E30 !important;
+        border-color: #AE0E30 !important;
+    }
+
+    .fc-button-active {
+        background-color: white !important;
+        color: #AE0E30 !important;
+        border-color: white !important;
+    }
+
+    /* Líneas de la grilla */
+    .fc-theme-standard td,
+    .fc-theme-standard th {
+        border-color: #333 !important;
+    }
+
+    .fc-timegrid-slot-label-cushion {
+        color: #aaa !important;
+    }
+
+    /* Indicador de hora actual */
+    .fc-timegrid-now-indicator-line {
+        border-color: #AE0E30;
+        border-width: 2px;
+    }
+
+    .fc-timegrid-now-indicator-arrow {
+        border-color: #AE0E30;
+        border-width: 5px;
+    }
+}
+/* =========================================
+   FULLCALENDAR DARK THEME OVERRIDE
+   ========================================= */
+
+/* 1. Fondo general y texto */
+#calendar-barber {
+    background-color: #111;
+    font-family: 'Montserrat', sans-serif;
+    color: white;
+    border-radius: 8px;
+    padding: 10px;
 }
 
+/* 2. Quitar el color amarillo/verdoso del "Día de hoy" */
+.fc .fc-timegrid-col.fc-day-today {
+    background-color: rgba(174, 14, 48, 0.05) !important;
+}
+
+/* 3. Líneas de la grilla */
+.fc-theme-standard td,
+.fc-theme-standard th,
+.fc-theme-standard .fc-scrollgrid {
+    border-color: #333 !important;
+}
+
+/* 4. Encabezados (Lunes, Martes...) */
+.fc-col-header-cell-cushion {
+    color: white !important;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    padding-top: 10px !important;
+    text-decoration: none !important;
+}
+
+/* 5. Columna de horas */
+.fc-timegrid-slot-label-cushion {
+    color: #888 !important;
+    font-size: 0.75rem;
+}
+
+/* 6. Eliminar bordes dobles */
+.fc-scrollgrid-section-header>* {
+    background: #1a1a1a;
+}
+
+/* 7. Barra de herramientas */
+.fc-header-toolbar {
+    margin-bottom: 10px !important;
+}
+
+.fc-toolbar-title {
+    font-size: 1rem !important;
+    color: white;
+    text-transform: capitalize;
+}
+
+/* Botones del calendario */
+.fc-button {
+    background-color: transparent !important;
+    border: 1px solid #444 !important;
+    color: #ccc !important;
+    font-size: 0.8rem !important;
+    text-transform: uppercase;
+    font-weight: bold;
+    box-shadow: none !important;
+}
+
+.fc-button:hover {
+    border-color: white !important;
+    color: white !important;
+}
+
+.fc-button-active {
+    background-color: #AE0E30 !important;
+    border-color: #AE0E30 !important;
+    color: white !important;
+}
+
+/* 8. Estilo de las TARJETAS DE TURNO */
+.fc-event {
+    border: none !important;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.fc-event-main {
+    padding: 2px 4px;
+    color: white;
+}
+
+/* =========================================
+   VISTA BARBERO: ESTILOS Y BOTONES
+   ========================================= */
+
+#view-barber {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 99999 !important;
+    background-color: #050505 !important;
+    display: flex;
+    flex-direction: column;
+    padding: 15px; /* Un poco menos de padding para ganar espacio */
+    box-sizing: border-box;
+}
+
+/* Header más compacto en el modo barbero */
+#view-barber .dashboard-header {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+/* Contenedor del calendario */
+#calendar-container-wrapper {
+    flex-grow: 1;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    background-color: #111;
+    border-radius: 12px;
+    border: 1px solid #333;
+}
+
+#calendar-barber {
+    height: 100%;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* --- BOTONES PERSONALIZADOS --- */
+.action-stack-barber {
+    flex-shrink: 0;
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+    justify-content: center;
+    width: 100%;
+}
+
+.btn-barber {
+    flex: 1;
+    padding: 14px;
+    border-radius: 8px;
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    letter-spacing: 1px;
+}
+
+/* Botón Actualizar (Transparente con borde rojo) */
+.btn-barber-refresh {
+    background: transparent;
+    border: 1px solid var(--redcolor);
+    color: var(--redcolor);
+}
+
+.btn-barber-refresh:hover {
+    background: rgba(174, 14, 48, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Botón Salir (Rojo sólido) */
+.btn-barber-logout {
+    background: var(--redcolor);
+    border: 1px solid var(--redcolor);
+    color: white;
+}
+
+.btn-barber-logout:hover {
+    background: transparent;
+    color: var(--redcolor);
+    transform: translateY(-2px);
+}
+
+/* --- AJUSTES ESPECÍFICOS DE FULLCALENDAR --- */
+.fc-toolbar-title {
+    font-size: 1.1rem !important;
+    text-transform: capitalize; 
+}
+
+/* Eventos más limpios */
+.fc-event-main {
+    padding: 2px 4px;
+}
+.event-time { font-weight: bold; font-size: 0.85em; display: block; }
+.event-title { font-weight: normal; font-size: 0.85em; }
+.event-service { font-size: 0.75em; opacity: 0.8; font-style: italic; display: block; margin-top: 2px;}
+
+
+/* =========================================
+   RESPONSIVE: CELULAR (MODO AMIGABLE)
+   ========================================= */
+@media (max-width: 768px) {
+    #view-barber {
+        padding: 10px !important;
+    }
+
+    /* Reducir tamaño del texto del header "Hola Nicolas" */
+    #view-barber h2 {
+        font-size: 1.4rem !important;
+    }
+    
+    .action-stack-barber {
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .btn-barber {
+        padding: 12px;
+        font-size: 0.8rem;
+    }
+
+    /* Ajustes del calendario en móvil */
+    .fc-header-toolbar {
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-bottom: 5px !important;
+    }
+    
+    .fc-toolbar-chunk {
+        display: flex; 
+        justify-content: center;
+        width: 100%; /* Centrar título y botones */
+    }
+
+    .fc-toolbar-title {
+        font-size: 1rem !important;
+        margin: 5px 0 !important;
+    }
+
+    /* Ocultar botones que sobran en móvil si es necesario */
+    .fc-dayGridMonth-button, .fc-timeGridWeek-button {
+        display: none !important; /* En celular solo permitimos ver Día y Lista */
+    }
+}
