@@ -25,7 +25,6 @@ body {
     position: relative;
 }
 
-/* --- EFECTOS DE FONDO (GLOW) --- */
 .red-glow {
     position: absolute;
     width: 300px;
@@ -36,10 +35,18 @@ body {
     z-index: -1;
 }
 
-.glow-1 { top: 10%; left: 20%; background-color: var(--redcolor); }
-.glow-2 { bottom: 10%; right: 20%; background-color: var(--redcolor); }
+.glow-1 {
+    top: 10%;
+    left: 20%;
+    background-color: var(--redcolor);
+}
 
-/* --- LOGIN CONTAINER --- */
+.glow-2 {
+    bottom: 10%;
+    right: 20%;
+    background-color: var(--redcolor);
+}
+
 .login-container {
     padding: 20px;
     width: 100%;
@@ -70,7 +77,9 @@ body {
     z-index: 10;
 }
 
-.login-header { margin-bottom: 30px; }
+.login-header {
+    margin-bottom: 30px;
+}
 
 .login-logo {
     width: 120px;
@@ -95,7 +104,9 @@ body {
     font-size: 0.9rem;
 }
 
-.text-red { color: var(--redcolor); }
+.text-red {
+    color: var(--redcolor);
+}
 
 .user-text-red {
     width: 100%;
@@ -115,7 +126,6 @@ body {
     max-width: 100%;
 }
 
-/* --- INPUTS --- */
 .input-group {
     position: relative;
     margin-bottom: 25px;
@@ -144,10 +154,17 @@ body {
     font-size: 1rem;
 }
 
-.input-group input::placeholder { color: #666; }
+.input-group input::placeholder {
+    color: #666;
+}
 
-.input-group:focus-within { background-color: #222; }
-.input-group:focus-within label { color: var(--redcolor); }
+.input-group:focus-within {
+    background-color: #222;
+}
+
+.input-group:focus-within label {
+    color: var(--redcolor);
+}
 
 .focus-border {
     position: absolute;
@@ -160,7 +177,9 @@ body {
     border-radius: 0 0 8px 8px;
 }
 
-.input-group:focus-within .focus-border { width: 100%; }
+.input-group:focus-within .focus-border {
+    width: 100%;
+}
 
 .forgot-pass-container {
     text-align: right;
@@ -168,15 +187,17 @@ body {
 }
 
 .forgot-pass {
-    color: var(--color-text-gray);
+    color: var(--color-text-gray); /* Corregido var */
     text-decoration: none;
     font-size: 0.8rem;
     transition: color 0.3s ease;
 }
 
-.forgot-pass:hover, .register-link:hover { color: var(--redcolor); }
+.forgot-pass:hover,
+.register-link:hover {
+    color: var(--redcolor);
+}
 
-/* --- BOTONES --- */
 .btn-login {
     width: 100%;
     padding: 15px;
@@ -200,7 +221,9 @@ body {
     transform: translateY(-1px);
 }
 
-.btn-login:active { transform: translateY(1px); }
+.btn-login:active {
+    transform: translateY(1px);
+}
 
 .login-footer {
     margin-top: 30px;
@@ -223,7 +246,9 @@ body {
     margin-left: 5px;
 }
 
-#show-register:hover { color: var(--redcolor); }
+#show-register:hover {
+    color: var(--redcolor);
+}
 
 .divider {
     display: flex;
@@ -235,13 +260,16 @@ body {
     text-transform: uppercase;
 }
 
-.divider::before, .divider::after {
+.divider::before,
+.divider::after {
     content: '';
     flex: 1;
     border-bottom: 1px solid #333;
 }
 
-.divider span { padding: 0 15px; }
+.divider span {
+    padding: 0 15px;
+}
 
 .google-btn {
     width: 100%;
@@ -261,13 +289,19 @@ body {
     transition: all 0.3s ease;
 }
 
-.google-btn i { font-size: 1.1rem; }
+.google-btn i {
+    font-size: 1.1rem;
+}
 
 .google-btn:hover {
     background-color: transparent;
     border-color: var(--redcolor);
     color: var(--redcolor);
     transform: translateY(-1px);
+}
+
+.google-btn:active {
+    transform: translateY(1px);
 }
 
 .back-arrow {
@@ -291,7 +325,6 @@ body {
     transform: translateX(-3px);
 }
 
-/* --- UTILIDADES --- */
 .fade-in {
     opacity: 0;
     transform: translateY(50px);
@@ -304,7 +337,9 @@ body {
     transform: translateY(0);
 }
 
-.hidden { display: none !important; }
+.hidden {
+    display: none !important;
+}
 
 .cursor-pointer {
     cursor: pointer;
@@ -312,11 +347,22 @@ body {
     transition: color 0.3s ease;
 }
 
-.cursor-pointer:hover { text-decoration: underline; }
+.cursor-pointer:hover {
+    text-decoration: underline;
+}
 
-.bookings-list::-webkit-scrollbar { display: none; }
-.bookings-list { -ms-overflow-style: none; scrollbar-width: none; }
-#no-bookings-msg { margin-bottom: 100px; }
+.bookings-list::-webkit-scrollbar {
+    display: none;
+}
+
+.bookings-list {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+#no-bookings-msg {
+    margin-bottom: 100px;
+}
 
 /* --- MODAL --- */
 .modal-overlay {
@@ -336,7 +382,10 @@ body {
     transition: all 0.3s ease;
 }
 
-.modal-overlay.active { opacity: 1; visibility: visible; }
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
 
 .modal-box {
     background: #1a1a1a;
@@ -363,7 +412,11 @@ body {
     line-height: 1.5;
 }
 
-.modal-actions { display: flex; gap: 10px; justify-content: center; }
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
 
 .btn-modal {
     padding: 10px 20px;
@@ -376,8 +429,16 @@ body {
     font-family: var(--font-primary);
 }
 
-.btn-cancel { background: transparent; border: 1px solid #555; color: white; }
-.btn-confirm { background: var(--redcolor); color: white; }
+.btn-cancel {
+    background: transparent;
+    border: 1px solid #555;
+    color: white;
+}
+
+.btn-confirm {
+    background: var(--redcolor);
+    color: white;
+}
 
 .btn-modal:hover {
     border: 1px solid var(--redcolor);
@@ -386,7 +447,11 @@ body {
     transform: translateY(-1px);
 }
 
-button:focus, input:focus, a:focus { outline: none; }
+button:focus,
+input:focus,
+a:focus {
+    outline: none;
+}
 
 .action-stack {
     display: flex;
@@ -410,12 +475,108 @@ a.btn-login {
     color: var(--redcolor);
 }
 
-.btn-outline:hover { background: rgba(174, 14, 48, 0.1); }
+.btn-outline:hover {
+    background: rgba(174, 14, 48, 0.1);
+}
+
+/* =========================================
+   MEDIA QUERIES (TABLET/PC PEQUEÑA)
+   ========================================= */
+@media (max-width: 992px) {
+    .login-header h1 {
+        font-size: 2rem;
+    }
+
+    .login-box {
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        width: 100%;
+        position: static;
+    }
+
+    .login-box::before {
+        display: none;
+    }
+}
+
+/* =========================================
+   MEDIA QUERIES (CELULAR)
+   ========================================= */
+@media (max-width: 768px) {
+    html, body {
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        overflow: hidden;
+    }
+
+    .login-container {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 100%;
+    }
+
+    .login-box {
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        width: 100%;
+    }
+
+    .login-header {
+        margin-bottom: 20px;
+    }
+
+    .login-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .input-group {
+        margin-bottom: 15px;
+        background-color: rgba(26, 26, 26, 0.8);
+    }
+
+    .input-group input {
+        padding: 15px;
+        font-size: 1rem;
+    }
+
+    .forgot-pass-container {
+        margin-bottom: 15px;
+    }
+
+    .forgot-pass {
+        font-size: 0.75rem;
+    }
+
+    .btn-login {
+        padding: 10px;
+        font-size: 1rem;
+        max-width: 50%;
+    }
+
+    .login-footer {
+        margin-top: 10px;
+        font-size: 0.7rem;
+    }
+
+    .back-arrow {
+        top: 15px;
+        left: 15px;
+        font-size: 1.1rem;
+    }
+}
 
 /* =========================================
    FULLCALENDAR DARK THEME OVERRIDE
    ========================================= */
 
+/* 1. Fondo general y texto */
 #calendar-barber {
     background-color: #111;
     font-family: 'Montserrat', sans-serif;
@@ -424,11 +585,19 @@ a.btn-login {
     padding: 10px;
 }
 
-/* Colores de hoy y grillas */
-.fc .fc-timegrid-col.fc-day-today { background-color: rgba(174, 14, 48, 0.05) !important; }
-.fc-theme-standard td, .fc-theme-standard th, .fc-theme-standard .fc-scrollgrid { border-color: #333 !important; }
+/* 2. Día de hoy */
+.fc .fc-timegrid-col.fc-day-today {
+    background-color: rgba(174, 14, 48, 0.05) !important;
+}
 
-/* Encabezados */
+/* 3. Líneas de la grilla */
+.fc-theme-standard td,
+.fc-theme-standard th,
+.fc-theme-standard .fc-scrollgrid {
+    border-color: #333 !important;
+}
+
+/* 4. Encabezados */
 .fc-col-header-cell-cushion {
     color: white !important;
     text-transform: uppercase;
@@ -437,12 +606,29 @@ a.btn-login {
     text-decoration: none !important;
 }
 
-.fc-timegrid-slot-label-cushion { color: #888 !important; font-size: 0.75rem; }
-.fc-scrollgrid-section-header>* { background: #1a1a1a; }
-.fc-header-toolbar { margin-bottom: 10px !important; }
-.fc-toolbar-title { font-size: 1rem !important; color: white; text-transform: capitalize; }
+/* 5. Columna de horas */
+.fc-timegrid-slot-label-cushion {
+    color: #888 !important;
+    font-size: 0.75rem;
+}
 
-/* Botones del calendario */
+/* 6. Header sections */
+.fc-scrollgrid-section-header > * {
+    background: #1a1a1a;
+}
+
+/* 7. Toolbar */
+.fc-header-toolbar {
+    margin-bottom: 10px !important;
+}
+
+.fc-toolbar-title {
+    font-size: 1rem !important;
+    color: white;
+    text-transform: capitalize;
+}
+
+/* Botones */
 .fc-button {
     background-color: transparent !important;
     border: 1px solid #444 !important;
@@ -453,59 +639,68 @@ a.btn-login {
     box-shadow: none !important;
 }
 
-.fc-button:hover { border-color: white !important; color: white !important; }
-.fc-button-active { background-color: #AE0E30 !important; border-color: #AE0E30 !important; color: white !important; }
+.fc-button:hover {
+    border-color: white !important;
+    color: white !important;
+}
 
-/* 8. ESTILO DE LAS TARJETAS DE TURNO (CORREGIDO PARA QUE NO SE SALGA EL TEXTO) */
+.fc-button-active {
+    background-color: #AE0E30 !important;
+    border-color: #AE0E30 !important;
+    color: white !important;
+}
+
+/* 8. TARJETAS DE TURNO (ARREGLADO) */
 .fc-event {
     border: none !important;
     border-radius: 4px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    overflow: hidden !important; /* CLAVE: Evita que el texto se salga */
 }
 
-/* Contenido interno del evento */
 .fc-event-main {
-    padding: 4px 5px !important; /* Un poco más de espacio interno */
+    padding: 0 !important; /* Quitamos padding para manejarlo nosotros */
     color: white;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Evita que se salga */
+}
+
+/* CONTENEDOR INTERNO DEL EVENTO PARA ARREGLAR TEXTO CORTADO */
+.fc-event-content-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    height: 100%; /* Ocupa todo el alto */
-    overflow: hidden; /* Asegura que lo de adentro no rompa */
+    justify-content: center; /* Centrar verticalmente */
+    height: 100%;
+    padding: 2px 4px;
+    white-space: normal !important; /* PERMITE QUE EL TEXTO BAJE DE RENGLON */
+    line-height: 1.1;
 }
 
-/* ESTILOS DE TEXTO DEL EVENTO (Letras más grandes y claras) */
-.event-time { 
-    font-weight: 800; 
-    font-size: 1.1em; /* NÚMEROS MÁS GRANDES */
-    display: block;
-    color: white; 
-}
-
+/* FUENTES MAS GRANDES Y ORDENADAS */
 .event-service { 
-    font-size: 0.9em; 
-    font-weight: bold; 
+    font-weight: 800; 
+    font-size: 0.95em; /* Más grande */
     display: block; 
     text-transform: uppercase;
-    color: #ffd700; /* Un color dorado/claro para resaltar el servicio */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    margin-bottom: 2px;
 }
-
 .event-title { 
     font-weight: normal; 
-    font-size: 0.8em; 
+    font-size: 0.9em; /* Más grande */
     opacity: 0.9;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    display: block;
+    margin-bottom: 2px;
+}
+.event-time { 
+    font-size: 0.85em; /* Más grande */
+    opacity: 0.7; 
+    font-style: italic; 
+    display: block; 
 }
 
 
 /* =========================================
-   VISTA BARBERO: ESTILOS Y BOTONES
+   VISTA BARBERO: ESTRUCTURA
    ========================================= */
 
 #view-barber {
@@ -518,7 +713,7 @@ a.btn-login {
     background-color: #050505 !important;
     display: flex;
     flex-direction: column;
-    padding: 15px; 
+    padding: 15px;
     box-sizing: border-box;
 }
 
@@ -542,9 +737,11 @@ a.btn-login {
     border: 1px solid #333;
 }
 
-#calendar-barber { height: 100%; font-family: 'Montserrat', sans-serif; }
+#calendar-barber {
+    height: 100%;
+    font-family: 'Montserrat', sans-serif;
+}
 
-/* --- BOTONES INFERIORES --- */
 .action-stack-barber {
     flex-shrink: 0;
     display: flex;
@@ -594,84 +791,47 @@ a.btn-login {
     transform: translateY(-2px);
 }
 
-
 /* =========================================
-   MEDIA QUERIES (RESPONSIVE)
+   RESPONSIVE: CELULAR (MODO AMIGABLE)
    ========================================= */
-
-@media (max-width: 992px) {
-    .login-header h1 { font-size: 2rem; }
-    .login-box {
-        background-color: transparent;
-        border: none;
-        box-shadow: none;
-        padding: 0;
-        width: 100%;
-        position: static;
-    }
-    .login-box::before { display: none; }
-}
-
 @media (max-width: 768px) {
-    html, body {
-        height: 100%;
-        width: 100%;
-        position: fixed;
-        overflow: hidden;
+    #view-barber {
+        padding: 10px !important;
     }
 
-    .login-container {
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        height: 100%;
+    #view-barber h2 {
+        font-size: 1.4rem !important;
+    }
+    
+    .action-stack-barber {
+        gap: 10px;
+        margin-top: 10px;
     }
 
-    .login-box { padding: 0; width: 100%; background: transparent; border: none; box-shadow: none; }
-    .login-header { margin-bottom: 20px; }
-    .login-header h1 { font-size: 1.8rem; }
+    .btn-barber {
+        padding: 12px;
+        font-size: 0.8rem;
+    }
 
-    .input-group { margin-bottom: 15px; background-color: rgba(26, 26, 26, 0.8); }
-    .input-group input { padding: 15px; font-size: 1rem; }
-    
-    .forgot-pass-container { margin-bottom: 15px; }
-    .forgot-pass { font-size: 0.75rem; }
-    
-    .btn-login { padding: 10px; font-size: 1rem; max-width: 50%; }
-    .login-footer { margin-top: 10px; font-size: 0.7rem; }
-    .back-arrow { top: 15px; left: 15px; font-size: 1.1rem; }
-
-    /* VISTA BARBERO CELULAR */
-    #view-barber { padding: 10px !important; }
-    #view-barber h2 { font-size: 1.4rem !important; }
-    
-    .action-stack-barber { gap: 10px; margin-top: 10px; }
-    .btn-barber { padding: 12px; font-size: 0.8rem; }
-
-    /* AJUSTES DEL CALENDARIO EN CELULAR */
     .fc-header-toolbar {
         flex-wrap: wrap;
         gap: 5px;
         margin-bottom: 5px !important;
-        justify-content: center; /* Centrar botones */
     }
     
     .fc-toolbar-chunk {
         display: flex; 
         justify-content: center;
-        width: auto; 
+        width: 100%; 
     }
 
     .fc-toolbar-title {
         font-size: 1rem !important;
         margin: 5px 0 !important;
-        width: 100%;
-        text-align: center;
     }
-    
-    /* Ocultar botones de vista en celular para que solo sea DÍA */
-    .fc-dayGridMonth-button, .fc-timeGridWeek-button, .fc-timeGridDay-button {
-        display: none !important; 
+
+    /* Ocultar botones innecesarios en movil */
+    .fc-dayGridMonth-button, .fc-timeGridWeek-button {
+        display: none !important;
     }
 }
