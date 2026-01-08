@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "tokz-barber"
-  }
+  },
+  "targets": {
+    "tokz-barber": {
+      "hosting": {
+        "web-oficial": [
+          "tokzbarber"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
