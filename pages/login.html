@@ -121,6 +121,10 @@
         </div>
 
         <div class="action-stack-barber">
+            <button id="btn-back-admin" class="btn-barber hidden" style="background: #333; color: white; border: 1px solid #555;">
+                <i class="fa-solid fa-lock"></i> Panel Admin
+            </button>
+
             <button id="btn-refresh-barber" class="btn-barber btn-barber-refresh">
                 <i class="fa-solid fa-rotate-right"></i> Actualizar
             </button>
@@ -129,7 +133,6 @@
                 <i class="fa-solid fa-arrow-right-from-bracket"></i> Salir
             </button>
         </div>
-    </div>
 
     <div id="view-admin" class="hidden">
         <div class="admin-container fade-in">
@@ -139,11 +142,16 @@
             </div>
 
             <div class="admin-controls">
-                <input type="date" id="admin-date-picker" class="admin-input">
-                <button id="btn-admin-refresh" class="cta-button">
-                    <i class="fa-solid fa-magnifying-glass"></i> Buscar
-                </button>
-            </div>
+            <input type="date" id="admin-date-picker" class="admin-input">
+            
+            <button id="btn-admin-refresh" class="cta-button">
+                <i class="fa-solid fa-magnifying-glass"></i> Buscar
+            </button>
+            
+            <button id="btn-go-calendar" class="cta-button btn-dark">
+                <i class="fa-regular fa-calendar"></i> Mi Agenda
+            </button>
+        </div>
 
             <div class="table-responsive">
                 <table class="admin-table">

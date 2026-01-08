@@ -748,10 +748,10 @@ a.btn-login {
 
 .btn-barber {
     flex: 1;
-    padding: 14px;
+    padding: 12px 6px; 
     border-radius: 8px;
     font-family: var(--font-primary);
-    font-size: 0.9rem;
+    font-size: 0.85rem; 
     font-weight: 700;
     text-transform: uppercase;
     cursor: pointer;
@@ -759,8 +759,12 @@ a.btn-login {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 5px; 
     letter-spacing: 1px;
+
+    /* Seguridad responsive */
+    white-space: nowrap;
+    min-width: fit-content;
 }
 
 .btn-barber-refresh {

@@ -140,11 +140,43 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                // 3. REDIRECCIONAR
+                // 3. REDIRECCIONAR Y GESTIONAR VISTAS
+                const btnGoCalendar = document.getElementById('btn-go-calendar');
+                const btnBackAdmin = document.getElementById('btn-back-admin');
+
                 if (rolDetectado === 'admin') {
+                    // Si es admin, mostramos el panel admin primero
                     switchView(viewAdmin);
+
+                    // LOGICA DOBLE ROL (Admin que también corta)
+                    if(btnGoCalendar && btnBackAdmin) {
+                        
+                        // 1. Activar botón en el calendario para volver al admin
+                        btnBackAdmin.classList.remove('hidden');
+                        
+                        // 2. Evento: Ir del Admin a la Agenda
+                        btnGoCalendar.onclick = () => {
+                            // Usamos el nombre del admin para cargar SU agenda personal
+                            // Asegurate de que el nombre del Admin coincida con como se guardan sus turnos en la DB
+                            loadBarberAgenda(nombreOficial); 
+                            
+                            // Actualizamos el nombre en la vista de barbero
+                            const barberNameDisplay = document.getElementById('barber-name-display');
+                            if (barberNameDisplay) barberNameDisplay.textContent = nombreOficial;
+
+                            switchView(viewBarber);
+                        };
+
+                        // 3. Evento: Volver de la Agenda al Admin
+                        btnBackAdmin.onclick = () => {
+                            switchView(viewAdmin);
+                        };
+                    }
                 }
                 else if (rolDetectado === 'barbero') {
+                    // Barbero normal: ocultar botón de volver a admin por seguridad
+                    if(btnBackAdmin) btnBackAdmin.classList.add('hidden');
+
                     const barberNameDisplay = document.getElementById('barber-name-display');
                     if (barberNameDisplay) barberNameDisplay.textContent = nombreOficial;
 
@@ -152,22 +184,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     switchView(viewBarber);
                 }
                 else {
+                    // Cliente normal
                     currentUserUid = user.uid;
                     loadUserBookings(currentUserUid);
                     const userNameDisplay = document.getElementById('user-name-display');
                     if (userNameDisplay) userNameDisplay.textContent = user.displayName;
                     switchView(viewUser);
                 }
-
-            } catch (error) {
-                console.error("Error Auth:", error);
-                switchView(viewLogin);
             }
-        } else {
-            switchView(viewLogin);
-        }
-    });
-
+            catch (error) {
+                console.error("Error en la gestión del usuario:", error);
+                alert("Error al cargar tu información. Por favor, intenta nuevamente.");
+                await signOut(auth);
+            }
+    }
+});
     // LISTENERS DE BOTONES
     if (btnLogout) btnLogout.addEventListener('click', async () => { try { await signOut(auth); } catch (e) { console.error(e); } });
 
