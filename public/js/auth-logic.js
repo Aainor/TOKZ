@@ -322,14 +322,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const isMobile = window.innerWidth < 768;
 
             calendarInstance = new FullCalendar.Calendar(calendarEl, {
-                // Si es móvil: Muestra solo UN DÍA. Si es PC: Muestra SEMANA.
+                // Si es móvil: DÍA. Si es PC: SEMANA.
                 initialView: isMobile ? 'timeGridDay' : 'timeGridWeek',
 
                 headerToolbar: {
-                    left: 'prev,next', // Navegación simple
+                    left: 'prev,next', 
                     center: 'title',
-                    // En móvil quitamos botones que saturan la pantalla
-                    right: isMobile ? 'today' : 'dayGridMonth,timeGridWeek,timeGridDay'
+                    // En móvil quitamos botones que saturan, en PC dejamos las opciones
+                    right: isMobile ? '' : 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
 
                 locale: 'es',
@@ -348,14 +348,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 nowIndicator: true,
                 events: eventos,
 
-                // Diseño de la tarjetita del turno (más limpio)
+                // DISEÑO DE LA TARJETA DE TURNO (ORDEN CAMBIADO)
                 eventContent: function (arg) {
                     return {
                         html: `
-                            <div style="overflow:hidden; line-height: 1.1;">
-                                <span class="event-time" style="font-weight: bold; display:block; font-size:0.85em;">${arg.timeText}</span>
-                                <span class="event-title" style="font-size:0.85em;">${arg.event.title}</span>
-                                <span class="event-service" style="display:block; font-size: 0.75em; opacity: 0.8; font-style: italic; margin-top: 2px;">✂️ ${arg.event.extendedProps.servicio}</span>
+                            <div style="height:100%; display:flex; flex-direction:column; justify-content:center;">
+                                <span class="event-time">${arg.timeText}</span>
+                                <span class="event-service">✂️ ${arg.event.extendedProps.servicio}</span>
+                                <span class="event-title">${arg.event.title}</span>
                             </div>
                         `
                     };
