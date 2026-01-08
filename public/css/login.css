@@ -834,4 +834,303 @@ a.btn-login {
     .fc-dayGridMonth-button, .fc-timeGridWeek-button {
         display: none !important;
     }
+}  
+
+/* =========================================
+   ESTILOS ESPECÍFICOS DEL PANEL ADMIN
+   ========================================= */
+
+.admin-container {
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+    max-width: 1000px; /* Evita que se estire demasiado en monitores grandes */
+    margin: 0 auto;
+}
+
+.admin-subtitle {
+    color: var(--redcolor);
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+}
+
+.admin-title {
+    color: white;
+    margin-bottom: 20px;
+}
+
+/* Controles (Input fecha y botón) */
+.admin-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.admin-input {
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    background: #222;
+    color: white;
+    font-family: var(--font-primary);
+}
+
+.cta-button {
+    padding: 12px 25px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background: var(--redcolor);
+    color: white;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.cta-button:hover {
+    background: #8a0b26;
+}
+
+.btn-dark {
+    background: #333;
+}
+
+.btn-dark:hover {
+    background: #444;
+}
+
+/* Tabla Base (Escritorio) */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #ddd;
+    margin-top: 10px;
+}
+
+.admin-table thead tr {
+    background: var(--redcolor);
+    color: white;
+}
+
+.admin-table th, 
+.admin-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+}
+
+.admin-table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.price-cell {
+    color: #4CAF50;
+    font-weight: bold;
+    text-align: right !important;
+}
+
+.loading-msg {
+    color: #666; 
+    margin-top: 20px;
+}
+
+.admin-footer {
+    margin-top: 40px;
+}
+
+/* Fila de Total (Diseño Escritorio) */
+.total-row {
+    background: rgba(174, 14, 48, 0.15);
+    border-top: 2px solid var(--redcolor);
+    font-weight: bold;
+}
+
+/* =========================================
+   ESTILOS ESPECÍFICOS DEL PANEL ADMIN (FINAL)
+   ========================================= */
+
+/* 1. EL FONDO DE PANTALLA COMPLETA (Wrapper) */
+#view-admin {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--color-bg-main);
+    z-index: 2000; /* Z-index alto para tapar todo */
+    overflow-y: auto; /* Permite scroll vertical si el contenido es largo */
+    padding: 20px 10px; /* Un poco de aire en los bordes */
+    display: none; /* JS lo cambia a block */
+}
+
+/* 2. EL CONTENIDO CENTRADO (Card) */
+.admin-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto; /* ESTO LO CENTRA HORIZONTALMENTE */
+    background-color: transparent; 
+    padding-bottom: 50px; /* Espacio extra abajo para scroll en móvil */
+}
+
+/* Títulos */
+.admin-subtitle {
+    color: var(--redcolor);
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.admin-title {
+    color: white;
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+}
+
+/* Controles (Input fecha y botón) */
+.admin-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    background: #111;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #333;
+}
+
+.admin-input {
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    background: #222;
+    color: white;
+    font-family: var(--font-primary);
+}
+
+.cta-button {
+    padding: 12px 25px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background: var(--redcolor);
+    color: white;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.cta-button:hover {
+    background: #8a0b26;
+}
+
+.btn-dark {
+    background: #333;
+    width: 100%;
+    max-width: 300px;
+}
+
+.admin-footer {
+    margin-top: 40px;
+    text-align: center;
+}
+
+/* TABLA - ESTILO ESCRITORIO */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #ddd;
+    margin-top: 10px;
+}
+
+.admin-table thead tr {
+    background: var(--redcolor);
+    color: white;
+}
+
+.admin-table th, 
+.admin-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+}
+
+.loading-msg {
+    color: #888;
+    margin-top: 20px;
+    font-style: italic;
+}
+
+/* =========================================
+   RESPONSIVE ADMIN (MÓVIL - MODO TARJETAS)
+   ========================================= */
+@media (max-width: 768px) {
+    
+    /* Ajuste de controles en móvil */
+    .admin-controls {
+        flex-direction: column;
+    }
+
+    .admin-input, .cta-button {
+        width: 100%;
+    }
+
+    /* Ocultar encabezados de tabla clásica */
+    .admin-table thead {
+        display: none;
+    }
+
+    /* Convertir filas en tarjetas */
+    .admin-table, .admin-table tbody, .admin-table tr, .admin-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .admin-table tr {
+        background: #161616;
+        border: 1px solid #333;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        padding: 10px;
+    }
+
+    /* Celdas internas */
+    .admin-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: right;
+        padding: 10px 5px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        font-size: 0.95rem;
+    }
+
+    .admin-table td:last-child {
+        border-bottom: none;
+    }
+
+    /* Etiquetas automáticas (data-label) */
+    .admin-table td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: var(--redcolor);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+    }
+
+    /* Arreglo especial para la fila de TOTAL */
+    .total-row td {
+        justify-content: space-between !important;
+        font-size: 1.1rem;
+        color: white;
+    }
 }

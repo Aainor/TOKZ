@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -130,6 +131,46 @@
         </div>
     </div>
 
+    <div id="view-admin" class="hidden">
+        <div class="admin-container fade-in">
+            <div class="dashboard-header">
+                <p class="admin-subtitle">PANEL DE CONTROL</p>
+                <h2 class="admin-title">Administración General</h2>
+            </div>
+
+            <div class="admin-controls">
+                <input type="date" id="admin-date-picker" class="admin-input">
+                <button id="btn-admin-refresh" class="cta-button">
+                    <i class="fa-solid fa-magnifying-glass"></i> Buscar
+                </button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Hora</th>
+                            <th>Cliente</th>
+                            <th>Servicio</th>
+                            <th>Barbero</th>
+                            <th>Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-table-body">
+                        </tbody>
+                </table>
+                <p id="admin-loading-msg" class="loading-msg">Seleccioná una fecha para ver los turnos.</p>
+            </div>
+
+            <div class="admin-footer">
+                <button id="btn-logout-admin" class="cta-button btn-dark">
+                    Cerrar Sesión Admin
+                </button>
+            </div>
+        </div>
+    </div>
+
+  
     <div id="delete-modal" class="modal-overlay">
         <div class="modal-box">
             <h3>¿CANCELAR TURNO?</h3>
