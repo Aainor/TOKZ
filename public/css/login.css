@@ -1179,3 +1179,116 @@ a.btn-login {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+/* =========================================
+   SENIOR FIX: SCROLL MÓVIL Y MODAL DETALLE
+   ========================================= */
+
+/* 1. Habilitar Scroll Nativo en el contenedor del calendario */
+#calendar-container-wrapper {
+    /* Permitir que el contenido desborde y se haga scroll */
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    /* Suavidad en iPhone */
+}
+
+/* 2. Estilos del Nuevo Modal de Detalle (Estilo Cyberpunk/Dark) */
+#modal-detalle-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    /* Desenfoque más fuerte */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100000;
+    /* SUPERIOR A view-barber (99999) */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+#modal-detalle-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-detalle-card {
+    background: #0a0a0a;
+    border: 1px solid var(--redcolor);
+    box-shadow: 0 0 30px rgba(174, 14, 48, 0.2);
+    width: 90%;
+    max-width: 400px;
+    border-radius: 16px;
+    padding: 25px;
+    transform: scale(0.8) translateY(20px);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+    position: relative;
+    text-align: left;
+}
+
+#modal-detalle-overlay.active .modal-detalle-card {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+/* Tipografía del Modal */
+.detalle-header {
+    border-bottom: 1px solid #333;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.detalle-header h2 {
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.close-modal-btn {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close-modal-btn:hover {
+    color: white;
+}
+
+.info-row {
+    margin-bottom: 15px;
+}
+
+.info-label {
+    color: var(--redcolor);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.info-value {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.info-value.email {
+    font-size: 0.9rem;
+    color: #ccc;
+    word-break: break-all;
+}

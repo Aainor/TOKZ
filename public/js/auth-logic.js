@@ -278,16 +278,44 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnBackDashboard) btnBackDashboard.addEventListener('click', () => { switchView(viewUser); });
 
     // ==========================================
-    // 3. FUNCIÓN BARBERO (CALENDARIO FIX MÓVIL)
+    // 3. FUNCIÓN BARBERO (MEJORADA: SCROLL + MODAL)
     // ==========================================
     async function loadBarberAgenda(nombreBarbero) {
         const calendarEl = document.getElementById('calendar-barber');
         if (!calendarEl) return;
 
+        // --- 1. INYECTAR HTML DEL MODAL SI NO EXISTE ---
+        if (!document.getElementById('modal-detalle-overlay')) {
+            const modalHTML = `
+                <div id="modal-detalle-overlay">
+                    <div class="modal-detalle-card">
+                        <div class="detalle-header">
+                            <h2>Detalles del Turno</h2>
+                            <button class="close-modal-btn" id="btn-close-detalle">&times;</button>
+                        </div>
+                        <div id="detalle-content">
+                            </div>
+                        <div style="margin-top: 20px; text-align: center;">
+                            <button id="btn-ok-detalle" class="cta-button" style="width:100%">ENTENDIDO</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+            // Listeners para cerrar
+            const closeModal = () => document.getElementById('modal-detalle-overlay').classList.remove('active');
+            document.getElementById('btn-close-detalle').addEventListener('click', closeModal);
+            document.getElementById('btn-ok-detalle').addEventListener('click', closeModal);
+            document.getElementById('modal-detalle-overlay').addEventListener('click', (e) => {
+                if (e.target.id === 'modal-detalle-overlay') closeModal();
+            });
+        }
+
         calendarEl.innerHTML = ''; // Limpiar
 
         try {
-            console.log(`📅 Cargando calendario para: "${nombreBarbero}"`);
+            console.log(`📅 Cargando calendario PRO para: "${nombreBarbero}"`);
 
             const q = query(collection(db, "turnos"), where("pro", "==", nombreBarbero));
             const querySnapshot = await getDocs(q);
@@ -322,65 +350,86 @@ document.addEventListener('DOMContentLoaded', () => {
             const isMobile = window.innerWidth < 768;
 
             calendarInstance = new FullCalendar.Calendar(calendarEl, {
-                // Si es móvil: Muestra solo UN DÍA. Si es PC: Muestra SEMANA.
+                // Si es móvil: Muestra solo UN DÍA.
                 initialView: isMobile ? 'timeGridDay' : 'timeGridWeek',
 
                 headerToolbar: {
-                    left: 'prev,next', // Navegación simple
+                    left: 'prev,next',
                     center: 'title',
-                    // En móvil quitamos botones que saturan la pantalla
                     right: isMobile ? 'today' : 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
 
-                buttonText: {
-                    today: 'Hoy',
-                    month: 'Mes',
-                    week: 'Semana',
-                    day: 'Día'
-                },
-
+                buttonText: { today: 'Hoy', month: 'Mes', week: 'Semana', day: 'Día' },
                 locale: 'es',
                 slotMinTime: '09:00:00',
                 slotMaxTime: '21:00:00',
                 allDaySlot: false,
-                slotDuration: '00:30:00', // Bloques de media hora
+                slotDuration: '00:30:00',
 
-                // --- CONFIGURACIÓN RESPONSIVE ---
-                height: '100%',
-                contentHeight: 'auto',
+                // --- CONFIGURACIÓN RESPONSIVE MEJORADA (SCROLL) ---
+                // En móvil usamos 'auto' para que el calendario crezca y use el scroll del CSS
+                // En PC usamos '100%' para que se ajuste al diseño fijo
+                height: isMobile ? 'auto' : '100%',
+                contentHeight: isMobile ? 'auto' : undefined,
+
                 expandRows: true,
                 handleWindowResize: true,
-                windowResize: function () {
+                windowResize: function (view) {
                     const isMobileNow = window.innerWidth < 768;
-                    calendarInstance.changeView(
-                        isMobileNow ? 'timeGridDay' : 'timeGridWeek'
-                    );
+                    calendarInstance.changeView(isMobileNow ? 'timeGridDay' : 'timeGridWeek');
+                    // Actualizar altura dinámicamente al redimensionar
+                    calendarInstance.setOption('height', isMobileNow ? 'auto' : '100%');
                 },
                 // --------------------------------
 
                 nowIndicator: true,
                 events: eventos,
 
-                // Diseño de la tarjetita del turno (más limpio)
                 eventContent: function (arg) {
                     return {
                         html: `
-            <div class="turno-card">
-                <div class="turno-hora">
-                    ${arg.timeText}
-                </div>
-                <div class="turno-servicio">
-                    ${arg.event.extendedProps.servicio}
-                </div>
-                <div class="turno-cliente">
-                    ${arg.event.title}
-                </div>
-            </div>
-                        `
+                            <div class="turno-card">
+                                <div class="turno-hora">${arg.timeText}</div>
+                                <div class="turno-servicio">${arg.event.extendedProps.servicio}</div>
+                                <div class="turno-cliente">${arg.event.title}</div>
+                            </div>`
                     };
                 },
+
+                // --- NUEVO CLICK EVENT CON MODAL ---
                 eventClick: function (info) {
-                    alert(`Cliente: ${info.event.title}\nServicio: ${info.event.extendedProps.servicio}\nEmail: ${info.event.extendedProps.email}`);
+                    // Evitar comportamiento por defecto
+                    info.jsEvent.preventDefault();
+
+                    const props = info.event.extendedProps;
+                    const content = document.getElementById('detalle-content');
+                    const modal = document.getElementById('modal-detalle-overlay');
+
+                    // Formatear hora
+                    const horaInicio = info.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                    // Llenar datos
+                    content.innerHTML = `
+                        <div class="info-row">
+                            <span class="info-label">Cliente</span>
+                            <div class="info-value">${info.event.title}</div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Servicio</span>
+                            <div class="info-value">${props.servicio}</div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Horario</span>
+                            <div class="info-value">${horaInicio} hs</div>
+                        </div>
+                         <div class="info-row">
+                            <span class="info-label">Contacto</span>
+                            <div class="info-value email">${props.email || 'No especificado'}</div>
+                        </div>
+                    `;
+
+                    // Mostrar Modal
+                    modal.classList.add('active');
                 }
             });
 
