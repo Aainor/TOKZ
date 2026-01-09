@@ -81,8 +81,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     uniqueBarbers.add(data.pro);
 
                     const start = `${data.date}T${data.time}:00`;
-                    // Calculamos 45 min de duración por defecto
-                    let endDate = new Date(new Date(start).getTime() + 45 * 60000).toISOString();
+                    // Calculamos 30 min de duración por defecto
+                    let endDate = new Date(new Date(start).getTime() + 30 * 60000).toISOString();
 
                     allEvents.push({
                         id: doc.id,

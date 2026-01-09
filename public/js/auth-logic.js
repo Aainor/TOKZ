@@ -351,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = doc.data();
                 if (data.date && data.time) {
                     const startStr = `${data.date}T${data.time}:00`;
-                    let endDate = new Date(new Date(startStr).getTime() + 45 * 60000);
+                    let endDate = new Date(new Date(startStr).getTime() + 30 * 60000);
                     let serviciosTexto = Array.isArray(data.services) ? data.services.join(" + ") : data.services;
 
                     eventos.push({
