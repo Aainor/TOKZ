@@ -170,12 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         // 2. Evento: Ir del Admin a la Agenda
                         btnGoCalendar.onclick = () => {
-                            // ============================================================
-                            // ⚠️ IMPORTANTE: SI TU CALENDARIO SALE VACÍO, REVISA ESTE NOMBRE.
-                            // Tiene que ser IDÉNTICO a como aparece en la columna 'pro' de Firebase.
                             const nombreRealEnBaseDeDatos = "Nicolás"; 
-                            // ============================================================
-
                             console.log("Cargando agenda para:", nombreRealEnBaseDeDatos);
                             
                             // Cargamos la agenda con ESE nombre específico
