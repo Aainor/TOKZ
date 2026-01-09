@@ -2,7 +2,6 @@
 <html lang="es">
 
 <head>
-
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -105,8 +104,7 @@
 
         <div class="dashboard-header">
             <div style="text-align: left;">
-                <p
-                    style="color:#888; text-transform: uppercase; letter-spacing: 2px; font-size: 0.7rem; margin-bottom: 2px;">
+                <p style="color:#888; text-transform: uppercase; letter-spacing: 2px; font-size: 0.7rem; margin-bottom: 2px;">
                     Staff Tokz
                 </p>
                 <h2 style="color:white; font-size: 1.8rem; margin: 0; line-height: 1;">
@@ -133,6 +131,7 @@
                 <i class="fa-solid fa-arrow-right-from-bracket"></i> Salir
             </button>
         </div>
+    </div>
 
     <div id="view-admin" class="hidden">
         <div class="admin-container fade-in">
@@ -142,16 +141,16 @@
             </div>
 
             <div class="admin-controls">
-            <input type="date" id="admin-date-picker" class="admin-input">
-            
-            <button id="btn-admin-refresh" class="cta-button">
-                <i class="fa-solid fa-magnifying-glass"></i> Buscar
-            </button>
-            
-            <button id="btn-go-calendar" class="cta-button btn-dark">
-                <i class="fa-regular fa-calendar"></i> Mi Agenda
-            </button>
-        </div>
+                <input type="date" id="admin-date-picker" class="admin-input">
+                
+                <button id="btn-admin-refresh" class="cta-button">
+                    <i class="fa-solid fa-magnifying-glass"></i> Buscar
+                </button>
+
+                <button id="btn-go-calendar" class="cta-button btn-dark">
+                    <i class="fa-regular fa-calendar"></i> Mi Agenda
+                </button>
+            </div>
 
             <div class="table-responsive">
                 <table class="admin-table">
@@ -178,22 +177,9 @@
         </div>
     </div>
 
-  
-    <div id="delete-modal" class="modal-overlay">
-        <div class="modal-box">
-            <h3>¿CANCELAR TURNO?</h3>
-            <p id="modal-text"></p>
-            <div class="modal-actions">
-                <button class="btn-modal btn-cancel" id="btn-modal-cancel">NO, VOLVER</button>
-                <button class="btn-modal btn-confirm" id="btn-modal-confirm">SÍ, BORRAR</button>
-            </div>
-        </div>
-    </div>
-
     <script src="/public/js/goBack.js"></script>
     <script src="/public/js/guard.js"></script>
     <script type="module" src="/public/js/auth-logic.js"></script>
 
 </body>
-
 </html>

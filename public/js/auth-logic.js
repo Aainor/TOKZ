@@ -19,15 +19,14 @@ import {
 // 🚨 CONFIGURACIÓN DE STAFF (LISTA BLANCA)
 // ==========================================
 const STAFF_EMAILS = {
-    "elias04baez@gmail.com": "Nicolás",
-    "fnvillalva.17@gmail.com": "Maurice",
-    "otro_mail@gmail.com": "Facu"
+    "pepito2134@gmail.com": "Jonathan",
+    "fnvillalva.17@gmail.com": "Lautaro",
+    "otro_mail@gmail.com": "Alejandra"
 };
 
 // ACÁ EL EMAIL DEL DUEÑO (ADMIN)
 const ADMIN_EMAILS = [
-    "tucorreo_admin@gmail.com",
-    "otrodueño@gmail.com"
+    "elias04baez@gmail.com"
 ];
 
 // Variable global para la instancia del calendario
@@ -48,8 +47,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Referencias Admin
     const viewAdmin = document.getElementById('view-admin');
-
     const googleBtn = document.querySelector('.google-btn');
+    const btnAdminRefresh = document.getElementById('btn-admin-refresh');
+    const adminDatePicker = document.getElementById('admin-date-picker');
+    const btnLogoutAdmin = document.getElementById('btn-logout-admin');
+
+    // 1. Botón BUSCAR (Admin)
+    if (btnAdminRefresh) {
+        btnAdminRefresh.addEventListener('click', () => {
+            const fechaSeleccionada = adminDatePicker.value;
+            if (fechaSeleccionada) {
+                loadAdminDashboard(fechaSeleccionada);
+            } else {
+                alert("📅 Por favor elegí una fecha primero.");
+            }
+        });
+    }
+
+    // 2. Botón SALIR (Admin)
+    if (btnLogoutAdmin) {
+        btnLogoutAdmin.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+            } catch (error) {
+                console.error("Error al salir:", error);
+            }
+        });
+    }
     const btnLogout = document.getElementById('btn-logout');
 
     const btnViewBookings = document.getElementById('btn-view-bookings');
@@ -62,11 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
         [viewLogin, viewRegister, viewUser, viewRecovery, viewBooking, viewBarber, viewAdmin].forEach(el => {
             if (el) {
                 el.classList.add('hidden');
-                // Limpiamos clases de animación para evitar conflictos residuales
                 el.classList.remove('fade-in', 'appear');
-
-                // Reset de estilo display por si acaso
-                if (el === viewBarber) el.style.display = 'none';
+                el.style.display = ''; 
             }
         });
 
@@ -74,16 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (viewToShow) {
             viewToShow.classList.remove('hidden');
 
-            // 🚨 FIX CRÍTICO: El modo Barbero usa display: flex para ocupar toda la pantalla
-            if (viewToShow === viewBarber) {
-                viewToShow.style.display = 'flex';
-
-                // Actualizamos tamaño del calendario una vez visible
-                if (calendarInstance) {
-                    setTimeout(() => { calendarInstance.updateSize(); }, 50);
-                }
+            // Barbero y Admin usan display especial o clases propias
+            if (viewToShow === viewBarber || viewToShow === viewAdmin) {
+                viewToShow.style.display = 'block'; 
             } else {
-                // El resto de vistas sí usan la animación bonita
+                // Las vistas chicas del login usan la animación
                 viewToShow.classList.add('fade-in', 'appear');
             }
         }
@@ -118,7 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (STAFF_EMAILS.hasOwnProperty(user.email)) {
                     rolDetectado = 'barbero';
                     nombreOficial = STAFF_EMAILS[user.email];
-                    console.log(`✅ Barbero identificado: ${nombreOficial}`);
                 }
                 else if (ADMIN_EMAILS.includes(user.email)) {
                     rolDetectado = 'admin';
@@ -129,9 +144,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     await setDoc(userRef, {
                         Nombre: nombreOficial,
                         Email: user.email,
-                        Cortes_Totales: 0,
-                        Fecha_Registro: new Date(),
-                        rol: rolDetectado
+                        rol: rolDetectado,
+                        Fecha_Registro: new Date()
                     });
                 } else {
                     const dataActual = userSnap.data();
@@ -156,13 +170,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         // 2. Evento: Ir del Admin a la Agenda
                         btnGoCalendar.onclick = () => {
-                            // Usamos el nombre del admin para cargar SU agenda personal
-                            // Asegurate de que el nombre del Admin coincida con como se guardan sus turnos en la DB
-                            loadBarberAgenda(nombreOficial); 
+                            // ============================================================
+                            // ⚠️ IMPORTANTE: SI TU CALENDARIO SALE VACÍO, REVISA ESTE NOMBRE.
+                            // Tiene que ser IDÉNTICO a como aparece en la columna 'pro' de Firebase.
+                            const nombreRealEnBaseDeDatos = "Nicolás"; 
+                            // ============================================================
+
+                            console.log("Cargando agenda para:", nombreRealEnBaseDeDatos);
                             
-                            // Actualizamos el nombre en la vista de barbero
+                            // Cargamos la agenda con ESE nombre específico
+                            loadBarberAgenda(nombreRealEnBaseDeDatos); 
+                            
+                            // Actualizamos el título visual
                             const barberNameDisplay = document.getElementById('barber-name-display');
-                            if (barberNameDisplay) barberNameDisplay.textContent = nombreOficial;
+                            if (barberNameDisplay) barberNameDisplay.textContent = nombreRealEnBaseDeDatos;
 
                             switchView(viewBarber);
                         };
@@ -191,14 +212,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (userNameDisplay) userNameDisplay.textContent = user.displayName;
                     switchView(viewUser);
                 }
+
+            } catch (error) {
+                console.error("Error Auth:", error);
+                switchView(viewLogin);
             }
-            catch (error) {
-                console.error("Error en la gestión del usuario:", error);
-                alert("Error al cargar tu información. Por favor, intenta nuevamente.");
-                await signOut(auth);
-            }
-    }
-});
+        } else {
+            switchView(viewLogin);
+        }
+    });
+
     // LISTENERS DE BOTONES
     if (btnLogout) btnLogout.addEventListener('click', async () => { try { await signOut(auth); } catch (e) { console.error(e); } });
 
@@ -309,44 +332,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnBackDashboard) btnBackDashboard.addEventListener('click', () => { switchView(viewUser); });
 
     // ==========================================
-    // 3. FUNCIÓN BARBERO (MEJORADA: SCROLL + MODAL)
+    // 3. FUNCIÓN BARBERO (CALENDARIO FIX MÓVIL)
     // ==========================================
     async function loadBarberAgenda(nombreBarbero) {
         const calendarEl = document.getElementById('calendar-barber');
         if (!calendarEl) return;
 
-        // --- 1. INYECTAR HTML DEL MODAL SI NO EXISTE ---
-        if (!document.getElementById('modal-detalle-overlay')) {
-            const modalHTML = `
-                <div id="modal-detalle-overlay">
-                    <div class="modal-detalle-card">
-                        <div class="detalle-header">
-                            <h2>Detalles del Turno</h2>
-                            <button class="close-modal-btn" id="btn-close-detalle">&times;</button>
-                        </div>
-                        <div id="detalle-content">
-                            </div>
-                        <div style="margin-top: 20px; text-align: center;">
-                            <button id="btn-ok-detalle" class="cta-button" style="width:100%">ENTENDIDO</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
-
-            // Listeners para cerrar
-            const closeModal = () => document.getElementById('modal-detalle-overlay').classList.remove('active');
-            document.getElementById('btn-close-detalle').addEventListener('click', closeModal);
-            document.getElementById('btn-ok-detalle').addEventListener('click', closeModal);
-            document.getElementById('modal-detalle-overlay').addEventListener('click', (e) => {
-                if (e.target.id === 'modal-detalle-overlay') closeModal();
-            });
-        }
-
         calendarEl.innerHTML = ''; // Limpiar
 
         try {
-            console.log(`📅 Cargando calendario PRO para: "${nombreBarbero}"`);
+            console.log(`📅 Cargando calendario para: "${nombreBarbero}"`);
 
             const q = query(collection(db, "turnos"), where("pro", "==", nombreBarbero));
             const querySnapshot = await getDocs(q);
@@ -381,86 +376,46 @@ document.addEventListener('DOMContentLoaded', () => {
             const isMobile = window.innerWidth < 768;
 
             calendarInstance = new FullCalendar.Calendar(calendarEl, {
-                // Si es móvil: Muestra solo UN DÍA.
+                // Si es móvil: DÍA. Si es PC: SEMANA.
                 initialView: isMobile ? 'timeGridDay' : 'timeGridWeek',
 
                 headerToolbar: {
-                    left: 'prev,next',
+                    left: 'prev,next', 
                     center: 'title',
-                    right: isMobile ? 'today' : 'dayGridMonth,timeGridWeek,timeGridDay'
+                    // En móvil quitamos botones que saturan, en PC dejamos las opciones
+                    right: isMobile ? '' : 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
 
-                buttonText: { today: 'Hoy', month: 'Mes', week: 'Semana', day: 'Día' },
                 locale: 'es',
                 slotMinTime: '09:00:00',
                 slotMaxTime: '21:00:00',
                 allDaySlot: false,
-                slotDuration: '00:30:00',
+                slotDuration: '00:30:00', // Bloques de media hora
 
-                // --- CONFIGURACIÓN RESPONSIVE MEJORADA (SCROLL) ---
-                // En móvil usamos 'auto' para que el calendario crezca y use el scroll del CSS
-                // En PC usamos '100%' para que se ajuste al diseño fijo
-                height: isMobile ? 'auto' : '100%',
-                contentHeight: isMobile ? 'auto' : undefined,
-
+                // --- CONFIGURACIÓN RESPONSIVE ---
+                height: '100%',
+                contentHeight: 'auto',
                 expandRows: true,
                 handleWindowResize: true,
-                windowResize: function (view) {
-                    const isMobileNow = window.innerWidth < 768;
-                    calendarInstance.changeView(isMobileNow ? 'timeGridDay' : 'timeGridWeek');
-                    // Actualizar altura dinámicamente al redimensionar
-                    calendarInstance.setOption('height', isMobileNow ? 'auto' : '100%');
-                },
                 // --------------------------------
 
                 nowIndicator: true,
                 events: eventos,
 
+                // DISEÑO DE LA TARJETA DE TURNO (ORDEN CAMBIADO)
                 eventContent: function (arg) {
                     return {
                         html: `
-                            <div class="turno-card">
-                                <div class="turno-hora">${arg.timeText}</div>
-                                <div class="turno-servicio">${arg.event.extendedProps.servicio}</div>
-                                <div class="turno-cliente">${arg.event.title}</div>
-                            </div>`
+                            <div style="height:100%; display:flex; flex-direction:column; justify-content:center;">
+                                <span class="event-time">${arg.timeText}</span>
+                                <span class="event-service">✂️ ${arg.event.extendedProps.servicio}</span>
+                                <span class="event-title">${arg.event.title}</span>
+                            </div>
+                        `
                     };
                 },
-
-                // --- NUEVO CLICK EVENT CON MODAL ---
                 eventClick: function (info) {
-                    // Evitar comportamiento por defecto
-                    info.jsEvent.preventDefault();
-
-                    const props = info.event.extendedProps;
-                    const content = document.getElementById('detalle-content');
-                    const modal = document.getElementById('modal-detalle-overlay');
-
-                    // Formatear hora
-                    const horaInicio = info.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-                    // Llenar datos
-                    content.innerHTML = `
-                        <div class="info-row">
-                            <span class="info-label">Cliente</span>
-                            <div class="info-value">${info.event.title}</div>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Servicio</span>
-                            <div class="info-value">${props.servicio}</div>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Horario</span>
-                            <div class="info-value">${horaInicio} hs</div>
-                        </div>
-                         <div class="info-row">
-                            <span class="info-label">Contacto</span>
-                            <div class="info-value email">${props.email || 'No especificado'}</div>
-                        </div>
-                    `;
-
-                    // Mostrar Modal
-                    modal.classList.add('active');
+                    alert(`Cliente: ${info.event.title}\nServicio: ${info.event.extendedProps.servicio}\nEmail: ${info.event.extendedProps.email}`);
                 }
             });
 
@@ -469,6 +424,135 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error("Error agenda:", error);
             calendarEl.innerHTML = '<p style="color:red;">Error de carga.</p>';
+        }
+    }
+
+    // ==========================================
+    // 6. FUNCIÓN ADMIN: BÚSQUEDA FLEXIBLE 🛡️
+    // ==========================================
+    async function loadAdminDashboard(fechaSeleccionada) {
+        const adminTableBody = document.getElementById('admin-table-body');
+        const adminMsg = document.getElementById('admin-loading-msg');
+        
+        const [anio, mes, dia] = fechaSeleccionada.split('-');
+        
+        const formatoGuion = `${anio}-${mes}-${dia}`;       
+        const formatoBarra = `${dia}/${mes}/${anio}`;       
+        const formatoBarraCorta = `${Number(dia)}/${Number(mes)}/${anio}`; 
+
+        console.log(`🔎 Buscando turnos con: ${formatoGuion} O ${formatoBarra} O ${formatoBarraCorta}`);
+
+        if (!adminTableBody) return;
+        adminTableBody.innerHTML = ''; 
+        if(adminMsg) {
+            adminMsg.style.display = 'block';
+            adminMsg.textContent = 'Buscando en la base de datos...';
+        }
+
+        try {
+            const turnosRef = collection(db, "turnos");
+            const querySnapshot = await getDocs(turnosRef);
+            
+            let turnosDelDia = [];
+            let cajaTotal = 0;
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                let esDelDia = false;
+                
+                // A) ¿Es un Timestamp de Firebase?
+                if (data.Fecha && data.Fecha.toDate) {
+                    const fechaObj = data.Fecha.toDate();
+                    const fechaIso = fechaObj.toISOString().split('T')[0];
+                    if (fechaIso === formatoGuion) esDelDia = true;
+                } 
+                // B) ¿Es un Texto (String)? Comparación Flexible
+                else {
+                    const fechaString = data.date || data.fecha || data.Fecha || "";
+                    if (fechaString === formatoGuion || 
+                        fechaString === formatoBarra || 
+                        fechaString === formatoBarraCorta) {
+                        esDelDia = true;
+                    }
+                }
+
+                if (esDelDia) {
+                    const hora = data.time || data.hora || "00:00";
+                    const nombre = data.clientName || data.cliente || "Cliente";
+                    const profesional = data.pro || data.barbero || "Barbero";
+                    
+                    let servicios = "Corte";
+                    if (Array.isArray(data.services)) servicios = data.services.join(" + ");
+                    else if (data.services) servicios = data.services;
+                    else if (data.service) servicios = data.service;
+
+                    let precioRaw = data.total || data.precio || data.price || 0;
+                    let precioNum = 0;
+                    if (typeof precioRaw === 'string') {
+                        precioNum = Number(precioRaw.replace('$', '').replace('.', ''));
+                    } else {
+                        precioNum = Number(precioRaw);
+                    }
+
+                    turnosDelDia.push({ 
+                        id: doc.id, 
+                        hora, 
+                        nombre, 
+                        servicios, 
+                        profesional, 
+                        precio: precioNum 
+                    });
+
+                    cajaTotal += precioNum;
+                }
+            });
+
+            if(adminMsg) adminMsg.style.display = 'none';
+
+            if (turnosDelDia.length === 0) {
+                adminTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align:center; padding:20px; color:#888;">
+                            ❌ No hay turnos para la fecha <b>${formatoBarra}</b>.<br>
+                            <small>Probé buscando "${formatoGuion}", "${formatoBarra}" y "${formatoBarraCorta}".</small>
+                        </td>
+                    </tr>`;
+                return;
+            }
+
+            turnosDelDia.sort((a, b) => a.hora.localeCompare(b.hora));
+
+            turnosDelDia.forEach(t => {
+                let colorPro = "#666";
+                if(t.profesional.includes('Nico')) colorPro = "#2196F3"; 
+                else if(t.profesional.includes('Lautaro')) colorPro = "#FF9800"; 
+                
+                const row = `
+                    <tr style="border-bottom: 1px solid #333;">
+                        <td data-label="Hora" style="padding:10px; color:white;">${t.hora}</td>
+                        <td data-label="Cliente" style="padding:10px; font-weight:bold; color:white;">${t.nombre}</td>
+                        <td data-label="Servicio" style="padding:10px; color:#ccc;">${t.servicios}</td>
+                        <td data-label="Barbero" style="padding:10px;">
+                            <span style="background:${colorPro}; color:white; padding:3px 8px; border-radius:4px; font-size:0.8rem;">${t.profesional}</span>
+                        </td>
+                        <td data-label="Precio" style="padding:10px; color:#4CAF50; font-weight:bold; text-align:right;">$${t.precio.toLocaleString()}</td>
+                    </tr>
+                `;
+                adminTableBody.insertAdjacentHTML('beforeend', row);
+            });
+
+            // TOTAL
+            const totalRow = `
+                <tr class="total-row">
+                    <td colspan="4" data-label="Resumen" style="text-align: right;">TOTAL DEL DÍA:</td>
+                    <td data-label="Total Caja" class="price-cell" style="font-size:1.2rem;">$${cajaTotal.toLocaleString()}</td>
+                </tr>
+            `;
+            adminTableBody.insertAdjacentHTML('beforeend', totalRow);
+
+        } catch (error) {
+            console.error("Error Admin:", error);
+            if(adminMsg) adminMsg.innerHTML = `<span style="color:red">Error: ${error.message}</span>`;
         }
     }
 });
