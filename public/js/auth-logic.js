@@ -294,13 +294,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function attachDeleteEvents() {
         document.querySelectorAll('.btn-delete-booking').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                itemToDeleteId = e.currentTarget.getAttribute('data-id');
-                const turnoData = myTurnos.find(t => t.id === itemToDeleteId);
-                if (modalText && turnoData) {
-                    let nombreServicio = Array.isArray(turnoData.services) ? turnoData.services[0] : turnoData.services;
-                    modalText.innerHTML = `Vas a cancelar el turno de <b>${nombreServicio}</b>.<br><br>¿Estás seguro?`;
-                    if (deleteModal) deleteModal.classList.add('active');
+            btn.addEventListener('click', async (e) => {
+                // 1. Efecto visual: Cambiar tacho por un spinner girando
+                const btnIcon = e.currentTarget.querySelector('i');
+                if(btnIcon) btnIcon.className = "fa-solid fa-spinner fa-spin";
+
+                // 2. Obtener el ID del turno
+                const idToDelete = e.currentTarget.getAttribute('data-id');
+                
+                try {
+                    // 3. Borrar directo de la base de datos (Sin preguntar)
+                    await deleteDoc(doc(db, "turnos", idToDelete));
+                    
+                    // 4. Sacarlo de la lista visual al instante para que no tengas que recargar
+                    myTurnos = myTurnos.filter(t => t.id !== idToDelete);
+                    renderBookings();
+                    
+                } catch (error) {
+                    console.error("Error al borrar:", error);
+                    alert("No se pudo borrar. Revisá tu conexión.");
+                    // Si falló, volvemos a mostrar la lista normal (restaura el icono de tacho)
+                    renderBookings(); 
                 }
             });
         });
