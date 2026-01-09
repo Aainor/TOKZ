@@ -292,33 +292,43 @@ document.addEventListener('DOMContentLoaded', () => {
         attachDeleteEvents();
     }
 
-    function attachDeleteEvents() {
-        document.querySelectorAll('.btn-delete-booking').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                // 1. Efecto visual: Cambiar tacho por un spinner girando
-                const btnIcon = e.currentTarget.querySelector('i');
-                if(btnIcon) btnIcon.className = "fa-solid fa-spinner fa-spin";
+   function attachDeleteEvents() {
+    document.querySelectorAll('.btn-delete-booking').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault(); 
+            const btnElement = e.currentTarget;
+            const idToDelete = btnElement.getAttribute('data-id');
+            
+            // 1. Efecto Visual Inmediato: Spinner
+            // Esto le avisa al usuario que algo está pasando
+            btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            btnElement.disabled = true; // Evitar doble click
 
-                // 2. Obtener el ID del turno
-                const idToDelete = e.currentTarget.getAttribute('data-id');
+            try {
+                console.log("🗑️ Iniciando borrado directo del ID:", idToDelete);
                 
-                try {
-                    // 3. Borrar directo de la base de datos (Sin preguntar)
-                    await deleteDoc(doc(db, "turnos", idToDelete));
-                    
-                    // 4. Sacarlo de la lista visual al instante para que no tengas que recargar
-                    myTurnos = myTurnos.filter(t => t.id !== idToDelete);
-                    renderBookings();
-                    
-                } catch (error) {
-                    console.error("Error al borrar:", error);
-                    alert("No se pudo borrar. Revisá tu conexión.");
-                    // Si falló, volvemos a mostrar la lista normal (restaura el icono de tacho)
-                    renderBookings(); 
-                }
-            });
+                // 2. BORRADO DIRECTO EN FIRESTORE
+                // Usamos deleteDoc importado de firebase-firestore
+                await deleteDoc(doc(db, "turnos", idToDelete));
+                
+                console.log("✅ Borrado exitoso en DB");
+
+                // 3. ACTUALIZAR LISTA VISUAL
+                // Eliminamos el turno del array local y volvemos a pintar
+                myTurnos = myTurnos.filter(t => t.id !== idToDelete);
+                renderBookings();
+                
+            } catch (error) {
+                console.error("❌ Error al borrar:", error);
+                alert("No se pudo borrar el turno. Revisá tu conexión.");
+                
+                // Si falla, restauramos el botón original (el tacho)
+                btnElement.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                btnElement.disabled = false;
+            }
         });
-    }
+    });
+}
 
     if (btnModalConfirm) {
         btnModalConfirm.addEventListener('click', async () => {

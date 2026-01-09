@@ -673,4 +673,4 @@ body {
 .info-row { margin-bottom: 15px; }
 .info-label { color: var(--redcolor); font-size: 0.75rem; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; display: block; margin-bottom: 4px; }
 .info-value { color: white; font-size: 1.1rem; font-weight: 500; }
-.info-value.email { font-size: 0.9rem; color: #ccc; word-break: break-all; }
+.info-value.email { font-size: 0.9rem; color: #ccc; word-break: break-all; } 
