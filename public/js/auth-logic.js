@@ -19,15 +19,15 @@ import {
 // 🚨 CONFIGURACIÓN DE STAFF (LISTA BLANCA)
 // ==========================================
 const STAFF_EMAILS = {
-    "pepito2134@gmail.com": "Jonathan",
-    "fnvillalva.17@gmail.com": "Lautaro",
-    "otro_mail@gmail.com": "Alejandra"
+    "elias04baez@gmail.com": "Nicolás",
+    "fnvillalva.17@gmail.com": "Maurice",
+    "otro_mail@gmail.com": "Facu"
 };
 
 // ACÁ EL EMAIL DEL DUEÑO (ADMIN)
 const ADMIN_EMAILS = [
-    "elias04baez@gmail.com",
-
+    "tucorreo_admin@gmail.com",
+    "otrodueño@gmail.com"
 ];
 
 // Variable global para la instancia del calendario
@@ -48,34 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Referencias Admin
     const viewAdmin = document.getElementById('view-admin');
+
     const googleBtn = document.querySelector('.google-btn');
-    const btnAdminRefresh = document.getElementById('btn-admin-refresh');
-    const adminDatePicker = document.getElementById('admin-date-picker');
-    const btnLogoutAdmin = document.getElementById('btn-logout-admin');
-
-    // 1. Botón BUSCAR
-    if (btnAdminRefresh) {
-        btnAdminRefresh.addEventListener('click', () => {
-            const fechaSeleccionada = adminDatePicker.value;
-            if (fechaSeleccionada) {
-                // Llamamos a la función que creaste abajo de todo
-                loadAdminDashboard(fechaSeleccionada);
-            } else {
-                alert("📅 Por favor elegí una fecha primero.");
-            }
-        });
-    }
-
-    // 2. Botón SALIR (Admin)
-    if (btnLogoutAdmin) {
-        btnLogoutAdmin.addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-            } catch (error) {
-                console.error("Error al salir:", error);
-            }
-        });
-    }
     const btnLogout = document.getElementById('btn-logout');
 
     const btnViewBookings = document.getElementById('btn-view-bookings');
@@ -83,15 +57,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const bookingsListContainer = document.querySelector('.bookings-list');
 
     // --- GESTIÓN DE VISTAS (FIX PANTALLA COMPLETA) ---
- function switchView(viewToShow) {
+    function switchView(viewToShow) {
         // 1. Ocultar todo
         [viewLogin, viewRegister, viewUser, viewRecovery, viewBooking, viewBarber, viewAdmin].forEach(el => {
             if (el) {
                 el.classList.add('hidden');
+                // Limpiamos clases de animación para evitar conflictos residuales
                 el.classList.remove('fade-in', 'appear');
-                
-                // Aseguramos que se oculten los display style
-                el.style.display = ''; 
+
+                // Reset de estilo display por si acaso
+                if (el === viewBarber) el.style.display = 'none';
             }
         });
 
@@ -99,17 +74,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (viewToShow) {
             viewToShow.classList.remove('hidden');
 
-            // Barbero y Admin usan display especial o clases propias
-            if (viewToShow === viewBarber || viewToShow === viewAdmin) {
-                // Admin y Barbero manejan su propio display via CSS o clase, 
-                // pero si queres forzarlo para asegurar:
-                viewToShow.style.display = 'block'; 
+            // 🚨 FIX CRÍTICO: El modo Barbero usa display: flex para ocupar toda la pantalla
+            if (viewToShow === viewBarber) {
+                viewToShow.style.display = 'flex';
+
+                // Actualizamos tamaño del calendario una vez visible
+                if (calendarInstance) {
+                    setTimeout(() => { calendarInstance.updateSize(); }, 50);
+                }
             } else {
-                // Las vistas chicas del login usan la animación
+                // El resto de vistas sí usan la animación bonita
                 viewToShow.classList.add('fade-in', 'appear');
             }
         }
     }
+
     // ==========================================
     // LOGICA DE AUTENTICACIÓN INTELIGENTE
     // ==========================================
@@ -343,14 +322,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const isMobile = window.innerWidth < 768;
 
             calendarInstance = new FullCalendar.Calendar(calendarEl, {
-                // Si es móvil: DÍA. Si es PC: SEMANA.
+                // Si es móvil: Muestra solo UN DÍA. Si es PC: Muestra SEMANA.
                 initialView: isMobile ? 'timeGridDay' : 'timeGridWeek',
 
                 headerToolbar: {
-                    left: 'prev,next', 
+                    left: 'prev,next', // Navegación simple
                     center: 'title',
-                    // En móvil quitamos botones que saturan, en PC dejamos las opciones
-                    right: isMobile ? '' : 'dayGridMonth,timeGridWeek,timeGridDay'
+                    // En móvil quitamos botones que saturan la pantalla
+                    right: isMobile ? 'today' : 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+
+                buttonText: {
+                    today: 'Hoy',
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día'
                 },
 
                 locale: 'es',
@@ -364,20 +350,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 contentHeight: 'auto',
                 expandRows: true,
                 handleWindowResize: true,
+                windowResize: function () {
+                    const isMobileNow = window.innerWidth < 768;
+                    calendarInstance.changeView(
+                        isMobileNow ? 'timeGridDay' : 'timeGridWeek'
+                    );
+                },
                 // --------------------------------
 
                 nowIndicator: true,
                 events: eventos,
 
-                // DISEÑO DE LA TARJETA DE TURNO (ORDEN CAMBIADO)
+                // Diseño de la tarjetita del turno (más limpio)
                 eventContent: function (arg) {
                     return {
                         html: `
-                            <div style="height:100%; display:flex; flex-direction:column; justify-content:center;">
-                                <span class="event-time">${arg.timeText}</span>
-                                <span class="event-service">✂️ ${arg.event.extendedProps.servicio}</span>
-                                <span class="event-title">${arg.event.title}</span>
-                            </div>
+            <div class="turno-card">
+                <div class="turno-hora">
+                    ${arg.timeText}
+                </div>
+                <div class="turno-servicio">
+                    ${arg.event.extendedProps.servicio}
+                </div>
+                <div class="turno-cliente">
+                    ${arg.event.title}
+                </div>
+            </div>
                         `
                     };
                 },
@@ -393,151 +391,4 @@ document.addEventListener('DOMContentLoaded', () => {
             calendarEl.innerHTML = '<p style="color:red;">Error de carga.</p>';
         }
     }
-
-// ==========================================
-    // 6. FUNCIÓN ADMIN: BÚSQUEDA FLEXIBLE 🛡️
-    // ==========================================
-    async function loadAdminDashboard(fechaSeleccionada) {
-        const adminTableBody = document.getElementById('admin-table-body');
-        const adminMsg = document.getElementById('admin-loading-msg');
-        
-        // 1. Convertimos la fecha del input (YYYY-MM-DD) a formatos posibles
-        // fechaSeleccionada viene como "2026-01-08"
-        const [anio, mes, dia] = fechaSeleccionada.split('-');
-        
-        // Formatos posibles que podría tener tu DB:
-        const formatoGuion = `${anio}-${mes}-${dia}`;       // "2026-01-08"
-        const formatoBarra = `${dia}/${mes}/${anio}`;       // "08/01/2026"
-        const formatoBarraCorta = `${Number(dia)}/${Number(mes)}/${anio}`; // "8/1/2026"
-
-        console.log(`🔎 Buscando turnos con: ${formatoGuion} O ${formatoBarra} O ${formatoBarraCorta}`);
-
-        if (!adminTableBody) return;
-        adminTableBody.innerHTML = ''; 
-        if(adminMsg) {
-            adminMsg.style.display = 'block';
-            adminMsg.textContent = 'Buscando en la base de datos...';
-        }
-
-        try {
-            // Probamos con la colección "turnos" (minúscula) que vimos en tu foto
-            const turnosRef = collection(db, "turnos");
-            const querySnapshot = await getDocs(turnosRef);
-            
-            let turnosDelDia = [];
-            let cajaTotal = 0;
-
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                let esDelDia = false;
-                let fechaTurno = "";
-
-                // A) ¿Es un Timestamp de Firebase?
-                if (data.Fecha && data.Fecha.toDate) {
-                    const fechaObj = data.Fecha.toDate();
-                    const fechaIso = fechaObj.toISOString().split('T')[0];
-                    if (fechaIso === formatoGuion) esDelDia = true;
-                    fechaTurno = fechaIso;
-                } 
-                // B) ¿Es un Texto (String)? Comparación Flexible
-                else {
-                    // Buscamos cualquier campo que parezca una fecha
-                    const fechaString = data.date || data.fecha || data.Fecha || "";
-                    
-                    if (fechaString === formatoGuion || 
-                        fechaString === formatoBarra || 
-                        fechaString === formatoBarraCorta) {
-                        esDelDia = true;
-                    }
-                    fechaTurno = fechaString;
-                }
-
-                // SI ENCONTRAMOS COINCIDENCIA:
-                if (esDelDia) {
-                    // Normalizar datos (para que no falle si falta alguno)
-                    const hora = data.time || data.hora || "00:00";
-                    const nombre = data.clientName || data.cliente || "Cliente";
-                    const profesional = data.pro || data.barbero || "Barbero";
-                    
-                    // Manejo de servicios (Array o String)
-                    let servicios = "Corte";
-                    if (Array.isArray(data.services)) servicios = data.services.join(" + ");
-                    else if (data.services) servicios = data.services;
-                    else if (data.service) servicios = data.service;
-
-                    // Precio (limpiamos el signo $ si viene como texto)
-                    let precioRaw = data.total || data.precio || data.price || 0;
-                    let precioNum = 0;
-                    if (typeof precioRaw === 'string') {
-                        precioNum = Number(precioRaw.replace('$', '').replace('.', ''));
-                    } else {
-                        precioNum = Number(precioRaw);
-                    }
-
-                    turnosDelDia.push({ 
-                        id: doc.id, 
-                        hora, 
-                        nombre, 
-                        servicios, 
-                        profesional, 
-                        precio: precioNum 
-                    });
-
-                    cajaTotal += precioNum;
-                }
-            });
-
-            // RESULTADOS
-            if(adminMsg) adminMsg.style.display = 'none';
-
-            if (turnosDelDia.length === 0) {
-                adminTableBody.innerHTML = `
-                    <tr>
-                        <td colspan="5" style="text-align:center; padding:20px; color:#888;">
-                            ❌ No hay turnos para la fecha <b>${formatoBarra}</b>.<br>
-                            <small>Probé buscando "${formatoGuion}", "${formatoBarra}" y "${formatoBarraCorta}".</small>
-                        </td>
-                    </tr>`;
-                return;
-            }
-
-            // Ordenar por hora
-            turnosDelDia.sort((a, b) => a.hora.localeCompare(b.hora));
-
-            // RENDERIZAR
-            turnosDelDia.forEach(t => {
-                let colorPro = "#666";
-                if(t.profesional.includes('Nico')) colorPro = "#2196F3"; 
-                else if(t.profesional.includes('Maurice')) colorPro = "#FF9800"; 
-                
-                const row = `
-                    <tr style="border-bottom: 1px solid #333;">
-                        <td data-label="Hora" style="padding:10px; color:white;">${t.hora}</td>
-                        <td data-label="Cliente" style="padding:10px; font-weight:bold; color:white;">${t.nombre}</td>
-                        <td data-label="Servicio" style="padding:10px; color:#ccc;">${t.servicios}</td>
-                        <td data-label="Barbero" style="padding:10px;">
-                            <span style="background:${colorPro}; color:white; padding:3px 8px; border-radius:4px; font-size:0.8rem;">${t.profesional}</span>
-                        </td>
-                        <td data-label="Precio" style="padding:10px; color:#4CAF50; font-weight:bold; text-align:right;">$${t.precio.toLocaleString()}</td>
-                    </tr>
-                `;
-                adminTableBody.insertAdjacentHTML('beforeend', row);
-            });
-
-           // TOTAL
-            // Nota: Usamos una estructura que funcione en flex (móvil) y table (pc)
-            const totalRow = `
-                <tr class="total-row">
-                    <td colspan="4" data-label="Resumen" style="text-align: right;">TOTAL DEL DÍA:</td>
-                    <td data-label="Total Caja" class="price-cell" style="font-size:1.2rem;">$${cajaTotal.toLocaleString()}</td>
-                </tr>
-            `;
-            adminTableBody.insertAdjacentHTML('beforeend', totalRow);
-
-        } catch (error) {
-            console.error("Error Admin:", error);
-            if(adminMsg) adminMsg.innerHTML = `<span style="color:red">Error: ${error.message}</span>`;
-        }
-    }
-   
 });

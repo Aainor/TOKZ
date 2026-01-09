@@ -187,7 +187,8 @@ body {
 }
 
 .forgot-pass {
-    color: var(--color-text-gray); /* Corregido var */
+    color: var(--color-text-gray);
+    /* Corregido var */
     text-decoration: none;
     font-size: 0.8rem;
     transition: color 0.3s ease;
@@ -505,7 +506,9 @@ a.btn-login {
    MEDIA QUERIES (CELULAR)
    ========================================= */
 @media (max-width: 768px) {
-    html, body {
+
+    html,
+    body {
         height: 100%;
         width: 100%;
         position: fixed;
@@ -613,7 +616,7 @@ a.btn-login {
 }
 
 /* 6. Header sections */
-.fc-scrollgrid-section-header > * {
+.fc-scrollgrid-section-header>* {
     background: #1a1a1a;
 }
 
@@ -658,44 +661,36 @@ a.btn-login {
 }
 
 .fc-event-main {
-    padding: 0 !important; /* Quitamos padding para manejarlo nosotros */
-    color: white;
-    width: 100%;
-    height: 100%;
-    overflow: hidden; /* Evita que se salga */
+    padding: 0 !important;
 }
 
-/* CONTENEDOR INTERNO DEL EVENTO PARA ARREGLAR TEXTO CORTADO */
 .fc-event-content-wrapper {
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Centrar verticalmente */
+    justify-content: center;
     height: 100%;
-    padding: 2px 4px;
-    white-space: normal !important; /* PERMITE QUE EL TEXTO BAJE DE RENGLON */
-    line-height: 1.1;
+    padding: 4px 6px;
+    white-space: normal;
 }
 
-/* FUENTES MAS GRANDES Y ORDENADAS */
-.event-service { 
-    font-weight: 800; 
-    font-size: 0.95em; /* Más grande */
-    display: block; 
-    text-transform: uppercase;
-    margin-bottom: 2px;
-}
-.event-title { 
-    font-weight: normal; 
-    font-size: 0.9em; /* Más grande */
+/* HORA – GRANDE */
+.event-time {
+    font-size: 1em;
+    font-weight: bold;
     opacity: 0.9;
-    display: block;
-    margin-bottom: 2px;
 }
-.event-time { 
-    font-size: 0.85em; /* Más grande */
-    opacity: 0.7; 
-    font-style: italic; 
-    display: block; 
+
+/* SERVICIO – PROTAGONISTA */
+.event-service {
+    font-size: 1.05em;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+/* CLIENTE */
+.event-title {
+    font-size: 0.9em;
+    opacity: 0.85;
 }
 
 
@@ -802,7 +797,7 @@ a.btn-login {
     #view-barber h2 {
         font-size: 1.4rem !important;
     }
-    
+
     .action-stack-barber {
         gap: 10px;
         margin-top: 10px;
@@ -818,11 +813,11 @@ a.btn-login {
         gap: 5px;
         margin-bottom: 5px !important;
     }
-    
+
     .fc-toolbar-chunk {
-        display: flex; 
+        display: flex;
         justify-content: center;
-        width: 100%; 
+        width: 100%;
     }
 
     .fc-toolbar-title {
@@ -831,10 +826,11 @@ a.btn-login {
     }
 
     /* Ocultar botones innecesarios en movil */
-    .fc-dayGridMonth-button, .fc-timeGridWeek-button {
+    .fc-dayGridMonth-button,
+    .fc-timeGridWeek-button {
         display: none !important;
     }
-}  
+}
 
 /* =========================================
    ESTILOS ESPECÍFICOS DEL PANEL ADMIN
@@ -844,7 +840,8 @@ a.btn-login {
     padding: 20px;
     text-align: center;
     width: 100%;
-    max-width: 1000px; /* Evita que se estire demasiado en monitores grandes */
+    max-width: 1000px;
+    /* Evita que se estire demasiado en monitores grandes */
     margin: 0 auto;
 }
 
@@ -918,7 +915,7 @@ a.btn-login {
     color: white;
 }
 
-.admin-table th, 
+.admin-table th,
 .admin-table td {
     padding: 12px 15px;
     text-align: left;
@@ -938,7 +935,7 @@ a.btn-login {
 }
 
 .loading-msg {
-    color: #666; 
+    color: #666;
     margin-top: 20px;
 }
 
@@ -965,19 +962,25 @@ a.btn-login {
     width: 100vw;
     height: 100vh;
     background-color: var(--color-bg-main);
-    z-index: 2000; /* Z-index alto para tapar todo */
-    overflow-y: auto; /* Permite scroll vertical si el contenido es largo */
-    padding: 20px 10px; /* Un poco de aire en los bordes */
-    display: none; /* JS lo cambia a block */
+    z-index: 2000;
+    /* Z-index alto para tapar todo */
+    overflow-y: auto;
+    /* Permite scroll vertical si el contenido es largo */
+    padding: 20px 10px;
+    /* Un poco de aire en los bordes */
+    display: none;
+    /* JS lo cambia a block */
 }
 
 /* 2. EL CONTENIDO CENTRADO (Card) */
 .admin-container {
     width: 100%;
     max-width: 900px;
-    margin: 0 auto; /* ESTO LO CENTRA HORIZONTALMENTE */
-    background-color: transparent; 
-    padding-bottom: 50px; /* Espacio extra abajo para scroll en móvil */
+    margin: 0 auto;
+    /* ESTO LO CENTRA HORIZONTALMENTE */
+    background-color: transparent;
+    padding-bottom: 50px;
+    /* Espacio extra abajo para scroll en móvil */
 }
 
 /* Títulos */
@@ -1056,7 +1059,7 @@ a.btn-login {
     color: white;
 }
 
-.admin-table th, 
+.admin-table th,
 .admin-table td {
     padding: 12px 15px;
     text-align: left;
@@ -1073,13 +1076,14 @@ a.btn-login {
    RESPONSIVE ADMIN (MÓVIL - MODO TARJETAS)
    ========================================= */
 @media (max-width: 768px) {
-    
+
     /* Ajuste de controles en móvil */
     .admin-controls {
         flex-direction: column;
     }
 
-    .admin-input, .cta-button {
+    .admin-input,
+    .cta-button {
         width: 100%;
     }
 
@@ -1089,7 +1093,10 @@ a.btn-login {
     }
 
     /* Convertir filas en tarjetas */
-    .admin-table, .admin-table tbody, .admin-table tr, .admin-table td {
+    .admin-table,
+    .admin-table tbody,
+    .admin-table tr,
+    .admin-table td {
         display: block;
         width: 100%;
     }
@@ -1099,7 +1106,7 @@ a.btn-login {
         border: 1px solid #333;
         border-radius: 10px;
         margin-bottom: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         padding: 10px;
     }
 
@@ -1110,7 +1117,7 @@ a.btn-login {
         align-items: center;
         text-align: right;
         padding: 10px 5px;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         font-size: 0.95rem;
     }
 
@@ -1133,4 +1140,42 @@ a.btn-login {
         font-size: 1.1rem;
         color: white;
     }
+}
+
+.fc-timegrid-event {
+    min-height: 60px !important;
+}
+
+.turno-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    padding: 6px 8px;
+    gap: 2px;
+    overflow: hidden;
+}
+
+/* HORA */
+.turno-hora {
+    font-size: 0.85em;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+/* SERVICIO (PROTAGONISTA) */
+.turno-servicio {
+    font-size: 1em;
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 1.1;
+}
+
+/* CLIENTE */
+.turno-cliente {
+    font-size: 0.85em;
+    opacity: 0.85;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
