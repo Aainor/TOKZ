@@ -39,17 +39,8 @@ body {
     z-index: -1;
 }
 
-.glow-1 {
-    top: 10%;
-    left: 20%;
-    background-color: var(--redcolor);
-}
-
-.glow-2 {
-    bottom: 10%;
-    right: 20%;
-    background-color: var(--redcolor);
-}
+.glow-1 { top: 10%; left: 20%; background-color: var(--redcolor); }
+.glow-2 { bottom: 10%; right: 20%; background-color: var(--redcolor); }
 
 /* =========================================
    2. LOGIN CONTAINER Y FORMULARIOS
@@ -84,9 +75,7 @@ body {
     z-index: 10;
 }
 
-.login-header {
-    margin-bottom: 30px;
-}
+.login-header { margin-bottom: 30px; }
 
 .login-logo {
     width: 120px;
@@ -106,14 +95,8 @@ body {
     line-height: 0.9;
 }
 
-.login-header p {
-    color: var(--color-text-gray);
-    font-size: 0.9rem;
-}
-
-.text-red {
-    color: var(--redcolor);
-}
+.login-header p { color: var(--color-text-gray); font-size: 0.9rem; }
+.text-red { color: var(--redcolor); }
 
 .user-text-red {
     width: 100%;
@@ -162,17 +145,9 @@ body {
     font-size: 1rem;
 }
 
-.input-group input::placeholder {
-    color: #666;
-}
-
-.input-group:focus-within {
-    background-color: #222;
-}
-
-.input-group:focus-within label {
-    color: var(--redcolor);
-}
+.input-group input::placeholder { color: #666; }
+.input-group:focus-within { background-color: #222; }
+.input-group:focus-within label { color: var(--redcolor); }
 
 .focus-border {
     position: absolute;
@@ -185,15 +160,10 @@ body {
     border-radius: 0 0 8px 8px;
 }
 
-.input-group:focus-within .focus-border {
-    width: 100%;
-}
+.input-group:focus-within .focus-border { width: 100%; }
 
 /* Botones y Links */
-.forgot-pass-container {
-    text-align: right;
-    margin-bottom: 25px;
-}
+.forgot-pass-container { text-align: right; margin-bottom: 25px; }
 
 .forgot-pass {
     color: var(--color-text-gray);
@@ -202,10 +172,7 @@ body {
     transition: color 0.3s ease;
 }
 
-.forgot-pass:hover,
-.register-link:hover {
-    color: var(--redcolor);
-}
+.forgot-pass:hover, .register-link:hover { color: var(--redcolor); }
 
 .btn-login {
     width: 100%;
@@ -234,22 +201,10 @@ body {
     transform: translateY(-1px);
 }
 
-.btn-login:active {
-    transform: translateY(1px);
-}
+.btn-login:active { transform: translateY(1px); }
 
-.login-footer {
-    margin-top: 30px;
-    color: var(--color-text-gray);
-    font-size: 0.9rem;
-}
-
-.auth-toggle {
-    margin-top: 25px;
-    text-align: center;
-    color: var(--color-text-gray);
-    font-size: 0.9rem;
-}
+.login-footer { margin-top: 30px; color: var(--color-text-gray); font-size: 0.9rem; }
+.auth-toggle { margin-top: 25px; text-align: center; color: var(--color-text-gray); font-size: 0.9rem; }
 
 #show-register {
     color: white;
@@ -258,10 +213,7 @@ body {
     transition: all 0.3s ease;
     margin-left: 5px;
 }
-
-#show-register:hover {
-    color: var(--redcolor);
-}
+#show-register:hover { color: var(--redcolor); }
 
 .divider {
     display: flex;
@@ -272,17 +224,12 @@ body {
     font-size: 0.85rem;
     text-transform: uppercase;
 }
-
-.divider::before,
-.divider::after {
+.divider::before, .divider::after {
     content: '';
     flex: 1;
     border-bottom: 1px solid #333;
 }
-
-.divider span {
-    padding: 0 15px;
-}
+.divider span { padding: 0 15px; }
 
 .google-btn {
     width: 100%;
@@ -301,20 +248,11 @@ body {
     gap: 10px;
     transition: all 0.3s ease;
 }
-
-.google-btn i {
-    font-size: 1.1rem;
-}
-
 .google-btn:hover {
     background-color: transparent;
     border-color: var(--redcolor);
     color: var(--redcolor);
     transform: translateY(-1px);
-}
-
-.google-btn:active {
-    transform: translateY(1px);
 }
 
 .back-arrow {
@@ -332,11 +270,7 @@ body {
     width: 35px;
     height: 35px;
 }
-
-.back-arrow:hover {
-    color: var(--redcolor);
-    transform: translateX(-3px);
-}
+.back-arrow:hover { color: var(--redcolor); transform: translateX(-3px); }
 
 /* Utilidades */
 .fade-in {
@@ -345,38 +279,15 @@ body {
     transition: opacity 0.6s ease-out, transform 0.6s ease-out;
     will-change: opacity, transform;
 }
+.fade-in.appear { opacity: 1; transform: translateY(0); }
+.hidden { display: none !important; }
 
-.fade-in.appear {
-    opacity: 1;
-    transform: translateY(0);
-}
+.cursor-pointer { cursor: pointer; font-weight: 700; transition: color 0.3s ease; }
+.cursor-pointer:hover { text-decoration: underline; }
 
-.hidden {
-    display: none !important;
-}
-
-.cursor-pointer {
-    cursor: pointer;
-    font-weight: 700;
-    transition: color 0.3s ease;
-}
-
-.cursor-pointer:hover {
-    text-decoration: underline;
-}
-
-.bookings-list::-webkit-scrollbar {
-    display: none;
-}
-
-.bookings-list {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-
-#no-bookings-msg {
-    margin-bottom: 100px;
-}
+.bookings-list::-webkit-scrollbar { display: none; }
+.bookings-list { -ms-overflow-style: none; scrollbar-width: none; }
+#no-bookings-msg { margin-bottom: 100px; }
 
 .action-stack {
     display: flex;
@@ -387,22 +298,12 @@ body {
     margin: 20px auto 0;
 }
 
-a.btn-login {
-    display: block;
-    text-align: center;
-    text-decoration: none;
-    line-height: 1.2;
-}
-
 .btn-outline {
     background: transparent;
     border: 1px solid var(--redcolor);
     color: var(--redcolor);
 }
-
-.btn-outline:hover {
-    background: rgba(174, 14, 48, 0.1);
-}
+.btn-outline:hover { background: rgba(174, 14, 48, 0.1); }
 
 /* --- MODAL ESTÁNDAR (Eliminar/Confirmar) --- */
 .modal-overlay {
@@ -421,11 +322,7 @@ a.btn-login {
     visibility: hidden;
     transition: all 0.3s ease;
 }
-
-.modal-overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
+.modal-overlay.active { opacity: 1; visibility: visible; }
 
 .modal-box {
     background: #1a1a1a;
@@ -438,26 +335,10 @@ a.btn-login {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     border-top: 3px solid var(--redcolor);
 }
+.modal-box h3 { color: white; margin-bottom: 10px; font-family: var(--font-heading); }
+.modal-box p { color: #aaa; font-size: 0.9rem; margin-bottom: 20px; line-height: 1.5; }
 
-.modal-box h3 {
-    color: white;
-    margin-bottom: 10px;
-    font-family: var(--font-heading);
-}
-
-.modal-box p {
-    color: #aaa;
-    font-size: 0.9rem;
-    margin-bottom: 20px;
-    line-height: 1.5;
-}
-
-.modal-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-}
-
+.modal-actions { display: flex; gap: 10px; justify-content: center; }
 .btn-modal {
     padding: 10px 20px;
     border-radius: 6px;
@@ -468,132 +349,13 @@ a.btn-login {
     padding: 10px;
     font-family: var(--font-primary);
 }
-
-.btn-cancel {
-    background: transparent;
-    border: 1px solid #555;
-    color: white;
-}
-
-.btn-confirm {
-    background: var(--redcolor);
-    color: white;
-}
-
-.btn-modal:hover {
-    border: 1px solid var(--redcolor);
-    background: transparent;
-    color: var(--redcolor);
-    transform: translateY(-1px);
-}
-
-button:focus,
-input:focus,
-a:focus {
-    outline: none;
-}
-
+.btn-cancel { background: transparent; border: 1px solid #555; color: white; }
+.btn-confirm { background: var(--redcolor); color: white; }
+.btn-modal:hover { transform: translateY(-1px); }
 
 /* =========================================
-   MEDIA QUERIES (TABLET/PC PEQUEÑA)
+   3. FULLCALENDAR DARK THEME OVERRIDE
    ========================================= */
-@media (max-width: 992px) {
-    .login-header h1 {
-        font-size: 2rem;
-    }
-
-    .login-box {
-        background-color: transparent;
-        border: none;
-        box-shadow: none;
-        padding: 0;
-        width: 100%;
-        position: static;
-    }
-
-    .login-box::before {
-        display: none;
-    }
-}
-
-/* =========================================
-   MEDIA QUERIES (CELULAR)
-   ========================================= */
-@media (max-width: 768px) {
-
-    html,
-    body {
-        height: 100%;
-        width: 100%;
-        position: fixed;
-        overflow: hidden;
-    }
-
-    .login-container {
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        height: 100%;
-    }
-
-    .login-box {
-        background-color: transparent;
-        border: none;
-        box-shadow: none;
-        padding: 0;
-        width: 100%;
-    }
-
-    .login-header {
-        margin-bottom: 20px;
-    }
-
-    .login-header h1 {
-        font-size: 1.8rem;
-    }
-
-    .input-group {
-        margin-bottom: 15px;
-        background-color: rgba(26, 26, 26, 0.8);
-    }
-
-    .input-group input {
-        padding: 15px;
-        font-size: 1rem;
-    }
-
-    .forgot-pass-container {
-        margin-bottom: 15px;
-    }
-
-    .forgot-pass {
-        font-size: 0.75rem;
-    }
-
-    .btn-login {
-        padding: 10px;
-        font-size: 1rem;
-        max-width: 50%;
-    }
-
-    .login-footer {
-        margin-top: 10px;
-        font-size: 0.7rem;
-    }
-
-    .back-arrow {
-        top: 15px;
-        left: 15px;
-        font-size: 1.1rem;
-    }
-}
-
-/* =========================================
-   FULLCALENDAR DARK THEME OVERRIDE
-   ========================================= */
-
-/* 1. Fondo general y texto */
 #calendar-barber {
     background-color: #111;
     font-family: 'Montserrat', sans-serif;
@@ -601,20 +363,8 @@ a:focus {
     border-radius: 8px;
     padding: 10px;
 }
-
-/* 2. Día de hoy */
-.fc .fc-timegrid-col.fc-day-today {
-    background-color: rgba(174, 14, 48, 0.05) !important;
-}
-
-/* 3. Líneas de la grilla */
-.fc-theme-standard td,
-.fc-theme-standard th,
-.fc-theme-standard .fc-scrollgrid {
-    border-color: #333 !important;
-}
-
-/* 4. Encabezados */
+.fc .fc-timegrid-col.fc-day-today { background-color: rgba(174, 14, 48, 0.05) !important; }
+.fc-theme-standard td, .fc-theme-standard th, .fc-theme-standard .fc-scrollgrid { border-color: #333 !important; }
 .fc-col-header-cell-cushion {
     color: white !important;
     text-transform: uppercase;
@@ -622,30 +372,12 @@ a:focus {
     padding-top: 10px !important;
     text-decoration: none !important;
 }
+.fc-timegrid-slot-label-cushion { color: #888 !important; font-size: 0.75rem; }
+.fc-scrollgrid-section-header>* { background: #1a1a1a; }
+.fc-header-toolbar { margin-bottom: 10px !important; }
+.fc-toolbar-title { font-size: 1rem !important; color: white; text-transform: capitalize; }
 
-/* 5. Columna de horas */
-.fc-timegrid-slot-label-cushion {
-    color: #888 !important;
-    font-size: 0.75rem;
-}
-
-/* 6. Header sections */
-.fc-scrollgrid-section-header>* {
-    background: #1a1a1a;
-}
-
-/* 7. Toolbar */
-.fc-header-toolbar {
-    margin-bottom: 10px !important;
-}
-
-.fc-toolbar-title {
-    font-size: 1rem !important;
-    color: white;
-    text-transform: capitalize;
-}
-
-/* Botones */
+/* Botones Calendario */
 .fc-button {
     background-color: transparent !important;
     border: 1px solid #444 !important;
@@ -655,29 +387,12 @@ a:focus {
     font-weight: bold;
     box-shadow: none !important;
 }
+.fc-button:hover { border-color: white !important; color: white !important; }
+.fc-button-active { background-color: #AE0E30 !important; border-color: #AE0E30 !important; color: white !important; }
 
-.fc-button:hover {
-    border-color: white !important;
-    color: white !important;
-}
-
-.fc-button-active {
-    background-color: #AE0E30 !important;
-    border-color: #AE0E30 !important;
-    color: white !important;
-}
-
-/* 8. TARJETAS DE TURNO (ARREGLADO) */
-.fc-event {
-    border: none !important;
-    border-radius: 4px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-.fc-event-main {
-    padding: 0 !important;
-}
-
+/* Tarjetas de Turno */
+.fc-event { border: none !important; border-radius: 4px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); }
+.fc-event-main { padding: 0 !important; }
 .fc-event-content-wrapper {
     display: flex;
     flex-direction: column;
@@ -686,32 +401,15 @@ a:focus {
     padding: 4px 6px;
     white-space: normal;
 }
+.event-time { font-size: 1em; font-weight: bold; opacity: 0.9; }
+.event-service { font-size: 1.05em; font-weight: 800; text-transform: uppercase; }
+.event-title { font-size: 0.9em; opacity: 0.85; }
 
-/* HORA – GRANDE */
-.event-time {
-    font-size: 1em;
-    font-weight: bold;
-    opacity: 0.9;
-}
-
-/* SERVICIO – PROTAGONISTA */
-.event-service {
-    font-size: 1.05em;
-    font-weight: 800;
-    text-transform: uppercase;
-}
-
-/* CLIENTE */
-.event-title {
-    font-size: 0.9em;
-    opacity: 0.85;
-}
-
+.fc-timegrid-event { min-height: 60px !important; }
 
 /* =========================================
-   VISTA BARBERO: ESTRUCTURA
+   4. VISTA BARBERO (FIX PANTALLA COMPLETA)
    ========================================= */
-
 #view-barber {
     position: fixed !important;
     top: 0 !important;
@@ -744,28 +442,32 @@ a:focus {
     background-color: #111;
     border-radius: 12px;
     border: 1px solid #333;
+    /* FIX SCROLL NATIVO */
+    overflow-y: auto !important; 
+    -webkit-overflow-scrolling: touch;
 }
 
-#calendar-barber {
-    height: 100%;
-    font-family: 'Montserrat', sans-serif;
-}
+#calendar-barber { height: 100%; font-family: 'Montserrat', sans-serif; }
 
+/* Botones Barbero (Flexibles) */
 .action-stack-barber {
     flex-shrink: 0;
     display: flex;
-    gap: 15px;
+    flex-wrap: wrap; /* CLAVE: Permite que bajen si no entran */
+    gap: 10px;       
     margin-top: 15px;
     justify-content: center;
     width: 100%;
+    padding-bottom: 20px; 
 }
 
 .btn-barber {
-    flex: 1;
-    padding: 14px;
+    flex: 1 1 auto; /* Crecen para ocupar espacio */
+    min-width: 120px; /* Ancho mínimo antes de bajar */
+    padding: 12px 10px;
     border-radius: 8px;
     font-family: var(--font-primary);
-    font-size: 0.9rem;
+    font-size: 0.85rem; 
     font-weight: 700;
     text-transform: uppercase;
     cursor: pointer;
@@ -774,201 +476,17 @@ a:focus {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    letter-spacing: 1px;
+    white-space: nowrap;
 }
 
-.btn-barber-refresh {
-    background: transparent;
-    border: 1px solid var(--redcolor);
-    color: var(--redcolor);
-}
-
-.btn-barber-refresh:hover {
-    background: rgba(174, 14, 48, 0.1);
-    transform: translateY(-2px);
-}
-
-.btn-barber-logout {
-    background: var(--redcolor);
-    border: 1px solid var(--redcolor);
-    color: white;
-}
-
-.btn-barber-logout:hover {
-    background: transparent;
-    color: var(--redcolor);
-    transform: translateY(-2px);
-}
+.btn-barber-refresh { background: transparent; border: 1px solid var(--redcolor); color: var(--redcolor); }
+.btn-barber-refresh:hover { background: rgba(174, 14, 48, 0.1); transform: translateY(-2px); }
+.btn-barber-logout { background: var(--redcolor); border: 1px solid var(--redcolor); color: white; }
+.btn-barber-logout:hover { background: transparent; color: var(--redcolor); transform: translateY(-2px); }
 
 /* =========================================
-   RESPONSIVE: CELULAR (MODO AMIGABLE)
+   5. PANEL ADMIN (FIX PANTALLA COMPLETA)
    ========================================= */
-@media (max-width: 768px) {
-    #view-barber {
-        padding: 10px !important;
-    }
-
-    #view-barber h2 {
-        font-size: 1.4rem !important;
-    }
-
-    .action-stack-barber {
-        gap: 10px;
-        margin-top: 10px;
-    }
-
-    .btn-barber {
-        padding: 12px;
-        font-size: 0.8rem;
-    }
-
-    .fc-header-toolbar {
-        flex-wrap: wrap;
-        gap: 5px;
-        margin-bottom: 5px !important;
-    }
-
-    .fc-toolbar-chunk {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-    }
-
-    .fc-toolbar-title {
-        font-size: 1rem !important;
-        margin: 5px 0 !important;
-    }
-
-    /* Ocultar botones innecesarios en movil */
-    .fc-dayGridMonth-button,
-    .fc-timeGridWeek-button {
-        display: none !important;
-    }
-}
-
-/* =========================================
-   ESTILOS ESPECÍFICOS DEL PANEL ADMIN
-   ========================================= */
-
-.admin-container {
-    padding: 20px;
-    text-align: center;
-    width: 100%;
-    max-width: 1000px;
-    /* Evita que se estire demasiado en monitores grandes */
-    margin: 0 auto;
-}
-
-.admin-subtitle {
-    color: var(--redcolor);
-    font-weight: bold;
-    letter-spacing: 2px;
-    margin-bottom: 5px;
-}
-
-.admin-title {
-    color: white;
-    margin-bottom: 20px;
-}
-
-/* Controles (Input fecha y botón) */
-.admin-controls {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.admin-input {
-    padding: 12px;
-    border-radius: 5px;
-    border: 1px solid #444;
-    background: #222;
-    color: white;
-    font-family: var(--font-primary);
-}
-
-.cta-button {
-    padding: 12px 25px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    background: var(--redcolor);
-    color: white;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-
-.cta-button:hover {
-    background: #8a0b26;
-}
-
-.btn-dark {
-    background: #333;
-}
-
-.btn-dark:hover {
-    background: #444;
-}
-
-/* Tabla Base (Escritorio) */
-.table-responsive {
-    overflow-x: auto;
-}
-
-.admin-table {
-    width: 100%;
-    border-collapse: collapse;
-    color: #ddd;
-    margin-top: 10px;
-}
-
-.admin-table thead tr {
-    background: var(--redcolor);
-    color: white;
-}
-
-.admin-table th,
-.admin-table td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #333;
-}
-
-.admin-table th {
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-}
-
-.price-cell {
-    color: #4CAF50;
-    font-weight: bold;
-    text-align: right !important;
-}
-
-.loading-msg {
-    color: #666;
-    margin-top: 20px;
-}
-
-.admin-footer {
-    margin-top: 40px;
-}
-
-/* Fila de Total (Diseño Escritorio) */
-.total-row {
-    background: rgba(174, 14, 48, 0.15);
-    border-top: 2px solid var(--redcolor);
-    font-weight: bold;
-}
-
-/* =========================================
-   ESTILOS ESPECÍFICOS DEL PANEL ADMIN (FINAL)
-   ========================================= */
-
-/* 1. EL FONDO DE PANTALLA COMPLETA (Wrapper) */
 #view-admin {
     position: fixed;
     top: 0;
@@ -977,42 +495,22 @@ a:focus {
     height: 100vh;
     background-color: var(--color-bg-main);
     z-index: 2000;
-    /* Z-index alto para tapar todo */
     overflow-y: auto;
-    /* Permite scroll vertical si el contenido es largo */
     padding: 20px 10px;
-    /* Un poco de aire en los bordes */
     display: none;
-    /* JS lo cambia a block */
 }
 
-/* 2. EL CONTENIDO CENTRADO (Card) */
 .admin-container {
     width: 100%;
     max-width: 900px;
     margin: 0 auto;
-    /* ESTO LO CENTRA HORIZONTALMENTE */
-    background-color: transparent;
-    padding-bottom: 50px;
-    /* Espacio extra abajo para scroll en móvil */
+    background-color: transparent; 
+    padding-bottom: 80px;
 }
 
-/* Títulos */
-.admin-subtitle {
-    color: var(--redcolor);
-    font-weight: bold;
-    letter-spacing: 2px;
-    margin-bottom: 5px;
-    font-size: 0.9rem;
-}
+.admin-subtitle { color: var(--redcolor); font-weight: bold; letter-spacing: 2px; margin-bottom: 5px; font-size: 0.9rem; }
+.admin-title { color: white; margin-bottom: 25px; font-size: 1.8rem; }
 
-.admin-title {
-    color: white;
-    margin-bottom: 25px;
-    font-size: 1.8rem;
-}
-
-/* Controles (Input fecha y botón) */
 .admin-controls {
     display: flex;
     justify-content: center;
@@ -1044,102 +542,72 @@ a:focus {
     font-weight: bold;
     transition: all 0.3s ease;
 }
+.cta-button:hover { background: #8a0b26; }
+.btn-dark { background: #333; width: 100%; max-width: 300px; }
+.btn-dark:hover { background: #444; }
 
-.cta-button:hover {
-    background: #8a0b26;
-}
+.admin-footer { margin-top: 40px; text-align: center; }
 
-.btn-dark {
-    background: #333;
-    width: 100%;
-    max-width: 300px;
-}
-
-.admin-footer {
-    margin-top: 40px;
-    text-align: center;
-}
-
-/* TABLA - ESTILO ESCRITORIO */
-.admin-table {
-    width: 100%;
-    border-collapse: collapse;
-    color: #ddd;
-    margin-top: 10px;
-}
-
-.admin-table thead tr {
-    background: var(--redcolor);
-    color: white;
-}
-
-.admin-table th,
-.admin-table td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #333;
-}
-
-.loading-msg {
-    color: #888;
-    margin-top: 20px;
-    font-style: italic;
-}
+/* Tabla Escritorio */
+.admin-table { width: 100%; border-collapse: collapse; color: #ddd; margin-top: 10px; }
+.admin-table thead tr { background: var(--redcolor); color: white; }
+.admin-table th, .admin-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #333; }
+.loading-msg { color: #888; margin-top: 20px; font-style: italic; }
+.price-cell { color: #4CAF50; font-weight: bold; text-align: right !important; }
+.total-row { background: rgba(174, 14, 48, 0.15); border-top: 2px solid var(--redcolor); font-weight: bold; }
 
 /* =========================================
-   RESPONSIVE ADMIN (MÓVIL - MODO TARJETAS)
+   6. MEDIA QUERIES (RESPONSIVE GENERAL)
    ========================================= */
+@media (max-width: 992px) {
+    .login-header h1 { font-size: 2rem; }
+    .login-box { background-color: transparent; border: none; box-shadow: none; padding: 0; position: static; }
+    .login-box::before { display: none; }
+}
+
 @media (max-width: 768px) {
+    /* Login */
+    .login-container { height: 100%; justify-content: center; padding: 20px; }
+    .login-header h1 { font-size: 1.8rem; }
+    /* FIX: Quitamos la restricción de 50% para que se centren bien */
+    .btn-login { max-width: 100%; }
 
-    /* Ajuste de controles en móvil */
-    .admin-controls {
-        flex-direction: column;
-    }
+    /* Barbero */
+    #view-barber { padding: 10px !important; }
+    #view-barber h2 { font-size: 1.4rem !important; }
+    .fc-header-toolbar { flex-wrap: wrap; gap: 5px; }
+    .fc-dayGridMonth-button, .fc-timeGridWeek-button { display: none !important; }
+    
+    /* Centrar botones del stack en movil si sobran */
+    .action-stack-barber { align-items: center; }
 
-    .admin-input,
-    .cta-button {
-        width: 100%;
-    }
-
-    /* Ocultar encabezados de tabla clásica */
-    .admin-table thead {
-        display: none;
-    }
-
-    /* Convertir filas en tarjetas */
-    .admin-table,
-    .admin-table tbody,
-    .admin-table tr,
-    .admin-table td {
-        display: block;
-        width: 100%;
-    }
-
+    /* Admin: Tabla a Tarjetas */
+    .admin-controls { flex-direction: column; }
+    .admin-input, .cta-button { width: 100%; }
+    .admin-table thead { display: none; }
+    
+    .admin-table, .admin-table tbody, .admin-table tr, .admin-table td { display: block; width: 100%; }
+    
     .admin-table tr {
         background: #161616;
         border: 1px solid #333;
         border-radius: 10px;
         margin-bottom: 15px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         padding: 10px;
     }
 
-    /* Celdas internas */
     .admin-table td {
         display: flex;
         justify-content: space-between;
         align-items: center;
         text-align: right;
         padding: 10px 5px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255,255,255,0.05);
         font-size: 0.95rem;
     }
-
-    .admin-table td:last-child {
-        border-bottom: none;
-    }
-
-    /* Etiquetas automáticas (data-label) */
+    .admin-table td:last-child { border-bottom: none; }
+    
     .admin-table td::before {
         content: attr(data-label);
         font-weight: bold;
@@ -1148,67 +616,12 @@ a:focus {
         text-transform: uppercase;
     }
 
-    /* Arreglo especial para la fila de TOTAL */
-    .total-row td {
-        justify-content: space-between !important;
-        font-size: 1.1rem;
-        color: white;
-    }
-}
-
-.fc-timegrid-event {
-    /* 🚨 SENIOR FIX: Desactivado para permitir turnos de 30 min */
-    /* min-height: 60px !important; */
-    border-radius: 4px;
-}
-
-.turno-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
-    padding: 6px 8px;
-    gap: 2px;
-    overflow: hidden;
-}
-
-/* HORA */
-.turno-hora {
-    font-size: 0.85em;
-    font-weight: 600;
-    opacity: 0.9;
-}
-
-/* SERVICIO (PROTAGONISTA) */
-.turno-servicio {
-    font-size: 1em;
-    font-weight: 800;
-    text-transform: uppercase;
-    line-height: 1.1;
-}
-
-/* CLIENTE */
-.turno-cliente {
-    font-size: 0.85em;
-    opacity: 0.85;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    .total-row td { justify-content: space-between !important; font-size: 1.1rem; color: white; }
 }
 
 /* =========================================
-   SENIOR FIX: SCROLL MÓVIL Y MODAL DETALLE
+   7. SENIOR FIX: MODAL DETALLE (Cyberpunk)
    ========================================= */
-
-/* 1. Habilitar Scroll Nativo en el contenedor del calendario */
-#calendar-container-wrapper {
-    /* Permitir que el contenido desborde y se haga scroll */
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
-    /* Suavidad en iPhone */
-}
-
-/* 2. Estilos del Nuevo Modal de Detalle (Estilo Cyberpunk/Dark) */
 #modal-detalle-overlay {
     position: fixed;
     top: 0;
@@ -1217,21 +630,16 @@ a:focus {
     height: 100%;
     background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(8px);
-    /* Desenfoque más fuerte */
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 100000;
-    /* SUPERIOR A view-barber (99999) */
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
 }
 
-#modal-detalle-overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
+#modal-detalle-overlay.active { opacity: 1; visibility: visible; }
 
 .modal-detalle-card {
     background: #0a0a0a;
@@ -1244,16 +652,11 @@ a:focus {
     transform: scale(0.8) translateY(20px);
     opacity: 0;
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
-    position: relative;
     text-align: left;
 }
 
-#modal-detalle-overlay.active .modal-detalle-card {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-}
+#modal-detalle-overlay.active .modal-detalle-card { transform: scale(1) translateY(0); opacity: 1; }
 
-/* Tipografía del Modal */
 .detalle-header {
     border-bottom: 1px solid #333;
     padding-bottom: 15px;
@@ -1263,149 +666,11 @@ a:focus {
     align-items: center;
 }
 
-.detalle-header h2 {
-    color: white;
-    font-family: var(--font-heading);
-    font-size: 1.5rem;
-    margin: 0;
-}
+.detalle-header h2 { color: white; font-family: var(--font-heading); font-size: 1.5rem; margin: 0; }
+.close-modal-btn { background: none; border: none; color: #666; font-size: 1.5rem; cursor: pointer; transition: color 0.3s; }
+.close-modal-btn:hover { color: white; }
 
-.close-modal-btn {
-    background: none;
-    border: none;
-    color: #666;
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: color 0.3s;
-}
-
-.close-modal-btn:hover {
-    color: white;
-}
-
-.info-row {
-    margin-bottom: 15px;
-}
-
-.info-label {
-    color: var(--redcolor);
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    font-weight: bold;
-    letter-spacing: 1px;
-    display: block;
-    margin-bottom: 4px;
-}
-
-.info-value {
-    color: white;
-    font-size: 1.1rem;
-    font-weight: 500;
-}
-
-.info-value.email {
-    font-size: 0.9rem;
-    color: #ccc;
-    word-break: break-all;
-}
-
-/* =========================================
-   FIX VISUAL: TARJETAS COMPACTAS
-   ========================================= */
-
-/* 1. Ajuste del contenedor del evento para que corte el texto sobrante */
-.fc-event {
-    border: none !important;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    overflow: hidden !important;
-    /* CLAVE: Corta lo que se sale */
-}
-
-/* 2. Contenido interno FullCalendar */
-.fc-event-main {
-    padding: 0 !important;
-    width: 100%;
-    height: 100%;
-}
-
-/* 3. Tarjeta Interna (Estructura Flex) */
-.turno-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    /* Alineado arriba */
-    width: 100%;
-    height: 100%;
-    padding: 2px 4px;
-    /* Padding mínimo */
-    box-sizing: border-box;
-    overflow: hidden;
-}
-
-/* 4. Hora (Más chica) */
-.turno-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0px;
-}
-
-.turno-hora {
-    font-size: 0.75rem;
-    /* Letra chica para la hora */
-    font-weight: 700;
-    opacity: 0.9;
-    white-space: nowrap;
-}
-
-/* 5. Cuerpo (Servicio) */
-.turno-body {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    /* Centrar verticalmente si hay espacio */
-    overflow: hidden;
-}
-
-.turno-servicio {
-    font-size: 0.8rem;
-    /* Letra legible pero compacta */
-    font-weight: 600;
-    text-transform: uppercase;
-    white-space: nowrap;
-    /* No bajar de renglón */
-    overflow: hidden;
-    /* Cortar si sobra */
-    text-overflow: ellipsis;
-    /* Poner "..." al final */
-    line-height: 1.1;
-}
-
-/* =========================================
-   FIX RESPONSIVE Y VISTAS
-   ========================================= */
-
-/* En celular, ajustamos la barra de herramientas para que entren los 3 botones */
-@media (max-width: 768px) {
-    .fc-header-toolbar {
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .fc-toolbar-chunk {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-    }
-
-    /* Asegurar que los botones de vista se vean en móvil */
-    .fc-dayGridMonth-button,
-    .fc-timeGridWeek-button,
-    .fc-timeGridDay-button {
-        display: inline-block !important;
-        /* Forzamos que se vean */
-        font-size: 0.75rem !important;
-        padding: 4px 8px !important;
-    }
-}
+.info-row { margin-bottom: 15px; }
+.info-label { color: var(--redcolor); font-size: 0.75rem; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; display: block; margin-bottom: 4px; }
+.info-value { color: white; font-size: 1.1rem; font-weight: 500; }
+.info-value.email { font-size: 0.9rem; color: #ccc; word-break: break-all; }
