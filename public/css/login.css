@@ -384,7 +384,18 @@ body {
     gap: 15px;
     width: 100%;
     max-width: 320px;
-    margin: 20px auto 0;
+    margin: 20px auto 0; /* El 'auto' acá es clave para centrar el bloque */
+    align-items: center; /* Esto centra los hijos (botones) horizontalmente */
+}
+
+/* Agregá esto justo abajo de .action-stack para forzar a los botones */
+.action-stack .btn-login, 
+.action-stack .cta-button,
+.action-stack button {
+    width: 100%;       /* Que ocupen todo el ancho del stack (320px) */
+    text-align: center;
+    justify-content: center; /* Por si son flex */
+    display: flex;
 }
 
 a.btn-login {
@@ -1400,15 +1411,18 @@ body {
 
 /* 3. La flecha se queda quieta arriba a la izquierda */
 .back-arrow {
-    position: fixed;  /* "Fixed" la pega a la pantalla, no a la caja */
-    top: 30px;        /* Separación desde el techo */
-    left: 30px;       /* Separación desde la pared izquierda */
-    z-index: 9999;    /* Se asegura de estar siempre encima de todo */
-    
-    /* Mantené estos estilos estéticos si ya los tenías: */
-    color: white;     /* O el color que use tu tema */
-    font-size: 1.5rem;
-    cursor: pointer;
+    position: fixed !important;
+    top: 30px !important;
+    left: 30px !important;
+    z-index: 99999 !important;
+    /* Ajuste para móvil para que no quede muy pegada */
+}
+
+@media (max-width: 768px) {
+    .back-arrow {
+        top: 20px !important;
+        left: 20px !important;
+    }
 }
 
 #calendar-container-wrapper {
