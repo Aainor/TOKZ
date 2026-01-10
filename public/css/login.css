@@ -1376,7 +1376,9 @@ body {
 
 #view-barber,
 #view-admin,
-.login-container {
+/* 1. Vistas de Barbero y Admin (Estas SÍ van pegadas arriba y ocupan todo) */
+#view-barber,
+#view-admin {
     position: absolute !important;
     height: auto !important;
     min-height: 100vh !important;
@@ -1386,6 +1388,23 @@ body {
     bottom: auto !important;
 }
 
+/* 2. Aseguramos que el Login use el centrado Flex del body */
+.login-container {
+    position: relative !important; /* Importante para que el z-index funcione */
+    height: auto !important;
+    min-height: auto !important;
+    top: auto !important;
+    left: auto !important;
+    /* Flexbox del body se encarga de centrarlo ahora */
+}
+
+/* 3. La flecha se queda quieta arriba a la izquierda */
+.back-arrow {
+    position: absolute;
+    top: 30px; /* Le damos un poco más de aire */
+    left: 30px;
+    z-index: 100; /* Nos aseguramos que esté por encima de todo */
+}
 
 #calendar-container-wrapper {
     height: auto !important;
