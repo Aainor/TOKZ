@@ -1400,10 +1400,15 @@ body {
 
 /* 3. La flecha se queda quieta arriba a la izquierda */
 .back-arrow {
-    position: absolute;
-    top: 30px; /* Le damos un poco más de aire */
-    left: 30px;
-    z-index: 100; /* Nos aseguramos que esté por encima de todo */
+    position: fixed;  /* "Fixed" la pega a la pantalla, no a la caja */
+    top: 30px;        /* Separación desde el techo */
+    left: 30px;       /* Separación desde la pared izquierda */
+    z-index: 9999;    /* Se asegura de estar siempre encima de todo */
+    
+    /* Mantené estos estilos estéticos si ya los tenías: */
+    color: white;     /* O el color que use tu tema */
+    font-size: 1.5rem;
+    cursor: pointer;
 }
 
 #calendar-container-wrapper {
