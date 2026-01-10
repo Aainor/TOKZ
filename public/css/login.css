@@ -1376,7 +1376,9 @@ body {
 
 #view-barber,
 #view-admin,
-.login-container {
+/* 1. Vistas de Barbero y Admin (Estas SÍ van pegadas arriba y ocupan todo) */
+#view-barber,
+#view-admin {
     position: absolute !important;
     height: auto !important;
     min-height: 100vh !important;
@@ -1384,6 +1386,18 @@ body {
     top: 0 !important;
     left: 0 !important;
     bottom: auto !important;
+    width: 100vw !important; /* Aseguramos ancho total */
+}
+
+/* 2. Login (Este lo dejamos "suelto" para que se centre, pero con altura auto para el scroll) */
+.login-container {
+    position: relative !important; /* CLAVE: Relative permite que el body lo centre */
+    margin: 50px auto !important;  /* Un poco de margen arriba/abajo para scrollear cómodo */
+    height: auto !important;       
+    top: auto !important;          /* Anulamos el top:0 que lo pegaba arriba */
+    left: auto !important;         /* Anulamos el left:0 */
+    width: 100% !important;
+    max-width: 450px !important;
 }
 
 
