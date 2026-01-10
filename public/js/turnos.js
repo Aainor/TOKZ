@@ -27,8 +27,8 @@ import {
 let BARBERS_CONFIG = [];
 let PRICES_DB = {};
 // Configuración de EmailJS
-const EMAIL_SERVICE_ID = "service_hamvojq";
-const EMAIL_TEMPLATE_ID = "template_qbqjfp6";
+const EMAIL_SERVICE_ID = "service_hdoerpa";
+const EMAIL_TEMPLATE_ID = "template_16dkj9g";
 
 // === FUNCIÓN AUXILIAR FECHA ===
 function getLocalDateISO(dateObj) {
@@ -583,7 +583,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 date_info: fechaResumen,
                 professional: proResumen,
                 total_price: `$${precioFinalReserva}`,
-                message: "Gracias por confiar en Staff TOKZ."
+                message: "Gracias por confiar en el Staff de TOKZ."
             };
 
             await emailjs.send(EMAIL_SERVICE_ID, EMAIL_TEMPLATE_ID, templateParams);
