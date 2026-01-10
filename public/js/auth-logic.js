@@ -32,8 +32,70 @@ const ADMIN_EMAILS = [
 // Variable global para la instancia del calendario
 let calendarInstance = null;
 
+// ==========================================
+// 🛠️ UTILIDADES VISUALES
+// ==========================================
+
+// Inyectar HTML del Modal (SOLO para ver DETALLES del turno en el calendario)
+function injectModalHTML() {
+    if (!document.getElementById('modal-detalle-overlay')) {
+        const modalHTML = `
+        <div id="modal-detalle-overlay">
+            <div class="modal-detalle-card">
+                <div class="detalle-header">
+                    <h2 id="modal-titulo">DETALLE TURNO</h2>
+                    <button class="close-modal-btn" onclick="closeDetalleModal()">&times;</button>
+                </div>
+                <div class="detalle-body">
+                    <div class="info-row">
+                        <span class="info-label">Cliente</span>
+                        <span class="info-value" id="modal-cliente">...</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Servicio</span>
+                        <span class="info-value" id="modal-servicio">...</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Horario</span>
+                        <span class="info-value" id="modal-horario">...</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Precio Estimado</span>
+                        <span class="info-value" id="modal-precio">...</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Contacto</span>
+                        <span class="info-value email" id="modal-email">...</span>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+        setTimeout(() => {
+            const overlay = document.getElementById('modal-detalle-overlay');
+            if (overlay) {
+                overlay.addEventListener('click', (e) => {
+                    if (e.target.id === 'modal-detalle-overlay') closeDetalleModal();
+                });
+            }
+        }, 500);
+    }
+}
+
+// Función global para cerrar modal de detalles
+window.closeDetalleModal = function () {
+    const el = document.getElementById('modal-detalle-overlay');
+    if (el) el.classList.remove('active');
+}
+
+// ==========================================
+// 🚀 INICIO DE LA APP
+// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Iniciando App Integrada con Agenda FullCalendar...");
+    console.log("Iniciando App Integrada (Versión Borrado Directo)...");
+
+    injectModalHTML();
 
     // --- REFERENCIAS DOM ---
     const viewLogin = document.getElementById('view-login');
@@ -41,16 +103,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const viewUser = document.getElementById('view-user');
     const viewRecovery = document.getElementById('view-recovery');
     const viewBooking = document.getElementById('booking-mod');
-
-    // Referencias Staff
     const viewBarber = document.getElementById('view-barber');
-
-    // Referencias Admin
     const viewAdmin = document.getElementById('view-admin');
-    const googleBtn = document.querySelector('.google-btn');
+
+    // Botones Admin
     const btnAdminRefresh = document.getElementById('btn-admin-refresh');
     const adminDatePicker = document.getElementById('admin-date-picker');
     const btnLogoutAdmin = document.getElementById('btn-logout-admin');
+    const btnGoCalendar = document.getElementById('btn-go-calendar');
+    const btnBackAdmin = document.getElementById('btn-back-admin');
 
     // 1. Botón BUSCAR (Admin)
     if (btnAdminRefresh) {
@@ -67,57 +128,43 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Botón SALIR (Admin)
     if (btnLogoutAdmin) {
         btnLogoutAdmin.addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-            } catch (error) {
-                console.error("Error al salir:", error);
-            }
+            try { await signOut(auth); } catch (error) { console.error("Error al salir:", error); }
         });
     }
-    const btnLogout = document.getElementById('btn-logout');
 
+    // Botones Generales
+    const btnLogout = document.getElementById('btn-logout');
     const btnViewBookings = document.getElementById('btn-view-bookings');
     const btnBackDashboard = document.getElementById('btn-back-dashboard');
     const bookingsListContainer = document.querySelector('.bookings-list');
+    const googleBtn = document.querySelector('.google-btn');
 
-    // --- GESTIÓN DE VISTAS (FIX PANTALLA COMPLETA) ---
+    // --- GESTIÓN DE VISTAS ---
     function switchView(viewToShow) {
-        // 1. Ocultar todo
         [viewLogin, viewRegister, viewUser, viewRecovery, viewBooking, viewBarber, viewAdmin].forEach(el => {
             if (el) {
                 el.classList.add('hidden');
                 el.classList.remove('fade-in', 'appear');
-                el.style.display = ''; 
+                el.style.display = '';
             }
         });
 
-        // 2. Mostrar la vista elegida
         if (viewToShow) {
             viewToShow.classList.remove('hidden');
-
-            // Barbero y Admin usan display especial o clases propias
             if (viewToShow === viewBarber || viewToShow === viewAdmin) {
-                viewToShow.style.display = 'block'; 
+                viewToShow.style.display = 'block';
             } else {
-                // Las vistas chicas del login usan la animación
                 viewToShow.classList.add('fade-in', 'appear');
             }
         }
     }
 
     // ==========================================
-    // LOGICA DE AUTENTICACIÓN INTELIGENTE
+    // LOGICA DE AUTENTICACIÓN
     // ==========================================
 
     let currentUserUid = null;
     let myTurnos = [];
-    let itemToDeleteId = null;
-
-    // Modal Referencias
-    const deleteModal = document.getElementById('delete-modal');
-    const modalText = document.getElementById('modal-text');
-    const btnModalCancel = document.getElementById('btn-modal-cancel');
-    const btnModalConfirm = document.getElementById('btn-modal-confirm');
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
@@ -144,8 +191,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     await setDoc(userRef, {
                         Nombre: nombreOficial,
                         Email: user.email,
-                        rol: rolDetectado,
-                        Fecha_Registro: new Date()
+                        Cortes_Totales: 0,
+                        Fecha_Registro: new Date(),
+                        rol: rolDetectado
                     });
                 } else {
                     const dataActual = userSnap.data();
@@ -154,49 +202,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                // 3. REDIRECCIONAR Y GESTIONAR VISTAS
-                const btnGoCalendar = document.getElementById('btn-go-calendar');
-                const btnBackAdmin = document.getElementById('btn-back-admin');
-
+                // 3. REDIRECCIONAR
                 if (rolDetectado === 'admin') {
-                    // Si es admin, mostramos el panel admin primero
                     switchView(viewAdmin);
 
-                    // LOGICA DOBLE ROL (Admin que también corta)
-                    if(btnGoCalendar && btnBackAdmin) {
-                        
-                        // 1. Activar botón en el calendario para volver al admin
+                    // LOGICA BOTÓN "MI AGENDA" (Admin -> Calendar)
+                    if (btnGoCalendar && btnBackAdmin) {
                         btnBackAdmin.classList.remove('hidden');
-                        
-                        // 2. Evento: Ir del Admin a la Agenda
-                        btnGoCalendar.onclick = () => {
-                            // ============================================================
-                            // ⚠️ IMPORTANTE: SI TU CALENDARIO SALE VACÍO, REVISA ESTE NOMBRE.
-                            // Tiene que ser IDÉNTICO a como aparece en la columna 'pro' de Firebase.
-                            const nombreRealEnBaseDeDatos = "Nicolás"; 
-                            // ============================================================
 
-                            console.log("Cargando agenda para:", nombreRealEnBaseDeDatos);
-                            
-                            // Cargamos la agenda con ESE nombre específico
-                            loadBarberAgenda(nombreRealEnBaseDeDatos); 
-                            
-                            // Actualizamos el título visual
+                        btnGoCalendar.onclick = () => {
+                            const nombreAgendaAdmin = "Nicolás"; 
+                            console.log("Admin yendo a agenda de:", nombreAgendaAdmin);
+
+                            loadBarberAgenda(nombreAgendaAdmin);
+
                             const barberNameDisplay = document.getElementById('barber-name-display');
-                            if (barberNameDisplay) barberNameDisplay.textContent = nombreRealEnBaseDeDatos;
+                            if (barberNameDisplay) barberNameDisplay.textContent = nombreAgendaAdmin;
 
                             switchView(viewBarber);
                         };
 
-                        // 3. Evento: Volver de la Agenda al Admin
                         btnBackAdmin.onclick = () => {
                             switchView(viewAdmin);
                         };
                     }
                 }
                 else if (rolDetectado === 'barbero') {
-                    // Barbero normal: ocultar botón de volver a admin por seguridad
-                    if(btnBackAdmin) btnBackAdmin.classList.add('hidden');
+                    if (btnBackAdmin) btnBackAdmin.classList.add('hidden');
 
                     const barberNameDisplay = document.getElementById('barber-name-display');
                     if (barberNameDisplay) barberNameDisplay.textContent = nombreOficial;
@@ -205,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     switchView(viewBarber);
                 }
                 else {
-                    // Cliente normal
+                    // Cliente Normal
                     currentUserUid = user.uid;
                     loadUserBookings(currentUserUid);
                     const userNameDisplay = document.getElementById('user-name-display');
@@ -243,7 +275,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ==========================================
     // A. CARGAR TURNOS CLIENTE
+    // ==========================================
     async function loadUserBookings(uid) {
         if (!bookingsListContainer) return;
         bookingsListContainer.innerHTML = '<p style="text-align:center; color:#888;">Cargando tus turnos...</p>';
@@ -289,83 +323,65 @@ document.addEventListener('DOMContentLoaded', () => {
                     </button>
                 </div>`;
         });
+        
+        // Adjuntamos los eventos de borrado directo
         attachDeleteEvents();
     }
 
-   function attachDeleteEvents() {
-    document.querySelectorAll('.btn-delete-booking').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            e.preventDefault(); 
-            const btnElement = e.currentTarget;
-            const idToDelete = btnElement.getAttribute('data-id');
-            
-            // 1. Efecto Visual Inmediato: Spinner
-            // Esto le avisa al usuario que algo está pasando
-            btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-            btnElement.disabled = true; // Evitar doble click
+    // ==========================================
+    // C. BORRADO DIRECTO (SIN MODAL - CON SPINNER)
+    // ==========================================
+    function attachDeleteEvents() {
+        document.querySelectorAll('.btn-delete-booking').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault(); 
+                const btnElement = e.currentTarget;
+                const idToDelete = btnElement.getAttribute('data-id');
+                
+                // 1. Efecto Visual Inmediato: Spinner
+                btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+                btnElement.disabled = true; // Evitar doble click
 
-            try {
-                console.log("🗑️ Iniciando borrado directo del ID:", idToDelete);
-                
-                // 2. BORRADO DIRECTO EN FIRESTORE
-                // Usamos deleteDoc importado de firebase-firestore
-                await deleteDoc(doc(db, "turnos", idToDelete));
-                
-                console.log("✅ Borrado exitoso en DB");
-
-                // 3. ACTUALIZAR LISTA VISUAL
-                // Eliminamos el turno del array local y volvemos a pintar
-                myTurnos = myTurnos.filter(t => t.id !== idToDelete);
-                renderBookings();
-                
-            } catch (error) {
-                console.error("❌ Error al borrar:", error);
-                alert("No se pudo borrar el turno. Revisá tu conexión.");
-                
-                // Si falla, restauramos el botón original (el tacho)
-                btnElement.innerHTML = '<i class="fa-solid fa-trash"></i>';
-                btnElement.disabled = false;
-            }
-        });
-    });
-}
-
-    if (btnModalConfirm) {
-        btnModalConfirm.addEventListener('click', async () => {
-            if (itemToDeleteId) {
-                const originalText = btnModalConfirm.textContent;
-                btnModalConfirm.textContent = "Borrando...";
                 try {
-                    await deleteDoc(doc(db, "turnos", itemToDeleteId));
-                    myTurnos = myTurnos.filter(t => t.id !== itemToDeleteId);
+                    console.log("🗑️ Iniciando borrado directo del ID:", idToDelete);
+                    
+                    // 2. BORRADO DIRECTO EN FIRESTORE
+                    await deleteDoc(doc(db, "turnos", idToDelete));
+                    
+                    console.log("✅ Borrado exitoso en DB");
+
+                    // 3. ACTUALIZAR LISTA VISUAL
+                    myTurnos = myTurnos.filter(t => t.id !== idToDelete);
                     renderBookings();
-                    if (deleteModal) deleteModal.classList.remove('active');
-                } catch (error) { alert("Error al borrar."); }
-                finally { btnModalConfirm.textContent = originalText; itemToDeleteId = null; }
-            }
-        });
-    }
-    if (btnModalCancel) {
-        btnModalCancel.addEventListener('click', () => {
-            itemToDeleteId = null;
-            if (deleteModal) deleteModal.classList.remove('active');
+                    
+                } catch (error) {
+                    console.error("❌ Error al borrar:", error);
+                    alert("No se pudo borrar el turno. Revisá tu conexión.");
+                    
+                    // Si falla, restauramos el botón original
+                    btnElement.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                    btnElement.disabled = false;
+                }
+            });
         });
     }
 
     if (btnViewBookings) btnViewBookings.addEventListener('click', () => { renderBookings(); switchView(viewBooking); });
     if (btnBackDashboard) btnBackDashboard.addEventListener('click', () => { switchView(viewUser); });
 
-    // ==========================================
-    // 3. FUNCIÓN BARBERO (CALENDARIO FIX MÓVIL)
-    // ==========================================
+    // =================================================================
+    // 3. FUNCIÓN BARBERO (FIX VISUAL + VISTAS + IDIOMA + MODAL DETALLE)
+    // =================================================================
     async function loadBarberAgenda(nombreBarbero) {
         const calendarEl = document.getElementById('calendar-barber');
         if (!calendarEl) return;
 
-        calendarEl.innerHTML = ''; // Limpiar
+        injectModalHTML(); // Asegura que el modal de detalles exista
+
+        calendarEl.innerHTML = '';
 
         try {
-            console.log(`📅 Cargando calendario para: "${nombreBarbero}"`);
+            console.log(`📅 Cargando calendario optimizado para: "${nombreBarbero}"`);
 
             const q = query(collection(db, "turnos"), where("pro", "==", nombreBarbero));
             const querySnapshot = await getDocs(q);
@@ -375,7 +391,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = doc.data();
                 if (data.date && data.time) {
                     const startStr = `${data.date}T${data.time}:00`;
-                    let endDate = new Date(new Date(startStr).getTime() + 45 * 60000);
+                    // 30 minutos por turno por defecto
+                    let endDate = new Date(new Date(startStr).getTime() + 30 * 60000);
+
                     let serviciosTexto = Array.isArray(data.services) ? data.services.join(" + ") : data.services;
 
                     eventos.push({
@@ -384,11 +402,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         start: startStr,
                         end: endDate.toISOString(),
                         backgroundColor: '#AE0E30',
-                        borderColor: '#AE0E30',
+                        borderColor: '#ffffff',
+                        textColor: '#ffffff',
                         extendedProps: {
                             servicio: serviciosTexto,
-                            email: data.clientEmail,
-                            precio: data.total
+                            email: data.clientEmail || 'No especificado',
+                            precio: data.total || '$ -'
                         }
                     });
                 }
@@ -396,50 +415,64 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (calendarInstance) calendarInstance.destroy();
 
-            // DETECCIÓN DE MÓVIL
-            const isMobile = window.innerWidth < 768;
+            const getInitialView = () => window.innerWidth < 768 ? 'timeGridDay' : 'timeGridWeek';
 
             calendarInstance = new FullCalendar.Calendar(calendarEl, {
-                // Si es móvil: DÍA. Si es PC: SEMANA.
-                initialView: isMobile ? 'timeGridDay' : 'timeGridWeek',
-
+                initialView: getInitialView(),
                 headerToolbar: {
-                    left: 'prev,next', 
+                    left: 'prev,next today',
                     center: 'title',
-                    // En móvil quitamos botones que saturan, en PC dejamos las opciones
-                    right: isMobile ? '' : 'dayGridMonth,timeGridWeek,timeGridDay'
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
-
                 locale: 'es',
+                buttonText: {
+                    today: 'Hoy',
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                    list: 'Lista'
+                },
                 slotMinTime: '09:00:00',
                 slotMaxTime: '21:00:00',
                 allDaySlot: false,
-                slotDuration: '00:30:00', // Bloques de media hora
-
-                // --- CONFIGURACIÓN RESPONSIVE ---
+                slotDuration: '00:30:00',
+                slotEventOverlap: false,
+                eventMaxStack: 2,
+                windowResize: function (arg) {
+                    const newView = window.innerWidth < 768 ? 'timeGridDay' : 'timeGridWeek';
+                    if (calendarInstance.view.type !== newView) {
+                        calendarInstance.changeView(newView);
+                    }
+                },
                 height: '100%',
                 contentHeight: 'auto',
-                expandRows: true,
-                handleWindowResize: true,
-                // --------------------------------
-
                 nowIndicator: true,
                 events: eventos,
-
-                // DISEÑO DE LA TARJETA DE TURNO (ORDEN CAMBIADO)
                 eventContent: function (arg) {
                     return {
                         html: `
-                            <div style="height:100%; display:flex; flex-direction:column; justify-content:center;">
-                                <span class="event-time">${arg.timeText}</span>
-                                <span class="event-service">✂️ ${arg.event.extendedProps.servicio}</span>
-                                <span class="event-title">${arg.event.title}</span>
+                            <div class="turno-card">
+                                <div class="turno-header">
+                                    <span class="turno-hora">${arg.timeText}</span>
+                                </div>
+                                <div class="turno-body">
+                                    <span class="turno-servicio">${arg.event.extendedProps.servicio}</span>
+                                </div>
                             </div>
                         `
                     };
                 },
                 eventClick: function (info) {
-                    alert(`Cliente: ${info.event.title}\nServicio: ${info.event.extendedProps.servicio}\nEmail: ${info.event.extendedProps.email}`);
+                    const props = info.event.extendedProps;
+                    document.getElementById('modal-cliente').textContent = info.event.title;
+                    document.getElementById('modal-servicio').textContent = props.servicio;
+                    const fechaObj = info.event.start;
+                    const horaStr = fechaObj.getHours().toString().padStart(2, '0') + ':' + fechaObj.getMinutes().toString().padStart(2, '0');
+                    document.getElementById('modal-horario').textContent = `${horaStr} hs`;
+                    document.getElementById('modal-email').textContent = props.email;
+                    document.getElementById('modal-precio').textContent = props.precio;
+                    const modalOverlay = document.getElementById('modal-detalle-overlay');
+                    if (modalOverlay) modalOverlay.classList.add('active');
                 }
             });
 
@@ -452,23 +485,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 6. FUNCIÓN ADMIN: BÚSQUEDA FLEXIBLE 🛡️
+    // 6. FUNCIÓN ADMIN: BÚSQUEDA FLEXIBLE
     // ==========================================
     async function loadAdminDashboard(fechaSeleccionada) {
         const adminTableBody = document.getElementById('admin-table-body');
         const adminMsg = document.getElementById('admin-loading-msg');
-        
+
         const [anio, mes, dia] = fechaSeleccionada.split('-');
-        
-        const formatoGuion = `${anio}-${mes}-${dia}`;       
-        const formatoBarra = `${dia}/${mes}/${anio}`;       
-        const formatoBarraCorta = `${Number(dia)}/${Number(mes)}/${anio}`; 
+        const formatoGuion = `${anio}-${mes}-${dia}`;
+        const formatoBarra = `${dia}/${mes}/${anio}`;
+        const formatoBarraCorta = `${Number(dia)}/${Number(mes)}/${anio}`;
 
         console.log(`🔎 Buscando turnos con: ${formatoGuion} O ${formatoBarra} O ${formatoBarraCorta}`);
 
         if (!adminTableBody) return;
-        adminTableBody.innerHTML = ''; 
-        if(adminMsg) {
+        adminTableBody.innerHTML = '';
+        if (adminMsg) {
             adminMsg.style.display = 'block';
             adminMsg.textContent = 'Buscando en la base de datos...';
         }
@@ -476,25 +508,23 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const turnosRef = collection(db, "turnos");
             const querySnapshot = await getDocs(turnosRef);
-            
+
             let turnosDelDia = [];
             let cajaTotal = 0;
 
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
                 let esDelDia = false;
-                
-                // A) ¿Es un Timestamp de Firebase?
+
                 if (data.Fecha && data.Fecha.toDate) {
                     const fechaObj = data.Fecha.toDate();
                     const fechaIso = fechaObj.toISOString().split('T')[0];
                     if (fechaIso === formatoGuion) esDelDia = true;
-                } 
-                // B) ¿Es un Texto (String)? Comparación Flexible
+                }
                 else {
                     const fechaString = data.date || data.fecha || data.Fecha || "";
-                    if (fechaString === formatoGuion || 
-                        fechaString === formatoBarra || 
+                    if (fechaString === formatoGuion ||
+                        fechaString === formatoBarra ||
                         fechaString === formatoBarraCorta) {
                         esDelDia = true;
                     }
@@ -504,7 +534,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const hora = data.time || data.hora || "00:00";
                     const nombre = data.clientName || data.cliente || "Cliente";
                     const profesional = data.pro || data.barbero || "Barbero";
-                    
+
                     let servicios = "Corte";
                     if (Array.isArray(data.services)) servicios = data.services.join(" + ");
                     else if (data.services) servicios = data.services;
@@ -518,20 +548,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         precioNum = Number(precioRaw);
                     }
 
-                    turnosDelDia.push({ 
-                        id: doc.id, 
-                        hora, 
-                        nombre, 
-                        servicios, 
-                        profesional, 
-                        precio: precioNum 
+                    turnosDelDia.push({
+                        id: doc.id,
+                        hora,
+                        nombre,
+                        servicios,
+                        profesional,
+                        precio: precioNum
                     });
 
                     cajaTotal += precioNum;
                 }
             });
 
-            if(adminMsg) adminMsg.style.display = 'none';
+            if (adminMsg) adminMsg.style.display = 'none';
 
             if (turnosDelDia.length === 0) {
                 adminTableBody.innerHTML = `
@@ -548,9 +578,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             turnosDelDia.forEach(t => {
                 let colorPro = "#666";
-                if(t.profesional.includes('Nico')) colorPro = "#2196F3"; 
-                else if(t.profesional.includes('Lautaro')) colorPro = "#FF9800"; 
-                
+                if (t.profesional.includes('Nico')) colorPro = "#2196F3";
+                else if (t.profesional.includes('Lautaro')) colorPro = "#FF9800";
+
                 const row = `
                     <tr style="border-bottom: 1px solid #333;">
                         <td data-label="Hora" style="padding:10px; color:white;">${t.hora}</td>
@@ -565,7 +595,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 adminTableBody.insertAdjacentHTML('beforeend', row);
             });
 
-            // TOTAL
             const totalRow = `
                 <tr class="total-row">
                     <td colspan="4" data-label="Resumen" style="text-align: right;">TOTAL DEL DÍA:</td>
@@ -576,7 +605,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error("Error Admin:", error);
-            if(adminMsg) adminMsg.innerHTML = `<span style="color:red">Error: ${error.message}</span>`;
+            if (adminMsg) adminMsg.innerHTML = `<span style="color:red">Error: ${error.message}</span>`;
         }
     }
 });

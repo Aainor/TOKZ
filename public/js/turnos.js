@@ -299,86 +299,106 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ==========================================
     // LÓGICA CALENDARIO + FIREBASE CHECK
     // ==========================================
-    async function renderTimeSlots() {
-        timeGridContainer.innerHTML = '<p style="color:white; text-align:center;">Cargando horarios...</p>'; 
-        const selectedDateStr = datePicker.value;
-        if (!selectedDateStr) return;
+   async function renderTimeSlots() {
+    timeGridContainer.innerHTML = '<p style="color:white; text-align:center;">Cargando horarios...</p>'; 
+    const selectedDateStr = datePicker.value;
+    if (!selectedDateStr) return;
 
-        const proId = proSelect.value;
-        const currentProName = proSelect.options[proSelect.selectedIndex].text;
-        const barber = BARBERS_CONFIG.find(b => b.id === proId) || BARBERS_CONFIG[0];
+    const proId = proSelect.value;
+    const currentProName = proSelect.options[proSelect.selectedIndex].text;
+    const barber = BARBERS_CONFIG.find(b => b.id === proId) || BARBERS_CONFIG[0];
 
-        const dateObj = new Date(selectedDateStr + 'T00:00:00'); 
-        const dayOfWeek = dateObj.getDay(); 
-        if (dayOfWeek === 0 || !barber.days.includes(dayOfWeek)) {
-            timeGridContainer.innerHTML = `<p style="color:#888; width:100%; text-align:center;">No trabaja este día.</p>`;
-            return;
-        }
-
-        try {
-            const q = query(
-                collection(db, "turnos"),
-                where("date", "==", selectedDateStr),
-                where("pro", "==", currentProName)
-            );
-            
-            const querySnapshot = await getDocs(q);
-            const dbTakenSlots = querySnapshot.docs.map(doc => doc.data().time);
-
-            const localTakenSlots = bookingData.appointments
-                .filter(appt => appt.date === selectedDateStr && appt.pro === currentProName)
-                .map(appt => appt.time);
-                
-            const allTakenSlots = [...dbTakenSlots, ...localTakenSlots];
-
-            timeGridContainer.innerHTML = ''; 
-
-            barber.hours.forEach(hora => {
-                const btn = document.createElement('button');
-                btn.className = 'time-btn';
-                btn.textContent = hora;
-                
-                let isPastTime = false;
-                const now = new Date();
-                
-                if (selectedDateStr === getLocalDateISO(now)) {
-                    const [slotHour, slotMin] = hora.split(':').map(Number);
-                    const currentHour = now.getHours();
-                    const currentMin = now.getMinutes();
-
-                    if (slotHour < currentHour || (slotHour === currentHour && slotMin < currentMin)) {
-                        isPastTime = true;
-                    }
-                }
-
-                if (allTakenSlots.includes(hora) || isPastTime) {
-                    btn.disabled = true;
-                    if (isPastTime) {
-                        btn.classList.add('past'); 
-                        btn.title = "Horario pasado";
-                    } else {
-                        btn.classList.add('taken'); 
-                        btn.title = "Ocupado";
-                    }
-                } else {
-                    if (bookingData.time === hora) btn.classList.add('active');
-                    btn.addEventListener('click', () => {
-                        document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        bookingData.time = hora;
-                        updateUI();
-                    });
-                }
-                timeGridContainer.appendChild(btn);
-            });
-            updateUI();
-
-        } catch (error) {
-            console.error("Error buscando horarios:", error);
-            timeGridContainer.innerHTML = '<p style="color:red;">Error de conexión.</p>';
-        }
+    // Validación de días laborables...
+    const dateObj = new Date(selectedDateStr + 'T00:00:00'); 
+    const dayOfWeek = dateObj.getDay(); 
+    if (dayOfWeek === 0 || !barber.days.includes(dayOfWeek)) {
+        timeGridContainer.innerHTML = `<p style="color:#888; width:100%; text-align:center;">No trabaja este día.</p>`;
+        return;
     }
 
+    try {
+        const q = query(
+            collection(db, "turnos"),
+            where("date", "==", selectedDateStr),
+            where("pro", "==", currentProName)
+        );
+        
+        const querySnapshot = await getDocs(q);
+        const dbTakenSlots = querySnapshot.docs.map(doc => doc.data().time);
+        
+        // Sumamos los turnos que el usuario está eligiendo ahora mismo
+        const localTakenSlots = bookingData.appointments
+            .filter(appt => appt.date === selectedDateStr && appt.pro === currentProName)
+            .map(appt => appt.time);
+            
+        const allTakenTimes = [...dbTakenSlots, ...localTakenSlots];
+
+        // --- LÓGICA DE RANGOS (NUEVO) ---
+        // Convertimos cada turno ocupado en un rango de minutos [inicio, fin]
+        const DURACION_TURNO = 45; // Minutos que dura el corte
+
+        const rangosOcupados = allTakenTimes.map(timeStr => {
+            const [h, m] = timeStr.split(':').map(Number);
+            const inicioMin = h * 60 + m;
+            return { inicio: inicioMin, fin: inicioMin + DURACION_TURNO };
+        });
+
+        timeGridContainer.innerHTML = ''; 
+
+        barber.hours.forEach(hora => {
+            const btn = document.createElement('button');
+            btn.className = 'time-btn';
+            btn.textContent = hora;
+            
+            // Calculamos minutos de ESTE botón
+            const [slotH, slotM] = hora.split(':').map(Number);
+            const slotInicio = slotH * 60 + slotM;
+            const slotFin = slotInicio + DURACION_TURNO;
+
+            // 1. Verificar si es horario pasado
+            let isPastTime = false;
+            const now = new Date();
+            if (selectedDateStr === getLocalDateISO(now)) {
+                const currentHour = now.getHours();
+                const currentMin = now.getMinutes();
+                if (slotH < currentHour || (slotH === currentHour && slotM < currentMin)) {
+                    isPastTime = true;
+                }
+            }
+
+            // 2. Verificar COLISIÓN REAL (Superposición)
+            // Un turno choca si su rango se cruza con otro ocupado
+            const hayColision = rangosOcupados.some(ocupado => {
+                // (Inicio del nuevo < Fin del viejo) Y (Fin del nuevo > Inicio del viejo)
+                return slotInicio < ocupado.fin && slotFin > ocupado.inicio;
+            });
+
+            if (hayColision || isPastTime) {
+                btn.disabled = true;
+                if (isPastTime) {
+                    btn.classList.add('past'); 
+                    btn.title = "Horario pasado";
+                } else {
+                    btn.classList.add('taken'); 
+                    btn.title = "Ocupado";
+                }
+            } else {
+                if (bookingData.time === hora) btn.classList.add('active');
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    bookingData.time = hora;
+                    updateUI();
+                });
+            }
+            timeGridContainer.appendChild(btn);
+        });
+        updateUI();
+
+    } catch (error) {
+        console.error("Error buscando horarios:", error);
+        timeGridContainer.innerHTML = '<p style="color:red;">Error de conexión.</p>';
+    }
     if(proSelect) proSelect.addEventListener('change', () => {
         bookingData.professional = proSelect.options[proSelect.selectedIndex].text;
         bookingData.time = null;

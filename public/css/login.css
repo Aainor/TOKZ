@@ -24,11 +24,11 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    overflow: hidden; /* El scroll lo manejan las vistas internas */
     position: relative;
 }
 
-/* Efectos de fondo */
+/* Efectos de fondo (Glow) */
 .red-glow {
     position: absolute;
     width: 300px;
@@ -305,7 +305,11 @@ body {
 }
 .btn-outline:hover { background: rgba(174, 14, 48, 0.1); }
 
-/* --- MODAL ESTÁNDAR (Eliminar/Confirmar) --- */
+/* =========================================
+   3. MODALES (DOS TIPOS)
+   ========================================= */
+
+/* A. MODAL DE CONFIRMACIÓN (BORRAR TURNO) */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -346,15 +350,69 @@ body {
     font-weight: bold;
     border: none;
     transition: transform 0.2s;
-    padding: 10px;
     font-family: var(--font-primary);
 }
 .btn-cancel { background: transparent; border: 1px solid #555; color: white; }
 .btn-confirm { background: var(--redcolor); color: white; }
 .btn-modal:hover { transform: translateY(-1px); }
 
+
+/* B. MODAL DE DETALLES (CYBERPUNK STYLE) */
+#modal-detalle-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100000; /* Por encima de todo */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+#modal-detalle-overlay.active { opacity: 1; visibility: visible; }
+
+.modal-detalle-card {
+    background: #0a0a0a;
+    border: 1px solid var(--redcolor);
+    box-shadow: 0 0 30px rgba(174, 14, 48, 0.2);
+    width: 90%;
+    max-width: 400px;
+    border-radius: 16px;
+    padding: 25px;
+    transform: scale(0.8) translateY(20px);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+    text-align: left;
+}
+
+#modal-detalle-overlay.active .modal-detalle-card { transform: scale(1) translateY(0); opacity: 1; }
+
+.detalle-header {
+    border-bottom: 1px solid #333;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.detalle-header h2 { color: white; font-family: var(--font-heading); font-size: 1.5rem; margin: 0; }
+.close-modal-btn { background: none; border: none; color: #666; font-size: 1.5rem; cursor: pointer; transition: color 0.3s; }
+.close-modal-btn:hover { color: white; }
+
+.info-row { margin-bottom: 15px; }
+.info-label { color: var(--redcolor); font-size: 0.75rem; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; display: block; margin-bottom: 4px; }
+.info-value { color: white; font-size: 1.1rem; font-weight: 500; }
+.info-value.email { font-size: 0.9rem; color: #ccc; word-break: break-all; }
+
+
 /* =========================================
-   3. FULLCALENDAR DARK THEME OVERRIDE
+   4. FULLCALENDAR DARK THEME & TARJETAS
    ========================================= */
 #calendar-barber {
     background-color: #111;
@@ -365,13 +423,7 @@ body {
 }
 .fc .fc-timegrid-col.fc-day-today { background-color: rgba(174, 14, 48, 0.05) !important; }
 .fc-theme-standard td, .fc-theme-standard th, .fc-theme-standard .fc-scrollgrid { border-color: #333 !important; }
-.fc-col-header-cell-cushion {
-    color: white !important;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    padding-top: 10px !important;
-    text-decoration: none !important;
-}
+.fc-col-header-cell-cushion { color: white !important; text-transform: uppercase; font-size: 0.8rem; padding-top: 10px !important; text-decoration: none !important; }
 .fc-timegrid-slot-label-cushion { color: #888 !important; font-size: 0.75rem; }
 .fc-scrollgrid-section-header>* { background: #1a1a1a; }
 .fc-header-toolbar { margin-bottom: 10px !important; }
@@ -390,25 +442,51 @@ body {
 .fc-button:hover { border-color: white !important; color: white !important; }
 .fc-button-active { background-color: #AE0E30 !important; border-color: #AE0E30 !important; color: white !important; }
 
-/* Tarjetas de Turno */
-.fc-event { border: none !important; border-radius: 4px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); }
-.fc-event-main { padding: 0 !important; }
-.fc-event-content-wrapper {
+/* --- TARJETAS COMPACTAS (SENIOR FIX) --- */
+.fc-event {
+    border: none !important;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    overflow: hidden !important; /* CLAVE */
+}
+.fc-event-main { padding: 0 !important; width: 100%; height: 100%; }
+
+.turno-card {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
+    width: 100%;
     height: 100%;
-    padding: 4px 6px;
-    white-space: normal;
+    padding: 2px 4px;
+    box-sizing: border-box;
+    overflow: hidden;
 }
-.event-time { font-size: 1em; font-weight: bold; opacity: 0.9; }
-.event-service { font-size: 1.05em; font-weight: 800; text-transform: uppercase; }
-.event-title { font-size: 0.9em; opacity: 0.85; }
 
-.fc-timegrid-event { min-height: 60px !important; }
+.turno-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.turno-hora { font-size: 0.75rem; font-weight: 700; opacity: 0.9; white-space: nowrap; }
+
+.turno-body {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+.turno-servicio {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.1;
+}
 
 /* =========================================
-   4. VISTA BARBERO (FIX PANTALLA COMPLETA)
+   5. VISTA BARBERO (FIX PANTALLA COMPLETA)
    ========================================= */
 #view-barber {
     position: fixed !important;
@@ -442,32 +520,27 @@ body {
     background-color: #111;
     border-radius: 12px;
     border: 1px solid #333;
-    /* FIX SCROLL NATIVO */
+    /* FIX SCROLL MÓVIL */
     overflow-y: auto !important; 
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch; 
 }
 
-#calendar-barber { height: 100%; font-family: 'Montserrat', sans-serif; }
+#calendar-barber { height: 100%; }
 
-/* Botones Barbero (Flexibles) */
 .action-stack-barber {
     flex-shrink: 0;
     display: flex;
-    flex-wrap: wrap; /* CLAVE: Permite que bajen si no entran */
-    gap: 10px;       
+    gap: 15px;
     margin-top: 15px;
     justify-content: center;
     width: 100%;
-    padding-bottom: 20px; 
 }
-
 .btn-barber {
-    flex: 1 1 auto; /* Crecen para ocupar espacio */
-    min-width: 120px; /* Ancho mínimo antes de bajar */
-    padding: 12px 10px;
+    flex: 1;
+    padding: 14px;
     border-radius: 8px;
     font-family: var(--font-primary);
-    font-size: 0.85rem; 
+    font-size: 0.9rem;
     font-weight: 700;
     text-transform: uppercase;
     cursor: pointer;
@@ -476,16 +549,15 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    white-space: nowrap;
+    letter-spacing: 1px;
 }
-
 .btn-barber-refresh { background: transparent; border: 1px solid var(--redcolor); color: var(--redcolor); }
 .btn-barber-refresh:hover { background: rgba(174, 14, 48, 0.1); transform: translateY(-2px); }
 .btn-barber-logout { background: var(--redcolor); border: 1px solid var(--redcolor); color: white; }
 .btn-barber-logout:hover { background: transparent; color: var(--redcolor); transform: translateY(-2px); }
 
 /* =========================================
-   5. PANEL ADMIN (FIX PANTALLA COMPLETA)
+   6. PANEL ADMIN (FIX RESPONSIVE)
    ========================================= */
 #view-admin {
     position: fixed;
@@ -521,32 +593,11 @@ body {
     border-radius: 10px;
     border: 1px solid #333;
 }
-
-.admin-input {
-    padding: 12px;
-    border-radius: 5px;
-    border: 1px solid #444;
-    background: #222;
-    color: white;
-    font-family: var(--font-primary);
-}
-
-.cta-button {
-    padding: 12px 25px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    background: var(--redcolor);
-    color: white;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
+.admin-input { padding: 12px; border-radius: 5px; border: 1px solid #444; background: #222; color: white; font-family: var(--font-primary); }
+.cta-button { padding: 12px 25px; font-size: 0.9rem; cursor: pointer; border: none; border-radius: 5px; background: var(--redcolor); color: white; font-weight: bold; transition: all 0.3s ease; }
 .cta-button:hover { background: #8a0b26; }
 .btn-dark { background: #333; width: 100%; max-width: 300px; }
 .btn-dark:hover { background: #444; }
-
-.admin-footer { margin-top: 40px; text-align: center; }
 
 /* Tabla Escritorio */
 .admin-table { width: 100%; border-collapse: collapse; color: #ddd; margin-top: 10px; }
@@ -557,7 +608,7 @@ body {
 .total-row { background: rgba(174, 14, 48, 0.15); border-top: 2px solid var(--redcolor); font-weight: bold; }
 
 /* =========================================
-   6. MEDIA QUERIES (RESPONSIVE GENERAL)
+   7. MEDIA QUERIES (CELULAR Y TABLET)
    ========================================= */
 @media (max-width: 992px) {
     .login-header h1 { font-size: 2rem; }
@@ -569,23 +620,24 @@ body {
     /* Login */
     .login-container { height: 100%; justify-content: center; padding: 20px; }
     .login-header h1 { font-size: 1.8rem; }
-    /* FIX: Quitamos la restricción de 50% para que se centren bien */
     .btn-login { max-width: 100%; }
 
-    /* Barbero */
+    /* Barbero (Ajustes Botones y Header) */
     #view-barber { padding: 10px !important; }
     #view-barber h2 { font-size: 1.4rem !important; }
-    .fc-header-toolbar { flex-wrap: wrap; gap: 5px; }
-    .fc-dayGridMonth-button, .fc-timeGridWeek-button { display: none !important; }
+    .action-stack-barber { flex-wrap: wrap; gap: 10px; }
+    .btn-barber { padding: 12px; font-size: 0.8rem; }
     
-    /* Centrar botones del stack en movil si sobran */
-    .action-stack-barber { align-items: center; }
+    /* FullCalendar Móvil */
+    .fc-header-toolbar { flex-wrap: wrap; gap: 5px; margin-bottom: 5px !important; }
+    .fc-toolbar-chunk { display: flex; justify-content: center; width: 100%; }
+    /* Forzamos que se vean los botones de navegación */
+    .fc-dayGridMonth-button, .fc-timeGridWeek-button, .fc-timeGridDay-button { display: inline-block !important; font-size: 0.75rem !important; padding: 4px 8px !important; }
 
     /* Admin: Tabla a Tarjetas */
     .admin-controls { flex-direction: column; }
     .admin-input, .cta-button { width: 100%; }
     .admin-table thead { display: none; }
-    
     .admin-table, .admin-table tbody, .admin-table tr, .admin-table td { display: block; width: 100%; }
     
     .admin-table tr {
@@ -596,7 +648,6 @@ body {
         box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         padding: 10px;
     }
-
     .admin-table td {
         display: flex;
         justify-content: space-between;
@@ -607,70 +658,6 @@ body {
         font-size: 0.95rem;
     }
     .admin-table td:last-child { border-bottom: none; }
-    
-    .admin-table td::before {
-        content: attr(data-label);
-        font-weight: bold;
-        color: var(--redcolor);
-        font-size: 0.8rem;
-        text-transform: uppercase;
-    }
-
+    .admin-table td::before { content: attr(data-label); font-weight: bold; color: var(--redcolor); font-size: 0.8rem; text-transform: uppercase; }
     .total-row td { justify-content: space-between !important; font-size: 1.1rem; color: white; }
 }
-
-/* =========================================
-   7. SENIOR FIX: MODAL DETALLE (Cyberpunk)
-   ========================================= */
-#modal-detalle-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 100000;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-}
-
-#modal-detalle-overlay.active { opacity: 1; visibility: visible; }
-
-.modal-detalle-card {
-    background: #0a0a0a;
-    border: 1px solid var(--redcolor);
-    box-shadow: 0 0 30px rgba(174, 14, 48, 0.2);
-    width: 90%;
-    max-width: 400px;
-    border-radius: 16px;
-    padding: 25px;
-    transform: scale(0.8) translateY(20px);
-    opacity: 0;
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
-    text-align: left;
-}
-
-#modal-detalle-overlay.active .modal-detalle-card { transform: scale(1) translateY(0); opacity: 1; }
-
-.detalle-header {
-    border-bottom: 1px solid #333;
-    padding-bottom: 15px;
-    margin-bottom: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.detalle-header h2 { color: white; font-family: var(--font-heading); font-size: 1.5rem; margin: 0; }
-.close-modal-btn { background: none; border: none; color: #666; font-size: 1.5rem; cursor: pointer; transition: color 0.3s; }
-.close-modal-btn:hover { color: white; }
-
-.info-row { margin-bottom: 15px; }
-.info-label { color: var(--redcolor); font-size: 0.75rem; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; display: block; margin-bottom: 4px; }
-.info-value { color: white; font-size: 1.1rem; font-weight: 500; }
-.info-value.email { font-size: 0.9rem; color: #ccc; word-break: break-all; } 
