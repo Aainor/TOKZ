@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                              data-name="${finalName}">
                             <div class="srv-info">
                                 <span class="srv-name">${finalName}</span>
-                                <span class="srv-price">$${vipPrice.toLocaleString('es-AR')}</span>
+                                <span class="srv-price">${vipPrice === 0 ? 'Consultar precio' : '$' + vipPrice.toLocaleString('es-AR')}</span>
                             </div>
                             <div class="quantity-control">
                                 <button class="qty-btn minus" disabled>-</button>
