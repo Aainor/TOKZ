@@ -36,6 +36,24 @@ let calendarInstance = null;
 // 🛠️ UTILIDADES VISUALES
 // ==========================================
 
+function injectDeleteModalHTML() {
+    // Solo lo creamos si no existe
+    if (!document.getElementById('modal-delete-overlay')) {
+        const modalHTML = `
+        <div id="modal-delete-overlay" class="modal-overlay">
+            <div class="modal-box">
+                <h3>¿Estás seguro?</h3>
+                <p>¿Querés borrar este turno de forma permanente? Esta acción no se puede deshacer.</p>
+                <div class="modal-actions">
+                    <button id="btn-confirm-no" class="btn-modal btn-cancel">Cancelar</button>
+                    <button id="btn-confirm-yes" class="btn-modal btn-confirm">Sí, borrar</button>
+                </div>
+            </div>
+        </div>`;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+}
+
 // Inyectar HTML del Modal (SOLO para ver DETALLES del turno en el calendario)
 function injectModalHTML() {
     if (!document.getElementById('modal-detalle-overlay')) {
@@ -96,6 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log("Iniciando App Integrada (Versión Borrado Directo)...");
 
     injectModalHTML();
+    injectDeleteModalHTML();
 
     // --- REFERENCIAS DOM ---
     const viewLogin = document.getElementById('view-login');
@@ -211,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         btnBackAdmin.classList.remove('hidden');
 
                         btnGoCalendar.onclick = () => {
-                            const nombreAgendaAdmin = "Nicolás"; 
+                            const nombreAgendaAdmin = "Nicolás";
                             console.log("Admin yendo a agenda de:", nombreAgendaAdmin);
 
                             loadBarberAgenda(nombreAgendaAdmin);
@@ -323,48 +342,97 @@ document.addEventListener('DOMContentLoaded', () => {
                     </button>
                 </div>`;
         });
-        
+
         // Adjuntamos los eventos de borrado directo
         attachDeleteEvents();
     }
+    // ==========================================
+    // C. BORRADO CON CONFIRMACIÓN (MODAL ESTILO CSS)
+    // ==========================================
 
-    // ==========================================
-    // C. BORRADO DIRECTO (SIN MODAL - CON SPINNER)
-    // ==========================================
+    // Variables temporales
+    let idParaBorrar = null;
+    let btnBorrarPresionado = null;
+
     function attachDeleteEvents() {
+        // 1. Detectar clicks en los tachos de basura
         document.querySelectorAll('.btn-delete-booking').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                e.preventDefault(); 
-                const btnElement = e.currentTarget;
-                const idToDelete = btnElement.getAttribute('data-id');
-                
-                // 1. Efecto Visual Inmediato: Spinner
-                btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-                btnElement.disabled = true; // Evitar doble click
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
 
-                try {
-                    console.log("🗑️ Iniciando borrado directo del ID:", idToDelete);
-                    
-                    // 2. BORRADO DIRECTO EN FIRESTORE
-                    await deleteDoc(doc(db, "turnos", idToDelete));
-                    
-                    console.log("✅ Borrado exitoso en DB");
+                // Guardar referencia
+                btnBorrarPresionado = e.currentTarget;
+                idParaBorrar = btnBorrarPresionado.getAttribute('data-id');
 
-                    // 3. ACTUALIZAR LISTA VISUAL
-                    myTurnos = myTurnos.filter(t => t.id !== idToDelete);
-                    renderBookings();
-                    
-                } catch (error) {
-                    console.error("❌ Error al borrar:", error);
-                    alert("No se pudo borrar el turno. Revisá tu conexión.");
-                    
-                    // Si falla, restauramos el botón original
-                    btnElement.innerHTML = '<i class="fa-solid fa-trash"></i>';
-                    btnElement.disabled = false;
+                // Mostrar el Modal (agregando la clase .active definida en tu CSS)
+                const overlay = document.getElementById('modal-delete-overlay');
+                if (overlay) {
+                    overlay.classList.add('active');
                 }
             });
         });
     }
+
+    // --- LÓGICA DE LOS BOTONES DEL MODAL ---
+
+    // Configurar listeners globales una sola vez
+    // (Esto evita que se dupliquen los eventos si se recarga la lista)
+    document.addEventListener('click', async (e) => {
+
+        // A. SI CLICKEA "CANCELAR" O EL FONDO NEGRO
+        if (e.target.id === 'btn-confirm-no' || e.target.id === 'modal-delete-overlay') {
+            const overlay = document.getElementById('modal-delete-overlay');
+            if (overlay) overlay.classList.remove('active');
+
+            // Limpiar variables
+            idParaBorrar = null;
+            btnBorrarPresionado = null;
+        }
+
+        // B. SI CLICKEA "SÍ, BORRAR"
+        if (e.target.id === 'btn-confirm-yes') {
+            // 1. Cerrar modal visualmente
+            const overlay = document.getElementById('modal-delete-overlay');
+            if (overlay) overlay.classList.remove('active');
+
+            if (!idParaBorrar) return;
+
+            // 2. Efecto visual de carga en el botón original (opcional)
+            if (btnBorrarPresionado) {
+                btnBorrarPresionado.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+                btnBorrarPresionado.disabled = true;
+            }
+
+            try {
+                console.log("🗑️ Ejecutando borrado de ID:", idParaBorrar);
+
+                // 3. BORRAR DE FIREBASE
+                await deleteDoc(doc(db, "turnos", idParaBorrar));
+
+                console.log("✅ Borrado exitoso");
+
+                // 4. ACTUALIZAR LISTA VISUAL
+                // Eliminamos del array local
+                myTurnos = myTurnos.filter(t => t.id !== idParaBorrar);
+                // Volvemos a pintar la lista
+                renderBookings();
+
+            } catch (error) {
+                console.error("❌ Error al borrar:", error);
+                alert("Error al borrar. Revisá tu conexión.");
+
+                // Si falla, restaurar icono
+                if (btnBorrarPresionado) {
+                    btnBorrarPresionado.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                    btnBorrarPresionado.disabled = false;
+                }
+            }
+
+            // Limpiar variables
+            idParaBorrar = null;
+            btnBorrarPresionado = null;
+        }
+    });
 
     if (btnViewBookings) btnViewBookings.addEventListener('click', () => { renderBookings(); switchView(viewBooking); });
     if (btnBackDashboard) btnBackDashboard.addEventListener('click', () => { switchView(viewUser); });

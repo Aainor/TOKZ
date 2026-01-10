@@ -2,68 +2,35 @@
 // 1. IMPORTACIONES
 // ==========================================
 
-// A. TUS CONFIGURACIONES LOCALES (Lo que sí exporta tu archivo)
-import { db, auth } from './firebase.js'; 
+import { db, auth } from './firebase.js';
 
-// B. HERRAMIENTAS DE AUTENTICACIÓN (Desde Google)
-import { 
-    onAuthStateChanged 
+import {
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// C. HERRAMIENTAS DE BASE DE DATOS (Desde Google)
-import { 
-    collection, 
-    addDoc, 
-    query, 
-    where, 
+import {
+    collection,
+    addDoc,
+    query,
+    where,
     getDocs,
-    doc,        // <--- Ahora sí las traemos desde la fuente oficial
+    doc,
     getDoc,
     setDoc,
     updateDoc,
-    increment 
+    increment
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
 // ==========================================
 // 2. CONFIGURACIÓN Y ESTADO
 // ==========================================
 let BARBERS_CONFIG = [];
 let PRICES_DB = {};
 // Configuración de EmailJS
-const EMAIL_SERVICE_ID = "service_hamvojq"; 
-const EMAIL_TEMPLATE_ID = "template_qbqjfp6"; 
+const EMAIL_SERVICE_ID = "service_hamvojq";
+const EMAIL_TEMPLATE_ID = "template_qbqjfp6";
 
-// === FUNCIÓN NUEVA PARA GESTIONAR CLIENTES (AUTO-GUARDADO) ===
-async function gestionarCliente(nombre, email) {
-    try {
-        const clientesRef = collection(db, "Clientes"); 
-        const q = query(clientesRef, where("Email", "==", email));
-        const querySnapshot = await getDocs(q);
-
-        if (querySnapshot.empty) {
-            // Cliente Nuevo
-            await addDoc(clientesRef, {
-                Nombre: nombre,
-                Email: email,
-                Cortes_Totales: 1,
-                Fecha_Registro: new Date()
-            });
-            console.log("✅ Nuevo cliente registrado.");
-        } else {
-            // Cliente Existente
-            const clienteDoc = querySnapshot.docs[0];
-            const clienteRef = doc(db, "Clientes", clienteDoc.id);
-            const cortesActuales = clienteDoc.data().Cortes_Totales || 0;
-            
-            await updateDoc(clienteRef, {
-                Cortes_Totales: cortesActuales + 1
-            });
-            console.log("🔄 Cliente recurrente actualizado.");
-        }
-    } catch (error) {
-        console.error("❌ Error gestionando cliente:", error);
-    }
-}
-
+// === FUNCIÓN AUXILIAR FECHA ===
 function getLocalDateISO(dateObj) {
     const offset = dateObj.getTimezoneOffset() * 60000;
     const localTime = new Date(dateObj.getTime() - offset);
@@ -71,33 +38,37 @@ function getLocalDateISO(dateObj) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    
-    // --- ESTADO MODIFICADO PARA MANEJAR DOBLE PRECIO ---
+
+    // --- ESTADO INICIAL ---
     let bookingData = {
-        services: [],      
-        totalVip: 0,      // Acumulador precio con descuento (Destacado)
-        totalRegular: 0,  // Acumulador precio full (Accesorio)
-        mode: 'together',  
+        services: [],
+        totalVip: 0,
+        totalRegular: 0,
+        mode: 'together',
         date: null,
         time: null,
         professional: '',
-        appointments: [] 
+        appointments: []
     };
 
     let currentStep = 1;
-    let serviceIndex = 0; 
+    let serviceIndex = 0;
     let guestData = null;
-    let currentUser = null; 
+    let currentUser = null;
 
-    // --- DOM ---
+    // --- DOM (ELEMENTOS HTML) ---
     const modal = document.getElementById('booking-modal');
-    const openBtn = document.querySelector('.services-section .cta-button'); 
+
+    // --- CORRECCIÓN FINAL ESPECÍFICA PARA TU HTML ---
+    // Buscamos el enlace con clase 'cta-button' que está DENTRO de la sección con id='reserva'
+    const openBtn = document.querySelector('#reserva .cta-button');
+
     const closeBtn = document.getElementById('close-modal-btn');
     const btnNext = document.getElementById('btn-next');
     const btnBack = document.getElementById('btn-back');
     const totalPriceEl = document.getElementById('total-price');
     const serviceTitle = document.getElementById('current-service-title');
-    const servicesListContainer = document.querySelector('.services-list'); 
+    const servicesListContainer = document.querySelector('.services-list');
     const steps = [
         document.getElementById('step-1'),
         document.getElementById('step-mode'),
@@ -109,67 +80,93 @@ document.addEventListener('DOMContentLoaded', async () => {
     const datePicker = document.getElementById('date-picker');
     const timeGridContainer = document.getElementById('time-grid-container');
 
+    // --- DIAGNÓSTICO EN CONSOLA (Para que sepas si lo encontró) ---
+    if (!modal) console.error("❌ ERROR CRÍTICO: No encuentro el modal con id='booking-modal'.");
+    if (openBtn) {
+        console.log("✅ Botón de reservar encontrado correctamente.");
+    } else {
+        console.error("❌ ERROR: Aún no encuentro el botón. Verifica que el script 'turnos.js' tenga 'defer' o esté al final del body.");
+    }
+
+    // ==========================================
+    // LOGICA DE BARBEROS
+    // ==========================================
     async function loadBarbersConfig() {
         try {
             const response = await fetch('/public/components/barberos.json');
             if (!response.ok) throw new Error("No se pudo cargar barberos.json");
-            
+
             BARBERS_CONFIG = await response.json();
-            
-            if(proSelect) {
-                proSelect.innerHTML = ''; 
+
+            if (proSelect) {
+                proSelect.innerHTML = '';
                 BARBERS_CONFIG.forEach(barber => {
                     const option = document.createElement('option');
                     option.value = barber.id;
                     option.textContent = barber.name;
                     proSelect.appendChild(option);
                 });
-                if (bookingData) bookingData.professional = proSelect.options[proSelect.selectedIndex].text;
+                if (bookingData && proSelect.options.length > 0) {
+                    bookingData.professional = proSelect.options[proSelect.selectedIndex].text;
+                }
             }
         } catch (e) {
             console.error("Error crítico cargando configuración de barberos:", e);
-            BARBERS_CONFIG = [{ id: "any", name: "Cualquiera", days: [1,2,3,4,5,6], hours: ["10:00", "18:00"] }];
+            // Configuración por defecto para que no se rompa
+            BARBERS_CONFIG = [{ id: "any", name: "Cualquiera", days: [1, 2, 3, 4, 5, 6], hours: ["10:00", "18:00"] }];
         }
     }
 
     await loadBarbersConfig();
 
-    if (proSelect) bookingData.professional = proSelect.options[proSelect.selectedIndex].text;
+    if (proSelect && proSelect.selectedIndex !== -1) {
+        bookingData.professional = proSelect.options[proSelect.selectedIndex].text;
+    }
 
     const today = new Date();
     const todayFormatted = getLocalDateISO(today);
 
-    if(datePicker) { 
-        datePicker.min = todayFormatted; 
+    if (datePicker) {
+        datePicker.min = todayFormatted;
         datePicker.value = todayFormatted;
-        bookingData.date = todayFormatted; 
+        bookingData.date = todayFormatted;
     }
 
-    onAuthStateChanged(auth, (user) => { 
+    // --- DETECCIÓN DE USUARIO ---
+    onAuthStateChanged(auth, (user) => {
         if (user) {
             currentUser = user;
             console.log("Usuario detectado:", currentUser.displayName);
         } else {
             currentUser = null;
         }
-        updateUI(); 
+        updateUI();
     });
 
-    if(openBtn) openBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        modal.classList.remove('hidden');
-    });
-    if(closeBtn) closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+    // --- EVENTOS DE APERTURA/CIERRE ---
+    if (openBtn) {
+        openBtn.addEventListener('click', (e) => {
+            e.preventDefault(); // IMPORTANTE: Evita que el enlace '#' te lleve arriba
+            if (modal) {
+                modal.classList.remove('hidden');
+                console.log("Abriendo modal...");
+            } else {
+                alert("Error: No se encuentra la ventana de reservas.");
+            }
+        });
+    }
+
+    if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
 
     // ==========================================
-    // CARGA DE SERVICIOS (LÓGICA DE PRECIOS CORREGIDA)
+    // CARGA DE SERVICIOS
     // ==========================================
     async function renderServicesFromJSON() {
         try {
             const response = await fetch('/public/components/precios.json');
             if (!response.ok) throw new Error("No se pudo cargar precios.json");
             const precios = await response.json();
-            servicesListContainer.innerHTML = ''; 
+            if (servicesListContainer) servicesListContainer.innerHTML = '';
 
             const SERVICE_NAMES = {
                 "corte": "Corte de Cabello", "barba": "Arreglo de Barba", "corte_barba": "Corte + Barba",
@@ -181,20 +178,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             availableKeys.forEach(key => {
                 if (precios[key]) {
                     const item = precios[key];
-                    
-                    // --- NUEVA LÓGICA DE PRECIOS ---
-                    // 'destacado' es el precio VIP (con descuento)
-                    // 'accesorio' es el precio Regular (sin descuento)
-                    // Si no hay 'accesorio', usamos 'destacado' como fallback
                     const vipPrice = Number(item.destacado) || 0;
                     const rawRegular = Number(item.accesorio);
                     const regularPrice = !isNaN(rawRegular) ? rawRegular : vipPrice;
-
                     const finalName = SERVICE_NAMES[key] || key.toUpperCase();
-                    
+
                     PRICES_DB[finalName] = { vip: vipPrice, regular: regularPrice };
 
-                    // Guardamos ambos precios en los atributos del HTML
                     const html = `
                         <div class="service-row" 
                              data-id="${key}" 
@@ -211,12 +201,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 <button class="qty-btn plus">+</button>
                             </div>
                         </div>`;
-                    servicesListContainer.insertAdjacentHTML('beforeend', html);
+                    if (servicesListContainer) servicesListContainer.insertAdjacentHTML('beforeend', html);
                 }
             });
             attachServiceListeners();
         } catch (e) {
-            console.error("Error crítico cargando servicios:", e);
+            console.error("Error cargando servicios:", e);
         }
     }
 
@@ -226,8 +216,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const plus = row.querySelector('.plus');
             const valSpan = row.querySelector('.qty-val');
             const name = row.getAttribute('data-name');
-            
-            // Leemos los dos precios
             const vipPrice = parseInt(row.getAttribute('data-vip'));
             const regularPrice = parseInt(row.getAttribute('data-regular'));
 
@@ -237,11 +225,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 currentQty++;
                 valSpan.textContent = currentQty;
                 minus.disabled = false;
-                row.classList.add('selected-active'); 
-                
+                row.classList.add('selected-active');
+
                 bookingData.services.push(name);
-                
-                // Sumamos a los acumuladores por separado
                 bookingData.totalVip += vipPrice;
                 bookingData.totalRegular += regularPrice;
 
@@ -262,8 +248,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const index = bookingData.services.indexOf(name);
                     if (index > -1) {
                         bookingData.services.splice(index, 1);
-                        
-                        // Restamos de los acumuladores
                         bookingData.totalVip -= vipPrice;
                         bookingData.totalRegular -= regularPrice;
                     }
@@ -276,6 +260,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function checkModeCompatibility() {
         const modeTogetherBtn = document.getElementById('mode-together');
+        if (!modeTogetherBtn) return;
+
         const hasDuplicates = new Set(bookingData.services).size !== bookingData.services.length;
         if (hasDuplicates) {
             selectMode('separate');
@@ -289,138 +275,133 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    window.selectMode = function(mode) {
+    window.selectMode = function (mode) {
         document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
-        document.getElementById(`mode-${mode}`).classList.add('selected');
+        const target = document.getElementById(`mode-${mode}`);
+        if (target) target.classList.add('selected');
         bookingData.mode = mode;
-        updateUI(); 
+        updateUI();
     }
 
     // ==========================================
-    // LÓGICA CALENDARIO + FIREBASE CHECK
+    // LÓGICA CALENDARIO
     // ==========================================
-   async function renderTimeSlots() {
-    timeGridContainer.innerHTML = '<p style="color:white; text-align:center;">Cargando horarios...</p>'; 
-    const selectedDateStr = datePicker.value;
-    if (!selectedDateStr) return;
+    async function renderTimeSlots() {
+        if (!timeGridContainer) return;
+        timeGridContainer.innerHTML = '<p style="color:white; text-align:center;">Cargando horarios...</p>';
 
-    const proId = proSelect.value;
-    const currentProName = proSelect.options[proSelect.selectedIndex].text;
-    const barber = BARBERS_CONFIG.find(b => b.id === proId) || BARBERS_CONFIG[0];
+        const selectedDateStr = datePicker.value;
+        if (!selectedDateStr) return;
 
-    // Validación de días laborables...
-    const dateObj = new Date(selectedDateStr + 'T00:00:00'); 
-    const dayOfWeek = dateObj.getDay(); 
-    if (dayOfWeek === 0 || !barber.days.includes(dayOfWeek)) {
-        timeGridContainer.innerHTML = `<p style="color:#888; width:100%; text-align:center;">No trabaja este día.</p>`;
-        return;
-    }
+        const proId = proSelect.value;
+        const currentProName = proSelect.options[proSelect.selectedIndex].text;
+        const barber = BARBERS_CONFIG.find(b => b.id === proId) || BARBERS_CONFIG[0];
 
-    try {
-        const q = query(
-            collection(db, "turnos"),
-            where("date", "==", selectedDateStr),
-            where("pro", "==", currentProName)
-        );
-        
-        const querySnapshot = await getDocs(q);
-        const dbTakenSlots = querySnapshot.docs.map(doc => doc.data().time);
-        
-        // Sumamos los turnos que el usuario está eligiendo ahora mismo
-        const localTakenSlots = bookingData.appointments
-            .filter(appt => appt.date === selectedDateStr && appt.pro === currentProName)
-            .map(appt => appt.time);
-            
-        const allTakenTimes = [...dbTakenSlots, ...localTakenSlots];
+        const dateObj = new Date(selectedDateStr + 'T00:00:00');
+        const dayOfWeek = dateObj.getDay();
+        if (dayOfWeek === 0 || !barber.days.includes(dayOfWeek)) {
+            timeGridContainer.innerHTML = `<p style="color:#888; width:100%; text-align:center;">No trabaja este día.</p>`;
+            return;
+        }
 
-        // --- LÓGICA DE RANGOS (NUEVO) ---
-        // Convertimos cada turno ocupado en un rango de minutos [inicio, fin]
-        const DURACION_TURNO = 45; // Minutos que dura el corte
+        try {
+            const q = query(
+                collection(db, "turnos"),
+                where("date", "==", selectedDateStr),
+                where("pro", "==", currentProName)
+            );
 
-        const rangosOcupados = allTakenTimes.map(timeStr => {
-            const [h, m] = timeStr.split(':').map(Number);
-            const inicioMin = h * 60 + m;
-            return { inicio: inicioMin, fin: inicioMin + DURACION_TURNO };
-        });
+            const querySnapshot = await getDocs(q);
+            const dbTakenSlots = querySnapshot.docs.map(doc => doc.data().time);
 
-        timeGridContainer.innerHTML = ''; 
+            const localTakenSlots = bookingData.appointments
+                .filter(appt => appt.date === selectedDateStr && appt.pro === currentProName)
+                .map(appt => appt.time);
 
-        barber.hours.forEach(hora => {
-            const btn = document.createElement('button');
-            btn.className = 'time-btn';
-            btn.textContent = hora;
-            
-            // Calculamos minutos de ESTE botón
-            const [slotH, slotM] = hora.split(':').map(Number);
-            const slotInicio = slotH * 60 + slotM;
-            const slotFin = slotInicio + DURACION_TURNO;
+            const allTakenTimes = [...dbTakenSlots, ...localTakenSlots];
 
-            // 1. Verificar si es horario pasado
-            let isPastTime = false;
-            const now = new Date();
-            if (selectedDateStr === getLocalDateISO(now)) {
-                const currentHour = now.getHours();
-                const currentMin = now.getMinutes();
-                if (slotH < currentHour || (slotH === currentHour && slotM < currentMin)) {
-                    isPastTime = true;
-                }
-            }
-
-            // 2. Verificar COLISIÓN REAL (Superposición)
-            // Un turno choca si su rango se cruza con otro ocupado
-            const hayColision = rangosOcupados.some(ocupado => {
-                // (Inicio del nuevo < Fin del viejo) Y (Fin del nuevo > Inicio del viejo)
-                return slotInicio < ocupado.fin && slotFin > ocupado.inicio;
+            const DURACION_TURNO = 45;
+            const rangosOcupados = allTakenTimes.map(timeStr => {
+                const [h, m] = timeStr.split(':').map(Number);
+                const inicioMin = h * 60 + m;
+                return { inicio: inicioMin, fin: inicioMin + DURACION_TURNO };
             });
 
-            if (hayColision || isPastTime) {
-                btn.disabled = true;
-                if (isPastTime) {
-                    btn.classList.add('past'); 
-                    btn.title = "Horario pasado";
-                } else {
-                    btn.classList.add('taken'); 
-                    btn.title = "Ocupado";
+            timeGridContainer.innerHTML = '';
+
+            barber.hours.forEach(hora => {
+                const btn = document.createElement('button');
+                btn.className = 'time-btn';
+                btn.textContent = hora;
+
+                const [slotH, slotM] = hora.split(':').map(Number);
+                const slotInicio = slotH * 60 + slotM;
+                const slotFin = slotInicio + DURACION_TURNO;
+
+                let isPastTime = false;
+                const now = new Date();
+                if (selectedDateStr === getLocalDateISO(now)) {
+                    const currentHour = now.getHours();
+                    const currentMin = now.getMinutes();
+                    if (slotH < currentHour || (slotH === currentHour && slotM < currentMin)) {
+                        isPastTime = true;
+                    }
                 }
-            } else {
-                if (bookingData.time === hora) btn.classList.add('active');
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    bookingData.time = hora;
-                    updateUI();
+
+                const hayColision = rangosOcupados.some(ocupado => {
+                    return slotInicio < ocupado.fin && slotFin > ocupado.inicio;
                 });
-            }
-            timeGridContainer.appendChild(btn);
+
+                if (hayColision || isPastTime) {
+                    btn.disabled = true;
+                    if (isPastTime) {
+                        btn.classList.add('past');
+                        btn.title = "Horario pasado";
+                    } else {
+                        btn.classList.add('taken');
+                        btn.title = "Ocupado";
+                    }
+                } else {
+                    if (bookingData.time === hora) btn.classList.add('active');
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        bookingData.time = hora;
+                        updateUI();
+                    });
+                }
+                timeGridContainer.appendChild(btn);
+            });
+            updateUI();
+
+        } catch (error) {
+            console.error("Error buscando horarios:", error);
+            timeGridContainer.innerHTML = '<p style="color:red;">Error de conexión.</p>';
+        }
+
+        if (proSelect) proSelect.addEventListener('change', () => {
+            bookingData.professional = proSelect.options[proSelect.selectedIndex].text;
+            bookingData.time = null;
+            renderTimeSlots();
         });
-        updateUI();
 
-    } catch (error) {
-        console.error("Error buscando horarios:", error);
-        timeGridContainer.innerHTML = '<p style="color:red;">Error de conexión.</p>';
+        if (datePicker) datePicker.addEventListener('change', (e) => {
+            bookingData.date = e.target.value;
+            bookingData.time = null;
+            renderTimeSlots();
+        });
     }
-    if(proSelect) proSelect.addEventListener('change', () => {
-        bookingData.professional = proSelect.options[proSelect.selectedIndex].text;
-        bookingData.time = null;
-        renderTimeSlots();
-    });
-
-    if(datePicker) datePicker.addEventListener('change', (e) => {
-        bookingData.date = e.target.value;
-        bookingData.time = null;
-        renderTimeSlots();
-    });
 
     // ==========================================
     // NAVEGACIÓN
     // ==========================================
-    btnNext.addEventListener('click', async () => {
+    if (btnNext) btnNext.addEventListener('click', async () => {
         if (currentStep === 1) {
-            if (bookingData.services.length > 1) currentStep = 2; 
+            if (bookingData.services.length > 1) currentStep = 2;
             else {
-                bookingData.mode = 'together'; 
+                bookingData.mode = 'together';
                 prepareCalendarStep();
-                currentStep = 3; 
+                currentStep = 3;
             }
             updateStep(); return;
         }
@@ -445,11 +426,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     time: bookingData.time,
                     pro: finalProName
                 };
-                serviceIndex++; 
+                serviceIndex++;
                 if (serviceIndex < bookingData.services.length) {
-                    prepareCalendarStep(); 
-                    updateStep(); 
-                    return; 
+                    prepareCalendarStep();
+                    updateStep();
+                    return;
                 }
             }
             currentStep = 4;
@@ -461,23 +442,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    btnBack.addEventListener('click', () => {
+    if (btnBack) btnBack.addEventListener('click', () => {
         if (currentStep === 4 && !currentUser && guestData !== null) {
-            guestData = null; 
+            guestData = null;
             renderFinalStep(); return;
         }
         if (currentStep === 4) {
             currentStep = 3;
             if (bookingData.mode === 'separate') {
-                bookingData.appointments.pop(); 
-                serviceIndex--; 
-                prepareCalendarStep(); 
+                bookingData.appointments.pop();
+                serviceIndex--;
+                prepareCalendarStep();
             }
         } else if (currentStep === 3) {
             if (bookingData.mode === 'separate' && serviceIndex > 0) {
-                serviceIndex--; 
+                serviceIndex--;
                 prepareCalendarStep();
-                updateStep(); return; 
+                updateStep(); return;
             }
             if (bookingData.services.length > 1) currentStep = 2;
             else currentStep = 1;
@@ -488,23 +469,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     function prepareCalendarStep() {
-        bookingData.time = null; 
+        bookingData.time = null;
         if (bookingData.mode === 'separate') {
             const srvName = bookingData.services[serviceIndex];
-            serviceTitle.textContent = `Agendando: ${srvName} (${serviceIndex + 1}/${bookingData.services.length})`;
-            serviceTitle.style.display = 'block';
-            serviceTitle.style.color = "#AE0E30"; 
+            if (serviceTitle) {
+                serviceTitle.textContent = `Agendando: ${srvName} (${serviceIndex + 1}/${bookingData.services.length})`;
+                serviceTitle.style.display = 'block';
+                serviceTitle.style.color = "#AE0E30";
+            }
         } else {
-            serviceTitle.textContent = bookingData.services.length > 1 ? "Agendando todo junto" : "";
-            serviceTitle.style.display = bookingData.services.length > 1 ? 'block' : 'none';
+            if (serviceTitle) {
+                serviceTitle.textContent = bookingData.services.length > 1 ? "Agendando todo junto" : "";
+                serviceTitle.style.display = bookingData.services.length > 1 ? 'block' : 'none';
+            }
         }
         renderTimeSlots();
     }
 
     // ==========================================
-    // 8. ENVÍO A FIREBASE + EMAILJS (FINALIZAR)
+    // FINALIZAR
     // ==========================================
     async function finalizarReserva() {
+        if (!currentUser && !guestData) {
+            console.error("Intento de reserva bloqueado: No hay usuario autenticado.");
+            return;
+        }
+
         btnNext.textContent = "Procesando...";
         btnNext.disabled = true;
 
@@ -512,7 +502,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         let finalMail = currentUser ? currentUser.email : guestData.email;
         let finalUid = currentUser ? currentUser.uid : "guest";
 
-        // Determinamos el precio final real AHORA
         const isVip = currentUser && currentUser.uid !== "guest";
         const precioFinalReserva = isVip ? bookingData.totalVip : bookingData.totalRegular;
 
@@ -540,13 +529,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
 
         try {
-            // A. GUARDAR EN FIREBASE
             if (bookingData.mode === 'together') {
                 let pName = bookingData.professional.includes("Cualquiera") ? "Cualquiera" : bookingData.professional;
                 await addDoc(collection(db, "turnos"), {
                     ...baseData,
                     services: bookingData.services,
-                    total: precioFinalReserva, // Precio Correcto
+                    total: precioFinalReserva,
                     date: bookingData.date,
                     time: bookingData.time,
                     pro: pName,
@@ -554,14 +542,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
             } else {
                 const promises = bookingData.appointments.map(appt => {
-                    // 1. Buscamos el precio en nuestra memoria
                     const preciosServicio = PRICES_DB[appt.service] || { vip: 0, regular: 0 };
                     const precioIndividual = isVip ? preciosServicio.vip : preciosServicio.regular;
-
                     return addDoc(collection(db, "turnos"), {
                         ...baseData,
-                        services: [appt.service], 
-                        total:precioIndividual, // En multi-turno el precio total puede ir en 0 o dividido
+                        services: [appt.service],
+                        total: precioIndividual,
                         date: appt.date,
                         time: appt.time,
                         pro: appt.pro,
@@ -571,38 +557,25 @@ document.addEventListener('DOMContentLoaded', async () => {
                 await Promise.all(promises);
             }
 
-           console.log("🔥 Guardado en Firebase exitoso.");
-            
-            // --- LÓGICA CORREGIDA PARA GESTIÓN DE CLIENTES ---
+            // GESTIÓN CLIENTES
             if (currentUser) {
                 try {
-                    // Usamos el UID como ID del documento (Práctica recomendada en Firebase)
                     const clientRef = doc(db, "Clientes", currentUser.uid);
                     const clientSnap = await getDoc(clientRef);
-
                     if (clientSnap.exists()) {
-                        // SI YA EXISTE: Solo incrementamos el contador atómicamente
-                        await updateDoc(clientRef, {
-                            Cortes_Totales: increment(1)
-                        });
-                        console.log("🔄 Cliente recurrente actualizado (Contador +1).");
+                        await updateDoc(clientRef, { Cortes_Totales: increment(1) });
                     } else {
-                        // SI NO EXISTE: Lo creamos con datos iniciales
                         await setDoc(clientRef, {
                             Nombre: currentUser.displayName || finalName,
                             Email: currentUser.email || finalMail,
                             Cortes_Totales: 1,
                             Fecha_Registro: new Date()
                         });
-                        console.log("✅ Nuevo cliente registrado en la colección Clientes.");
                     }
-                } catch (e) {
-                    console.error("❌ Error gestionando cliente en DB:", e);
-                }
+                } catch (e) { console.error(e); }
             }
- 
 
-            // B. ENVIAR EMAIL CON EMAILJS
+            // EMAILJS
             const templateParams = {
                 to_name: finalName,
                 to_email: finalMail,
@@ -610,41 +583,34 @@ document.addEventListener('DOMContentLoaded', async () => {
                 date_info: fechaResumen,
                 professional: proResumen,
                 total_price: `$${precioFinalReserva}`,
-                message: "Gracias por confiar en Staff TOKZ. Te esperamos."
+                message: "Gracias por confiar en Staff TOKZ."
             };
 
             await emailjs.send(EMAIL_SERVICE_ID, EMAIL_TEMPLATE_ID, templateParams);
-            console.log("📧 Email enviado exitosamente.");
 
-            alert(`¡Reserva confirmada ${finalName}! Te enviamos un correo con los detalles.`);
+            alert(`¡Reserva confirmada ${finalName}!`);
             modal.classList.add('hidden');
             resetBooking();
             btnNext.textContent = "Confirmar Reserva";
             btnNext.disabled = false;
 
         } catch (e) {
-            console.error("Error en el proceso:", e);
-            alert("Hubo un error al guardar o enviar el correo. Por favor avisanos por WhatsApp.");
+            console.error("Error reserva:", e);
+            alert("Hubo un error al procesar la reserva.");
             btnNext.textContent = "Reintentar";
             btnNext.disabled = false;
         }
     }
 
     function recalculateTotal() {
-        // Obtenemos los dos totales acumulados
         const totalVip = bookingData.totalVip;
         const totalRegular = bookingData.totalRegular;
-        
-        let displayPrice = totalRegular; // Por defecto mostramos precio lista
+        let displayPrice = totalRegular;
         let showCrossed = false;
 
-        // Si es usuario VIP
         if (currentUser && currentUser.uid !== "guest") {
             displayPrice = totalVip;
-            // Solo tachamos si hay diferencia real
-            if (totalRegular > totalVip) {
-                showCrossed = true;
-            }
+            if (totalRegular > totalVip) showCrossed = true;
         }
 
         const totalEl = document.getElementById('total-price');
@@ -661,38 +627,47 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ==========================================
-    // UI UPDATES & HELPERS
+    // UI UPDATES
     // ==========================================
     function updateUI() {
         recalculateTotal();
         let ok = false;
-        if (currentStep === 1) ok = bookingData.services.length > 0;
-        else if (currentStep === 2) ok = true; 
-        else if (currentStep === 3) ok = bookingData.time !== null && bookingData.date !== null;
-        else ok = true; 
-        if(btnNext) btnNext.style.display = 'block'; 
-        btnNext.disabled = !ok;
 
-        const footerTotal = document.querySelector('.total-display'); 
-        if(footerTotal) footerTotal.style.opacity = (currentStep === 4) ? '0' : '1';
+        if (currentStep === 1) ok = bookingData.services.length > 0;
+        else if (currentStep === 2) ok = true;
+        else if (currentStep === 3) ok = bookingData.time !== null && bookingData.date !== null;
+        else ok = true;
+
+        if (currentStep !== 4 && btnNext) {
+            btnNext.style.display = 'block';
+        }
+
+        if (btnNext) btnNext.disabled = !ok;
+
+        const footerTotal = document.querySelector('.total-display');
+        if (footerTotal) footerTotal.style.opacity = (currentStep === 4) ? '0' : '1';
 
         if (currentStep === 4) {
-            btnNext.textContent = "Confirmar Reserva";
-            btnNext.style.backgroundColor = "#AE0E30";
+            if (btnNext) {
+                btnNext.textContent = "Confirmar Reserva";
+                btnNext.style.backgroundColor = "#AE0E30";
+            }
         } else if (currentStep === 3 && bookingData.mode === 'separate' && serviceIndex < bookingData.services.length - 1) {
-            btnNext.textContent = `Siguiente Turno`;
-            btnNext.style.backgroundColor = "#333";
+            if (btnNext) {
+                btnNext.textContent = `Siguiente Turno`;
+                btnNext.style.backgroundColor = "#333";
+            }
         } else {
-            btnNext.textContent = "Siguiente";
-            btnNext.style.backgroundColor = "#AE0E30";
+            if (btnNext) {
+                btnNext.textContent = "Siguiente";
+                btnNext.style.backgroundColor = "#AE0E30";
+            }
         }
     }
 
     const generateSummaryHTML = (name, isVip) => {
         let resumenHTML = '';
         const proNameDisplay = bookingData.professional;
-        
-        // Usamos los acumuladores correctos
         const precioLista = bookingData.totalRegular;
         const precioFinal = isVip ? bookingData.totalVip : bookingData.totalRegular;
 
@@ -753,30 +728,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="user-summary" style="text-align: center;">
                 <h3 style="color: white; margin: 5px 0 15px 0;">¡Hola, <span style="color: #AE0E30;">${name}</span>!</h3>
                 <p style="color: #aaa; font-size: 0.9rem; margin-bottom: -20px;">Este es el resumen de tu reserva:</p>
-                
                 ${resumenHTML}
-                
                 <div style="border-top: 1px solid #333; margin-top: 15px; padding-top: 10px;">
                     ${precioHTML}
                 </div>
-                
                 ${emailMsg}
-
                 <p style="color: #555; font-size: 0.75rem; margin-top: 20px;">
-                    ${isVip 
-                        ? '(Si no sos vos, <a href="/pages/login.html" style="color:#666;">cerrá sesión e iniciá de nuevo.</a>)' 
-                        : '(Revisá bien los datos antes de confirmar)'}
+                    ${isVip
+                ? '(Si no sos vos, <a href="/pages/login.html" style="color:#666;">cerrá sesión e iniciá de nuevo.</a>)'
+                : '(Revisá bien los datos antes de confirmar)'}
                 </p>
             </div>
         `;
     };
 
     function renderFinalStep() {
-        const finalStepContainer = document.getElementById('step-3'); 
+        const finalStepContainer = document.getElementById('step-3');
         if (!finalStepContainer) return;
 
-        finalStepContainer.innerHTML = ''; 
-        
+        finalStepContainer.innerHTML = '';
+
         const contentWrapper = document.createElement('div');
         contentWrapper.className = 'booking-form';
 
@@ -785,12 +756,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <h2 class="step-title" style="text-align:center; color:white; margin-bottom:20px;">Revisá y Confirmá</h2>
                 ${generateSummaryHTML(currentUser.displayName, true)}
             `;
-            if(btnNext) {
+            if (btnNext) {
                 btnNext.style.display = 'block';
                 btnNext.textContent = "Confirmar Reserva";
                 btnNext.disabled = false;
             }
-        } 
+        }
         else {
             contentWrapper.innerHTML = `
                 <div style="text-align: center; padding: 30px 10px;">
@@ -803,18 +774,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </a>
                 </div>
             `;
-            if(btnNext) btnNext.style.display = 'none';
+            if (btnNext) btnNext.style.display = 'none';
         }
-        
         finalStepContainer.appendChild(contentWrapper);
     }
 
     function updateStep() {
         steps.forEach((s, i) => {
-            if (i + 1 === currentStep) { s.classList.remove('hidden'); s.classList.add('active'); } 
+            if (!s) return;
+            if (i + 1 === currentStep) { s.classList.remove('hidden'); s.classList.add('active'); }
             else { s.classList.add('hidden'); s.classList.remove('active'); }
         });
-        
+
         let visualStepLimit = currentStep;
         if (currentStep === 2) visualStepLimit = 1;
         if (currentStep === 3) visualStepLimit = 2;
@@ -824,14 +795,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             const n = parseInt(d.getAttribute('data-step'));
             d.classList.toggle('active', n <= visualStepLimit);
         });
-        
+
         if (currentStep === 4) renderFinalStep();
-        btnBack.classList.toggle('hidden', currentStep === 1);
+        if (btnBack) btnBack.classList.toggle('hidden', currentStep === 1);
         updateUI();
     }
 
     function resetBooking() {
-        // Reiniciamos ambos contadores
         bookingData = { services: [], totalVip: 0, totalRegular: 0, mode: 'together', date: getLocalDateISO(new Date()), time: null, professional: 'Cualquiera', appointments: [] };
         currentStep = 1; serviceIndex = 0; guestData = null;
         document.querySelectorAll('.qty-val').forEach(el => el.textContent = '0');
