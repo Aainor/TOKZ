@@ -19,14 +19,16 @@ import {
 // 🚨 CONFIGURACIÓN DE STAFF (LISTA BLANCA)
 // ==========================================
 const STAFF_EMAILS = {
-    "pepito2134@gmail.com": "Jonathan",
-    "fnvillalva.17@gmail.com": "Lautaro",
-    "otro_mail@gmail.com": "Alejandra"
+    "jonathanrimada9@icloud.com": "Jonathan",
+    "lautabarber.17@gmail.com": "Lautaro",
+    "marsanzmos@gmail.com": "Alejandra"
 };
 
 // ACÁ EL EMAIL DEL DUEÑO (ADMIN)
 const ADMIN_EMAILS = [
-    "elias04baez@gmail.com"
+  
+    "nicolasruibals4@gmail.com",
+    "larazobaji@gmail.com"
 ];
 
 // Variable global para la instancia del calendario

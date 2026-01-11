@@ -1,7 +1,6 @@
 // ==========================================
 // 1. IMPORTACIONES
 // ==========================================
-
 import { db, auth } from './firebase.js';
 
 import {
@@ -22,10 +21,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // ==========================================
-// 2. CONFIGURACIÓN Y ESTADO
+// 2. CONFIGURACIÓN Y ESTADO GLOBAL
 // ==========================================
 let BARBERS_CONFIG = [];
 let PRICES_DB = {};
+
 // Configuración de EmailJS
 const EMAIL_SERVICE_ID = "service_hdoerpa";
 const EMAIL_TEMPLATE_ID = "template_16dkj9g";
@@ -56,13 +56,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     let guestData = null;
     let currentUser = null;
 
-    // --- DOM (ELEMENTOS HTML) ---
+    // --- ELEMENTOS DEL DOM ---
     const modal = document.getElementById('booking-modal');
-
-    // --- CORRECCIÓN FINAL ESPECÍFICA PARA TU HTML ---
-    // Buscamos el enlace con clase 'cta-button' que está DENTRO de la sección con id='reserva'
-    const openBtn = document.querySelector('#reserva .cta-button');
-
+    // Buscamos el botón dentro de la sección reserva (ajustar selector si es necesario)
+    const openBtn = document.querySelector('#reserva .cta-button') || document.querySelector('.open-booking-btn');
     const closeBtn = document.getElementById('close-modal-btn');
     const btnNext = document.getElementById('btn-next');
     const btnBack = document.getElementById('btn-back');
@@ -80,49 +77,77 @@ document.addEventListener('DOMContentLoaded', async () => {
     const datePicker = document.getElementById('date-picker');
     const timeGridContainer = document.getElementById('time-grid-container');
 
-    // --- DIAGNÓSTICO EN CONSOLA (Para que sepas si lo encontró) ---
+    // Validación crítica
     if (!modal) console.error("❌ ERROR CRÍTICO: No encuentro el modal con id='booking-modal'.");
-    if (openBtn) {
-        console.log("✅ Botón de reservar encontrado correctamente.");
-    } else {
-        console.error("❌ ERROR: Aún no encuentro el botón. Verifica que el script 'turnos.js' tenga 'defer' o esté al final del body.");
-    }
 
     // ==========================================
-    // LOGICA DE BARBEROS
+    // LÓGICA DE BARBEROS (Carga y Filtrado)
     // ==========================================
+    
+    // Función para llenar el Select del DOM
+    function populateBarberSelect(barbersList) {
+        if (!proSelect) return;
+        proSelect.innerHTML = '';
+        
+        barbersList.forEach(barber => {
+            const option = document.createElement('option');
+            option.value = barber.id;
+            option.textContent = barber.name;
+            proSelect.appendChild(option);
+        });
+
+        // Seleccionar automáticamente el primero y actualizar el estado
+        if (proSelect.options.length > 0) {
+            proSelect.selectedIndex = 0;
+            bookingData.professional = proSelect.options[0].text;
+        }
+    }
+
     async function loadBarbersConfig() {
         try {
             const response = await fetch('/public/components/barberos.json');
             if (!response.ok) throw new Error("No se pudo cargar barberos.json");
 
             BARBERS_CONFIG = await response.json();
+            
+            // Carga inicial con todos los barberos
+            populateBarberSelect(BARBERS_CONFIG);
 
-            if (proSelect) {
-                proSelect.innerHTML = '';
-                BARBERS_CONFIG.forEach(barber => {
-                    const option = document.createElement('option');
-                    option.value = barber.id;
-                    option.textContent = barber.name;
-                    proSelect.appendChild(option);
-                });
-                if (bookingData && proSelect.options.length > 0) {
-                    bookingData.professional = proSelect.options[proSelect.selectedIndex].text;
-                }
-            }
         } catch (e) {
-            console.error("Error crítico cargando configuración de barberos:", e);
-            // Configuración por defecto para que no se rompa
-            BARBERS_CONFIG = [{ id: "any", name: "Cualquiera", days: [1, 2, 3, 4, 5, 6], hours: ["10:00", "18:00"] }];
+            console.error("Error cargando barberos, usando fallback:", e);
+            // Configuración de respaldo para evitar que la app se rompa
+            BARBERS_CONFIG = [{ id: "any", name: "Cualquiera", days: [1, 2, 3, 4, 5, 6], hours: ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"] }];
+            populateBarberSelect(BARBERS_CONFIG);
+        }
+    }
+
+    // Lógica de exclusividad (Ej: Color -> Solo Alejandra)
+    function filtrarBarberosPorServicio() {
+        // Lista de servicios que requieren especialista
+        const SERVICIOS_COLOR = ["Claritos", "Color Global", "Franja"]; 
+
+        // Verificamos si algún servicio seleccionado es de color
+        const tieneColor = bookingData.services.some(srv => SERVICIOS_COLOR.includes(srv));
+
+        if (tieneColor) {
+            // Filtramos barberos que incluyan "alejandra" en su nombre
+            const soloEspecialistas = BARBERS_CONFIG.filter(b => b.name.toLowerCase().includes("alejandra"));
+            
+            if (soloEspecialistas.length > 0) {
+                populateBarberSelect(soloEspecialistas);
+            } else {
+                // Si no encuentra a Alejandra en el JSON, mostramos todos para no bloquear
+                populateBarberSelect(BARBERS_CONFIG); 
+            }
+        } else {
+            // Si no es color, restauramos la lista completa
+            populateBarberSelect(BARBERS_CONFIG);
         }
     }
 
     await loadBarbersConfig();
 
-    if (proSelect && proSelect.selectedIndex !== -1) {
-        bookingData.professional = proSelect.options[proSelect.selectedIndex].text;
-    }
-
+    // Configuración inicial de fechas
     const today = new Date();
     const todayFormatted = getLocalDateISO(today);
 
@@ -132,7 +157,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         bookingData.date = todayFormatted;
     }
 
-    // --- DETECCIÓN DE USUARIO ---
+    // --- DETECCIÓN DE USUARIO (AUTH) ---
     onAuthStateChanged(auth, (user) => {
         if (user) {
             currentUser = user;
@@ -143,23 +168,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateUI();
     });
 
-    // --- EVENTOS DE APERTURA/CIERRE ---
+    // --- EVENTOS MODAL ---
     if (openBtn) {
         openBtn.addEventListener('click', (e) => {
-            e.preventDefault(); // IMPORTANTE: Evita que el enlace '#' te lleve arriba
-            if (modal) {
-                modal.classList.remove('hidden');
-                console.log("Abriendo modal...");
-            } else {
-                alert("Error: No se encuentra la ventana de reservas.");
-            }
+            e.preventDefault();
+            if (modal) modal.classList.remove('hidden');
         });
     }
-
     if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
 
     // ==========================================
-    // CARGA DE SERVICIOS
+    // CARGA DE SERVICIOS Y PRECIOS
     // ==========================================
     async function renderServicesFromJSON() {
         try {
@@ -171,29 +190,40 @@ document.addEventListener('DOMContentLoaded', async () => {
             const SERVICE_NAMES = {
                 "corte": "Corte de Cabello", "barba": "Arreglo de Barba", "corte_barba": "Corte + Barba",
                 "rapado": "Rapado Clásico", "corte_diseno": "Corte + Diseño", "femenino": "Corte Femenino",
-                "claritos": "Claritos", "global": "Color Global", "franja": "Franja"
+                "claritos": "Claritos", "global": "Color Global", "franja": "Franja", "evento": "Evento/Boda"
             };
             const availableKeys = ['corte', 'barba', 'corte_barba', 'rapado', 'corte_diseno', 'femenino', 'claritos', 'global', 'franja'];
 
             availableKeys.forEach(key => {
                 if (precios[key]) {
                     const item = precios[key];
-                    const vipPrice = Number(item.destacado) || 0;
-                    const rawRegular = Number(item.accesorio);
-                    const regularPrice = !isNaN(rawRegular) ? rawRegular : vipPrice;
-                    const finalName = SERVICE_NAMES[key] || key.toUpperCase();
 
+                    // Manejo de precios nulos (A consultar)
+                    let vipPrice = Number(item.destacado);
+                    if (isNaN(vipPrice)) vipPrice = null;
+
+                    let rawRegular = Number(item.accesorio);
+                    let regularPrice;
+                    if (isNaN(rawRegular)) {
+                        regularPrice = vipPrice; 
+                    } else {
+                        regularPrice = rawRegular;
+                    }
+
+                    const finalName = SERVICE_NAMES[key] || key.toUpperCase();
                     PRICES_DB[finalName] = { vip: vipPrice, regular: regularPrice };
 
                     const html = `
                         <div class="service-row" 
                              data-id="${key}" 
-                             data-vip="${vipPrice}" 
-                             data-regular="${regularPrice}" 
+                             data-vip="${vipPrice !== null ? vipPrice : 'null'}" 
+                             data-regular="${regularPrice !== null ? regularPrice : 'null'}" 
                              data-name="${finalName}">
                             <div class="srv-info">
                                 <span class="srv-name">${finalName}</span>
-                                <span class="srv-price">${vipPrice === 0 ? 'Consultar precio' : '$' + vipPrice.toLocaleString('es-AR')}</span>
+                                <span class="srv-price">
+                                    ${vipPrice === null ? 'A consultar' : '$' + vipPrice.toLocaleString('es-AR')}
+                                </span>
                             </div>
                             <div class="quantity-control">
                                 <button class="qty-btn minus" disabled>-</button>
@@ -216,8 +246,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             const plus = row.querySelector('.plus');
             const valSpan = row.querySelector('.qty-val');
             const name = row.getAttribute('data-name');
-            const vipPrice = parseInt(row.getAttribute('data-vip'));
-            const regularPrice = parseInt(row.getAttribute('data-regular'));
+            
+            const rawVip = row.getAttribute('data-vip');
+            const vipPrice = rawVip === 'null' ? null : Number(rawVip);
+
+            const rawReg = row.getAttribute('data-regular');
+            const regularPrice = rawReg === 'null' ? null : Number(rawReg);
 
             plus.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -228,8 +262,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 row.classList.add('selected-active');
 
                 bookingData.services.push(name);
-                bookingData.totalVip += vipPrice;
-                bookingData.totalRegular += regularPrice;
+                
+                if (vipPrice !== null) bookingData.totalVip += vipPrice;
+                if (regularPrice !== null) bookingData.totalRegular += regularPrice;
 
                 checkModeCompatibility();
                 updateUI();
@@ -248,8 +283,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const index = bookingData.services.indexOf(name);
                     if (index > -1) {
                         bookingData.services.splice(index, 1);
-                        bookingData.totalVip -= vipPrice;
-                        bookingData.totalRegular -= regularPrice;
+                        if (vipPrice !== null) bookingData.totalVip -= vipPrice;
+                        if (regularPrice !== null) bookingData.totalRegular -= regularPrice;
                     }
                     checkModeCompatibility();
                     updateUI();
@@ -284,27 +319,44 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ==========================================
-    // LÓGICA CALENDARIO
+    // LÓGICA CALENDARIO (Renderizado de Horarios)
     // ==========================================
     async function renderTimeSlots() {
         if (!timeGridContainer) return;
         timeGridContainer.innerHTML = '<p style="color:white; text-align:center;">Cargando horarios...</p>';
 
         const selectedDateStr = datePicker.value;
-        if (!selectedDateStr) return;
+        if (!selectedDateStr) {
+             timeGridContainer.innerHTML = '<p style="color:orange; text-align:center;">Selecciona una fecha</p>';
+             return;
+        }
 
         const proId = proSelect.value;
-        const currentProName = proSelect.options[proSelect.selectedIndex].text;
-        const barber = BARBERS_CONFIG.find(b => b.id === proId) || BARBERS_CONFIG[0];
+        // Si no hay configuración de barberos, evitar crash
+        if (!BARBERS_CONFIG || BARBERS_CONFIG.length === 0) {
+            timeGridContainer.innerHTML = '<p style="color:red; text-align:center;">Error cargando barberos.</p>';
+            return;
+        }
+
+        // Buscar al barbero por ID, o usar el primero como fallback (seguridad)
+       // Convertimos ambos a String para que no importe si es número o texto
+        const barber = BARBERS_CONFIG.find(b => String(b.id) === String(proId)) || BARBERS_CONFIG[0];
+
+        // Agregamos este aviso para depurar si sigue fallando
+        console.log("Barbero seleccionado:", proId, "| Barbero encontrado:", barber.name);
+        const currentProName = barber.name; // Usar el nombre de la configuración, es más seguro
 
         const dateObj = new Date(selectedDateStr + 'T00:00:00');
         const dayOfWeek = dateObj.getDay();
+        
+        // Verificar si el barbero trabaja este día
         if (dayOfWeek === 0 || !barber.days.includes(dayOfWeek)) {
-            timeGridContainer.innerHTML = `<p style="color:#888; width:100%; text-align:center;">No trabaja este día.</p>`;
+            timeGridContainer.innerHTML = `<p style="color:#888; width:100%; text-align:center;">${barber.name} no trabaja este día.</p>`;
             return;
         }
 
         try {
+            // Consultar turnos ocupados en Firebase
             const q = query(
                 collection(db, "turnos"),
                 where("date", "==", selectedDateStr),
@@ -314,6 +366,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const querySnapshot = await getDocs(q);
             const dbTakenSlots = querySnapshot.docs.map(doc => doc.data().time);
 
+            // Sumar los ocupados localmente (si estamos agendando por separado)
             const localTakenSlots = bookingData.appointments
                 .filter(appt => appt.date === selectedDateStr && appt.pro === currentProName)
                 .map(appt => appt.time);
@@ -329,6 +382,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             timeGridContainer.innerHTML = '';
 
+            // Renderizar botones de hora
             barber.hours.forEach(hora => {
                 const btn = document.createElement('button');
                 btn.className = 'time-btn';
@@ -340,7 +394,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 let isPastTime = false;
                 const now = new Date();
-                if (selectedDateStr === getLocalDateISO(now)) {
+                const nowISO = getLocalDateISO(now);
+                
+                // Si es hoy, bloquear horarios pasados
+                if (selectedDateStr === nowISO) {
                     const currentHour = now.getHours();
                     const currentMin = now.getMinutes();
                     if (slotH < currentHour || (slotH === currentHour && slotM < currentMin)) {
@@ -376,27 +433,36 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         } catch (error) {
             console.error("Error buscando horarios:", error);
-            timeGridContainer.innerHTML = '<p style="color:red;">Error de conexión.</p>';
+            timeGridContainer.innerHTML = '<p style="color:red; text-align:center;">Error de conexión.</p>';
         }
 
-        if (proSelect) proSelect.addEventListener('change', () => {
-            bookingData.professional = proSelect.options[proSelect.selectedIndex].text;
-            bookingData.time = null;
-            renderTimeSlots();
-        });
+        // Listener para cambios en selects/fechas
+        // IMPORTANTE: Removemos listeners anteriores para no duplicar si se llama múltiples veces
+        if (proSelect) {
+            proSelect.onchange = () => {
+                bookingData.professional = proSelect.options[proSelect.selectedIndex].text;
+                bookingData.time = null;
+                renderTimeSlots();
+            };
+        }
 
-        if (datePicker) datePicker.addEventListener('change', (e) => {
-            bookingData.date = e.target.value;
-            bookingData.time = null;
-            renderTimeSlots();
-        });
+        if (datePicker) {
+            datePicker.onchange = (e) => {
+                bookingData.date = e.target.value;
+                bookingData.time = null;
+                renderTimeSlots();
+            };
+        }
     }
 
     // ==========================================
-    // NAVEGACIÓN
+    // NAVEGACIÓN (Next/Back)
     // ==========================================
     if (btnNext) btnNext.addEventListener('click', async () => {
         if (currentStep === 1) {
+            // APLICAMOS FILTRO ANTES DE PASAR AL CALENDARIO
+            filtrarBarberosPorServicio();
+
             if (bookingData.services.length > 1) currentStep = 2;
             else {
                 bookingData.mode = 'together';
@@ -461,9 +527,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 updateStep(); return;
             }
             if (bookingData.services.length > 1) currentStep = 2;
-            else currentStep = 1;
+            else {
+                currentStep = 1;
+                // Restaurar lista completa al volver al paso 1
+                populateBarberSelect(BARBERS_CONFIG);
+            }
         } else if (currentStep === 2) {
             currentStep = 1;
+            // Restaurar lista completa al volver al paso 1
+            populateBarberSelect(BARBERS_CONFIG);
         }
         updateStep();
     });
@@ -487,7 +559,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ==========================================
-    // FINALIZAR
+    // FINALIZAR Y ENVIAR A FIREBASE
     // ==========================================
     async function finalizarReserva() {
         if (!currentUser && !guestData) {
@@ -498,8 +570,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnNext.textContent = "Procesando...";
         btnNext.disabled = true;
 
-        let finalName = currentUser ? currentUser.displayName : guestData.name;
-        let finalMail = currentUser ? currentUser.email : guestData.email;
+        let finalName = (currentUser && currentUser.displayName) ? currentUser.displayName : (guestData ? guestData.name : "Cliente");
+        let finalMail = (currentUser && currentUser.email) ? currentUser.email : (guestData ? guestData.email : "");
         let finalUid = currentUser ? currentUser.uid : "guest";
 
         const isVip = currentUser && currentUser.uid !== "guest";
@@ -543,7 +615,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             } else {
                 const promises = bookingData.appointments.map(appt => {
                     const preciosServicio = PRICES_DB[appt.service] || { vip: 0, regular: 0 };
-                    const precioIndividual = isVip ? preciosServicio.vip : preciosServicio.regular;
+                    let precioIndividual = isVip ? preciosServicio.vip : preciosServicio.regular;
+                    if (precioIndividual === null) precioIndividual = 0; 
+
                     return addDoc(collection(db, "turnos"), {
                         ...baseData,
                         services: [appt.service],
@@ -557,7 +631,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 await Promise.all(promises);
             }
 
-            // GESTIÓN CLIENTES
+            // GESTIÓN CLIENTES (Contador de cortes)
             if (currentUser) {
                 try {
                     const clientRef = doc(db, "Clientes", currentUser.uid);
@@ -586,7 +660,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 message: "Gracias por confiar en el Staff de TOKZ."
             };
 
-            await emailjs.send(EMAIL_SERVICE_ID, EMAIL_TEMPLATE_ID, templateParams);
+            // Asegúrate que emailjs esté inicializado en el HTML
+            if (typeof emailjs !== 'undefined') {
+                await emailjs.send(EMAIL_SERVICE_ID, EMAIL_TEMPLATE_ID, templateParams);
+            } else {
+                console.warn("EmailJS no está definido. No se envió el correo.");
+            }
 
             alert(`¡Reserva confirmada ${finalName}!`);
             modal.classList.add('hidden');
@@ -596,13 +675,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         } catch (e) {
             console.error("Error reserva:", e);
-            alert("Hubo un error al procesar la reserva.");
+            alert("Hubo un error al procesar la reserva. Intenta nuevamente.");
             btnNext.textContent = "Reintentar";
             btnNext.disabled = false;
         }
     }
 
+    // ==========================================
+    // UI UPDATES & CALCULOS
+    // ==========================================
     function recalculateTotal() {
+        const tienePrecioAconsultar = bookingData.services.some(serviceName => {
+            const precioItem = PRICES_DB[serviceName]; 
+            return precioItem && precioItem.vip === null;
+        });
+
         const totalVip = bookingData.totalVip;
         const totalRegular = bookingData.totalRegular;
         let displayPrice = totalRegular;
@@ -614,21 +701,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const totalEl = document.getElementById('total-price');
+        
         if (totalEl) {
-            if (showCrossed) {
-                totalEl.innerHTML = `
-                    <span style="text-decoration: line-through; color: #888; font-size: 0.8em; margin-right: 5px;">$${totalRegular.toLocaleString()}</span>
-                    <span style="color: #AE0E30;">$${displayPrice.toLocaleString()}</span>
-                `;
-            } else {
-                totalEl.textContent = `$${displayPrice.toLocaleString()}`;
+            if (tienePrecioAconsultar) {
+                if (displayPrice > 0) {
+                     totalEl.innerHTML = `<span style="font-size: 0.9em;">$${displayPrice.toLocaleString()} + A consultar</span>`;
+                } else {
+                     totalEl.textContent = "A consultar en local";
+                }
+            } 
+            else {
+                if (showCrossed) {
+                    totalEl.innerHTML = `
+                        <span style="text-decoration: line-through; color: #888; font-size: 0.8em; margin-right: 5px;">$${totalRegular.toLocaleString()}</span>
+                        <span style="color: #AE0E30;">$${displayPrice.toLocaleString()}</span>
+                    `;
+                } else {
+                    totalEl.textContent = `$${displayPrice.toLocaleString()}`;
+                }
             }
         }
     }
 
-    // ==========================================
-    // UI UPDATES
-    // ==========================================
     function updateUI() {
         recalculateTotal();
         let ok = false;
@@ -666,10 +760,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const generateSummaryHTML = (name, isVip) => {
+        const safeName = name || "Cliente";
         let resumenHTML = '';
         const proNameDisplay = bookingData.professional;
         const precioLista = bookingData.totalRegular;
         const precioFinal = isVip ? bookingData.totalVip : bookingData.totalRegular;
+
+        const tienePrecioAconsultar = bookingData.services.some(serviceName => {
+            const precioItem = PRICES_DB[serviceName]; 
+            return precioItem && precioItem.vip === null;
+        });
 
         if (bookingData.mode === 'separate') {
             let itemsHTML = bookingData.appointments.map(appt => `
@@ -697,7 +797,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         let precioHTML = '';
-        if (isVip && precioFinal < precioLista) {
+
+        if (tienePrecioAconsultar) {
+            const textoPrecio = precioFinal > 0 ? `$${precioFinal.toLocaleString()} + A consultar` : "A definir en local";
+            precioHTML = `
+               <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 20px;">
+                   <span style="color: white; font-size: 1.8rem; font-weight: bold;">${textoPrecio}</span>
+                   <span style="color: #888; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Total Estimado</span>
+               </div>
+            `;
+        } else if (isVip && precioFinal < precioLista) {
             precioHTML = `
                 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 20px;">
                     <span style="text-decoration: line-through; color: #666; font-size: 1.1rem; margin-bottom: -5px;">$${precioLista.toLocaleString()}</span>
@@ -726,7 +835,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         return `
             <div class="user-summary" style="text-align: center;">
-                <h3 style="color: white; margin: 5px 0 15px 0;">¡Hola, <span style="color: #AE0E30;">${name}</span>!</h3>
+                <h3 style="color: white; margin: 5px 0 15px 0;">¡Hola, <span style="color: #AE0E30;">${safeName}</span>!</h3>
                 <p style="color: #aaa; font-size: 0.9rem; margin-bottom: -20px;">Este es el resumen de tu reserva:</p>
                 ${resumenHTML}
                 <div style="border-top: 1px solid #333; margin-top: 15px; padding-top: 10px;">
@@ -807,6 +916,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelectorAll('.qty-val').forEach(el => el.textContent = '0');
         document.querySelectorAll('.minus').forEach(el => el.disabled = true);
         document.querySelectorAll('.service-row').forEach(el => el.classList.remove('selected-active'));
+        
+        // Restaurar barberos
+        populateBarberSelect(BARBERS_CONFIG);
+        
         updateStep();
     }
 
