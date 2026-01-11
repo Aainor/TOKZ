@@ -27,7 +27,8 @@ const STAFF_EMAILS = {
 // ACÁ EL EMAIL DEL DUEÑO (ADMIN)
 const ADMIN_EMAILS = [
   
-    "nicolasruibals4@gmail.com"
+    "nicolasruibals4@gmail.com",
+    "larazobaji@gmail.com"
 ];
 
 // Variable global para la instancia del calendario
