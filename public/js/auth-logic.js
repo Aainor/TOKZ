@@ -26,7 +26,7 @@ const STAFF_EMAILS = {
 
 // ACÁ EL EMAIL DEL DUEÑO (ADMIN)
 const ADMIN_EMAILS = [
-  
+
     "nicolasruibals4@gmail.com",
     "larazobaji@gmail.com"
 ];
@@ -677,5 +677,47 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Error Admin:", error);
             if (adminMsg) adminMsg.innerHTML = `<span style="color:red">Error: ${error.message}</span>`;
         }
+    }
+});
+document.getElementById("manual-save").addEventListener("click", async () => {
+
+    const name = document.getElementById("manual-client").value.trim();
+    const email = document.getElementById("manual-email").value.trim();
+    const phone = document.getElementById("manual-phone").value.trim();
+    const date = document.getElementById("manual-date").value;
+    const time = document.getElementById("manual-time").value;
+    const services = Array.from(document.getElementById("manual-services").selectedOptions)
+        .map(o => o.value);
+
+    const pro = document.getElementById("barber-name-display").textContent;
+
+    if (!name || !date || !time) {
+        alert("⚠️ Faltan completar campos obligatorios.");
+        return;
+    }
+
+    try {
+        await addDoc(collection(db, "turnos"), {
+            clientName: name,
+            clientEmail: email || null,
+            clientPhone: phone || null,
+            date,
+            time,
+            pro,
+            services,
+            uid: null,           // Marks as a manual booking
+            createdAt: new Date()
+        });
+
+        alert("✅ Turno agregado correctamente.");
+
+        document.getElementById("modal-manual-overlay").classList.add("hidden");
+
+        // Recargar la agenda del barbero
+        loadBarberAgenda(pro);
+
+    } catch (error) {
+        console.error("Error agregando turno manual:", error);
+        alert("❌ Error al guardar. Revisá consola.");
     }
 });

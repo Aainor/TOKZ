@@ -104,7 +104,8 @@
 
         <div class="dashboard-header">
             <div style="text-align: left;">
-                <p style="color:#888; text-transform: uppercase; letter-spacing: 2px; font-size: 0.7rem; margin-bottom: 2px;">
+                <p
+                    style="color:#888; text-transform: uppercase; letter-spacing: 2px; font-size: 0.7rem; margin-bottom: 2px;">
                     Staff Tokz
                 </p>
                 <h2 style="color:white; font-size: 1.8rem; margin: 0; line-height: 1;">
@@ -119,8 +120,14 @@
         </div>
 
         <div class="action-stack-barber">
-            <button id="btn-back-admin" class="btn-barber hidden" style="background: #333; color: white; border: 1px solid #555;">
+            <button id="btn-back-admin" class="btn-barber hidden"
+                style="background: #333; color: white; border: 1px solid #555;">
                 <i class="fa-solid fa-lock"></i> Panel Admin
+            </button>
+
+            <button id="btn-add-manual" class="btn-barber"
+                style="background:#AE0E30; color:white; border:1px solid #AE0E30; margin-top:10px;">
+                + Agregar Turno Manual
             </button>
 
             <button id="btn-refresh-barber" class="btn-barber btn-barber-refresh">
@@ -142,7 +149,7 @@
 
             <div class="admin-controls">
                 <input type="date" id="admin-date-picker" class="admin-input">
-                
+
                 <button id="btn-admin-refresh" class="cta-button">
                     <i class="fa-solid fa-magnifying-glass"></i> Buscar
                 </button>
@@ -164,7 +171,7 @@
                         </tr>
                     </thead>
                     <tbody id="admin-table-body">
-                        </tbody>
+                    </tbody>
                 </table>
                 <p id="admin-loading-msg" class="loading-msg">Seleccioná una fecha para ver los turnos.</p>
             </div>
@@ -176,10 +183,57 @@
             </div>
         </div>
     </div>
+    <!-- ============================
+     MODAL: TURNO MANUAL
+============================ -->
+    <div id="modal-manual-overlay" class="modal-overlay hidden" style="z-index:3000;">
+        <div class="modal-box" style="max-width:400px;">
+
+            <h3 style="margin-bottom:15px;">Nuevo Turno Manual</h3>
+
+            <input id="manual-client" type="text" placeholder="Nombre del cliente" class="input-group"
+                style="width:100%; padding:12px; margin-bottom:10px; background:#222; color:white; border:none; border-radius:6px;">
+
+            <input id="manual-email" type="email" placeholder="Email (opcional)" class="input-group"
+                style="width:100%; padding:12px; margin-bottom:10px; background:#222; color:white; border:none; border-radius:6px;">
+
+            <input id="manual-phone" type="text" placeholder="Teléfono (opcional)" class="input-group"
+                style="width:100%; padding:12px; margin-bottom:10px; background:#222; color:white; border:none; border-radius:6px;">
+
+            <label style="color:#aaa; font-size:0.9rem;">Fecha</label>
+            <input id="manual-date" type="date" class="input-group"
+                style="width:100%; padding:12px; margin-bottom:10px; background:#222; color:white; border:none; border-radius:6px;">
+
+            <label style="color:#aaa; font-size:0.9rem;">Hora</label>
+            <input id="manual-time" type="time" class="input-group"
+                style="width:100%; padding:12px; margin-bottom:10px; background:#222; color:white; border:none; border-radius:6px;">
+
+            <label style="color:#aaa; font-size:0.9rem;">Servicios</label>
+            <select id="manual-services" multiple class="input-group"
+                style="width:100%; padding:12px; margin-bottom:20px; background:#222; color:white; border:none; border-radius:6px; height:120px;">
+                <option value="Corte">Corte</option>
+                <option value="Barba">Barba</option>
+                <option value="Corte + Barba">Corte + Barba</option>
+                <option value="Rapado">Rapado</option>
+                <option value="Corte + Diseño">Corte + Diseño</option>
+                <option value="Corte Femenino">Corte Femenino</option>
+                <option value="Claritos">Claritos</option>
+                <option value="Color Global">Color Global</option>
+                <option value="Franja">Franja</option>
+            </select>
+
+            <div class="modal-actions">
+                <button id="manual-cancel" class="btn-modal btn-cancel">Cancelar</button>
+                <button id="manual-save" class="btn-modal btn-confirm">Guardar</button>
+            </div>
+
+        </div>
+    </div>
 
     <script src="/public/js/goBack.js"></script>
     <script src="/public/js/guard.js"></script>
     <script type="module" src="/public/js/auth-logic.js"></script>
 
 </body>
+
 </html>
