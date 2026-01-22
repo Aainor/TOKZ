@@ -1,6 +1,7 @@
 // ==========================================
 // 1. IMPORTACIONES
 // ==========================================
+
 import { db, auth } from './firebase.js';
 
 import {
@@ -21,11 +22,53 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // ==========================================
-// 2. CONFIGURACIÓN Y ESTADO GLOBAL
+// 2. CONFIGURACIÓN Y ESTADO
 // ==========================================
+function abrirLinkGoogleCalendar(turnoData) {
+    if (!turnoData) return;
+
+    // MAPA DE EMAILS (Barbero -> Email)
+    const EMAILS_BARBEROS = {
+        "Jonathan": "jonathanrimada9@icloud.com",
+        "Jonatan Rimada": "jonathanrimada9@icloud.com",
+        "Lautaro": "lautabarber.17@gmail.com",
+        "Lautaro Ribeiro": "lautabarber.17@gmail.com",
+        "Alejandra": "marsanzmos@gmail.com",
+        "Alejandra Sanchez": "marsanzmos@gmail.com",
+        "Nicolás": "fnvillalva.17@gmail.com",
+        "Nicolás Ruibal": "fnvillalva.17@gmail.com"
+    };
+
+    // Buscamos el email
+    let emailBarbero = EMAILS_BARBEROS[turnoData.barbero];
+    
+    // Si no encontró por nombre exacto, buscamos coincidencia parcial
+    if (!emailBarbero) {
+        const nombreKey = Object.keys(EMAILS_BARBEROS).find(key => turnoData.barbero.includes(key));
+        if (nombreKey) emailBarbero = EMAILS_BARBEROS[nombreKey];
+    }
+
+    // Formatear fechas
+    const fechaLimpia = turnoData.fecha.replace(/-/g, ''); 
+    const horaLimpia = turnoData.hora.replace(/:/g, '') + '00'; 
+    const fechasGoogle = `${fechaLimpia}T${horaLimpia}/${fechaLimpia}T${horaLimpia}`;
+
+    const baseUrl = "https://calendar.google.com/calendar/render";
+    const params = new URLSearchParams({
+        action: "TEMPLATE",
+        text: `Corte con ${turnoData.barbero} - Tokz Barber`,
+        details: `Servicio: ${turnoData.servicio}. \n¡Te esperamos en el local!`,
+        dates: fechasGoogle,
+        location: "Tokz Barber Shop"
+    });
+
+    if (emailBarbero) params.append('add', emailBarbero);
+
+    window.open(`${baseUrl}?${params.toString()}`, '_blank');
+}
+
 let BARBERS_CONFIG = [];
 let PRICES_DB = {};
-
 // Configuración de EmailJS
 const EMAIL_SERVICE_ID = "service_hdoerpa";
 const EMAIL_TEMPLATE_ID = "template_16dkj9g";
@@ -56,10 +99,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     let guestData = null;
     let currentUser = null;
 
-    // --- ELEMENTOS DEL DOM ---
+    // --- DOM (ELEMENTOS HTML) ---
     const modal = document.getElementById('booking-modal');
-    // Buscamos el botón dentro de la sección reserva (ajustar selector si es necesario)
-    const openBtn = document.querySelector('#reserva .cta-button') || document.querySelector('.open-booking-btn');
+    const openBtn = document.querySelector('#reserva .cta-button'); 
     const closeBtn = document.getElementById('close-modal-btn');
     const btnNext = document.getElementById('btn-next');
     const btnBack = document.getElementById('btn-back');
@@ -77,14 +119,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     const datePicker = document.getElementById('date-picker');
     const timeGridContainer = document.getElementById('time-grid-container');
 
-    // Validación crítica
     if (!modal) console.error("❌ ERROR CRÍTICO: No encuentro el modal con id='booking-modal'.");
 
     // ==========================================
-    // LÓGICA DE BARBEROS (Carga y Filtrado)
+    // LOGICA DE BARBEROS
     // ==========================================
-    
-    // Función para llenar el Select del DOM
+    async function loadBarbersConfig() {
+        try {
+            const response = await fetch('/public/components/barberos.json');
+            if (!response.ok) throw new Error("No se pudo cargar barberos.json");
+
+            BARBERS_CONFIG = await response.json();
+
+            // Carga inicial
+            populateBarberSelect(BARBERS_CONFIG);
+
+        } catch (e) {
+            console.error("Error crítico cargando configuración de barberos:", e);
+            BARBERS_CONFIG = [{ id: "any", name: "Cualquiera", days: [1, 2, 3, 4, 5, 6], hours: ["10:00", "18:00"] }];
+        }
+    }
+
+    // ✅ CORRECCIÓN CLAVE: Actualiza el estado inmediatamente al llenar el select
     function populateBarberSelect(barbersList) {
         if (!proSelect) return;
         proSelect.innerHTML = '';
@@ -96,58 +152,42 @@ document.addEventListener('DOMContentLoaded', async () => {
             proSelect.appendChild(option);
         });
 
-        // Seleccionar automáticamente el primero y actualizar el estado
+        // Forzamos la selección del primer elemento (Alejandra si está filtrado)
         if (proSelect.options.length > 0) {
             proSelect.selectedIndex = 0;
             bookingData.professional = proSelect.options[0].text;
+            console.log("Profesional actualizado a:", bookingData.professional);
         }
     }
 
-    async function loadBarbersConfig() {
-        try {
-            const response = await fetch('/public/components/barberos.json');
-            if (!response.ok) throw new Error("No se pudo cargar barberos.json");
-
-            BARBERS_CONFIG = await response.json();
-            
-            // Carga inicial con todos los barberos
-            populateBarberSelect(BARBERS_CONFIG);
-
-        } catch (e) {
-            console.error("Error cargando barberos, usando fallback:", e);
-            // Configuración de respaldo para evitar que la app se rompa
-            BARBERS_CONFIG = [{ id: "any", name: "Cualquiera", days: [1, 2, 3, 4, 5, 6], hours: ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"] }];
-            populateBarberSelect(BARBERS_CONFIG);
-        }
-    }
-
-    // Lógica de exclusividad (Ej: Color -> Solo Alejandra)
+    // ✅ Lógica de exclusividad para Color
     function filtrarBarberosPorServicio() {
-        // Lista de servicios que requieren especialista
         const SERVICIOS_COLOR = ["Claritos", "Color Global", "Franja"]; 
 
-        // Verificamos si algún servicio seleccionado es de color
+        // Verificamos si alguno de los servicios seleccionados es de color
+        // Usamos el nombre FINAL (del PRICES_DB o del data-name) para comparar
         const tieneColor = bookingData.services.some(srv => SERVICIOS_COLOR.includes(srv));
 
         if (tieneColor) {
-            // Filtramos barberos que incluyan "alejandra" en su nombre
-            const soloEspecialistas = BARBERS_CONFIG.filter(b => b.name.toLowerCase().includes("alejandra"));
+            console.log("Detectado servicio de color. Filtrando a Alejandra...");
+            // Filtramos solo a Alejandra (asegúrate que en barberos.json el name tenga "Alejandra")
+            const soloAlejandra = BARBERS_CONFIG.filter(b => b.name.toLowerCase().includes("alejandra"));
             
-            if (soloEspecialistas.length > 0) {
-                populateBarberSelect(soloEspecialistas);
+            if (soloAlejandra.length > 0) {
+                populateBarberSelect(soloAlejandra);
             } else {
-                // Si no encuentra a Alejandra en el JSON, mostramos todos para no bloquear
+                console.warn("ALERTA: No se encontró un barbero llamado 'Alejandra' en el JSON.");
+                // Si falla, mostramos todos para no romper la app
                 populateBarberSelect(BARBERS_CONFIG); 
             }
         } else {
-            // Si no es color, restauramos la lista completa
+            // Si no hay color, restauramos a todos los barberos
             populateBarberSelect(BARBERS_CONFIG);
         }
     }
 
     await loadBarbersConfig();
 
-    // Configuración inicial de fechas
     const today = new Date();
     const todayFormatted = getLocalDateISO(today);
 
@@ -157,7 +197,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         bookingData.date = todayFormatted;
     }
 
-    // --- DETECCIÓN DE USUARIO (AUTH) ---
+    // --- DETECCIÓN DE USUARIO ---
     onAuthStateChanged(auth, (user) => {
         if (user) {
             currentUser = user;
@@ -168,17 +208,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateUI();
     });
 
-    // --- EVENTOS MODAL ---
+    // --- EVENTOS DE APERTURA/CIERRE ---
     if (openBtn) {
         openBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            if (modal) modal.classList.remove('hidden');
+            if (modal) {
+                modal.classList.remove('hidden');
+            } else {
+                alert("Error: No se encuentra la ventana de reservas.");
+            }
         });
     }
+
     if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
 
     // ==========================================
-    // CARGA DE SERVICIOS Y PRECIOS
+    // CARGA DE SERVICIOS
     // ==========================================
     async function renderServicesFromJSON() {
         try {
@@ -198,7 +243,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (precios[key]) {
                     const item = precios[key];
 
-                    // Manejo de precios nulos (A consultar)
+                    // Detección inteligente de precios nulos/texto
                     let vipPrice = Number(item.destacado);
                     if (isNaN(vipPrice)) vipPrice = null;
 
@@ -211,6 +256,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
 
                     const finalName = SERVICE_NAMES[key] || key.toUpperCase();
+
                     PRICES_DB[finalName] = { vip: vipPrice, regular: regularPrice };
 
                     const html = `
@@ -319,44 +365,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ==========================================
-    // LÓGICA CALENDARIO (Renderizado de Horarios)
+    // LÓGICA CALENDARIO
     // ==========================================
     async function renderTimeSlots() {
         if (!timeGridContainer) return;
         timeGridContainer.innerHTML = '<p style="color:white; text-align:center;">Cargando horarios...</p>';
 
         const selectedDateStr = datePicker.value;
-        if (!selectedDateStr) {
-             timeGridContainer.innerHTML = '<p style="color:orange; text-align:center;">Selecciona una fecha</p>';
-             return;
-        }
+        if (!selectedDateStr) return;
 
         const proId = proSelect.value;
-        // Si no hay configuración de barberos, evitar crash
-        if (!BARBERS_CONFIG || BARBERS_CONFIG.length === 0) {
-            timeGridContainer.innerHTML = '<p style="color:red; text-align:center;">Error cargando barberos.</p>';
-            return;
-        }
-
-        // Buscar al barbero por ID, o usar el primero como fallback (seguridad)
-       // Convertimos ambos a String para que no importe si es número o texto
-        const barber = BARBERS_CONFIG.find(b => String(b.id) === String(proId)) || BARBERS_CONFIG[0];
-
-        // Agregamos este aviso para depurar si sigue fallando
-        console.log("Barbero seleccionado:", proId, "| Barbero encontrado:", barber.name);
-        const currentProName = barber.name; // Usar el nombre de la configuración, es más seguro
+        const currentProName = proSelect.options[proSelect.selectedIndex].text;
+        const barber = BARBERS_CONFIG.find(b => b.id === proId) || BARBERS_CONFIG[0];
 
         const dateObj = new Date(selectedDateStr + 'T00:00:00');
         const dayOfWeek = dateObj.getDay();
-        
-        // Verificar si el barbero trabaja este día
         if (dayOfWeek === 0 || !barber.days.includes(dayOfWeek)) {
-            timeGridContainer.innerHTML = `<p style="color:#888; width:100%; text-align:center;">${barber.name} no trabaja este día.</p>`;
+            timeGridContainer.innerHTML = `<p style="color:#888; width:100%; text-align:center;">No trabaja este día.</p>`;
             return;
         }
 
         try {
-            // Consultar turnos ocupados en Firebase
             const q = query(
                 collection(db, "turnos"),
                 where("date", "==", selectedDateStr),
@@ -366,7 +395,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const querySnapshot = await getDocs(q);
             const dbTakenSlots = querySnapshot.docs.map(doc => doc.data().time);
 
-            // Sumar los ocupados localmente (si estamos agendando por separado)
             const localTakenSlots = bookingData.appointments
                 .filter(appt => appt.date === selectedDateStr && appt.pro === currentProName)
                 .map(appt => appt.time);
@@ -382,7 +410,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             timeGridContainer.innerHTML = '';
 
-            // Renderizar botones de hora
             barber.hours.forEach(hora => {
                 const btn = document.createElement('button');
                 btn.className = 'time-btn';
@@ -394,10 +421,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 let isPastTime = false;
                 const now = new Date();
-                const nowISO = getLocalDateISO(now);
-                
-                // Si es hoy, bloquear horarios pasados
-                if (selectedDateStr === nowISO) {
+                if (selectedDateStr === getLocalDateISO(now)) {
                     const currentHour = now.getHours();
                     const currentMin = now.getMinutes();
                     if (slotH < currentHour || (slotH === currentHour && slotM < currentMin)) {
@@ -433,30 +457,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         } catch (error) {
             console.error("Error buscando horarios:", error);
-            timeGridContainer.innerHTML = '<p style="color:red; text-align:center;">Error de conexión.</p>';
+            timeGridContainer.innerHTML = '<p style="color:red;">Error de conexión.</p>';
         }
 
-        // Listener para cambios en selects/fechas
-        // IMPORTANTE: Removemos listeners anteriores para no duplicar si se llama múltiples veces
-        if (proSelect) {
-            proSelect.onchange = () => {
-                bookingData.professional = proSelect.options[proSelect.selectedIndex].text;
-                bookingData.time = null;
-                renderTimeSlots();
-            };
-        }
+        if (proSelect) proSelect.addEventListener('change', () => {
+            bookingData.professional = proSelect.options[proSelect.selectedIndex].text;
+            bookingData.time = null;
+            renderTimeSlots();
+        });
 
-        if (datePicker) {
-            datePicker.onchange = (e) => {
-                bookingData.date = e.target.value;
-                bookingData.time = null;
-                renderTimeSlots();
-            };
-        }
+        if (datePicker) datePicker.addEventListener('change', (e) => {
+            bookingData.date = e.target.value;
+            bookingData.time = null;
+            renderTimeSlots();
+        });
     }
 
     // ==========================================
-    // NAVEGACIÓN (Next/Back)
+    // NAVEGACIÓN
     // ==========================================
     if (btnNext) btnNext.addEventListener('click', async () => {
         if (currentStep === 1) {
@@ -527,15 +545,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 updateStep(); return;
             }
             if (bookingData.services.length > 1) currentStep = 2;
-            else {
-                currentStep = 1;
-                // Restaurar lista completa al volver al paso 1
-                populateBarberSelect(BARBERS_CONFIG);
-            }
+            else currentStep = 1;
         } else if (currentStep === 2) {
             currentStep = 1;
-            // Restaurar lista completa al volver al paso 1
-            populateBarberSelect(BARBERS_CONFIG);
         }
         updateStep();
     });
@@ -559,7 +571,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ==========================================
-    // FINALIZAR Y ENVIAR A FIREBASE
+    // FINALIZAR
     // ==========================================
     async function finalizarReserva() {
         if (!currentUser && !guestData) {
@@ -631,7 +643,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 await Promise.all(promises);
             }
 
-            // GESTIÓN CLIENTES (Contador de cortes)
+            // GESTIÓN CLIENTES
             if (currentUser) {
                 try {
                     const clientRef = doc(db, "Clientes", currentUser.uid);
@@ -660,12 +672,31 @@ document.addEventListener('DOMContentLoaded', async () => {
                 message: "Gracias por confiar en el Staff de TOKZ."
             };
 
-            // Asegúrate que emailjs esté inicializado en el HTML
-            if (typeof emailjs !== 'undefined') {
-                await emailjs.send(EMAIL_SERVICE_ID, EMAIL_TEMPLATE_ID, templateParams);
+            await emailjs.send(EMAIL_SERVICE_ID, EMAIL_TEMPLATE_ID, templateParams);
+            
+
+            // --- ABRIR CALENDARIO ---
+            if (bookingData.mode === 'together') {
+                let pName = bookingData.professional.includes("Cualquiera") ? "Staff Tokz" : bookingData.professional;
+                abrirLinkGoogleCalendar({
+                    fecha: bookingData.date,
+                    hora: bookingData.time,
+                    barbero: pName,
+                    servicio: bookingData.services.join(" + ")
+                });
             } else {
-                console.warn("EmailJS no está definido. No se envió el correo.");
+                // Si son turnos separados, abrimos el del primero
+                const primerTurno = bookingData.appointments[0];
+                if (primerTurno) {
+                    abrirLinkGoogleCalendar({
+                        fecha: primerTurno.date,
+                        hora: primerTurno.time,
+                        barbero: primerTurno.pro,
+                        servicio: primerTurno.service
+                    });
+                }
             }
+            
 
             alert(`¡Reserva confirmada ${finalName}!`);
             modal.classList.add('hidden');
@@ -675,15 +706,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         } catch (e) {
             console.error("Error reserva:", e);
-            alert("Hubo un error al procesar la reserva. Intenta nuevamente.");
+            alert("Hubo un error al procesar la reserva.");
             btnNext.textContent = "Reintentar";
             btnNext.disabled = false;
         }
     }
 
-    // ==========================================
-    // UI UPDATES & CALCULOS
-    // ==========================================
     function recalculateTotal() {
         const tienePrecioAconsultar = bookingData.services.some(serviceName => {
             const precioItem = PRICES_DB[serviceName]; 
@@ -723,6 +751,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    // ==========================================
+    // UI UPDATES
+    // ==========================================
     function updateUI() {
         recalculateTotal();
         let ok = false;
@@ -761,6 +792,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const generateSummaryHTML = (name, isVip) => {
         const safeName = name || "Cliente";
+
         let resumenHTML = '';
         const proNameDisplay = bookingData.professional;
         const precioLista = bookingData.totalRegular;
@@ -805,7 +837,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                    <span style="color: white; font-size: 1.8rem; font-weight: bold;">${textoPrecio}</span>
                    <span style="color: #888; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Total Estimado</span>
                </div>
-            `;
+           `;
         } else if (isVip && precioFinal < precioLista) {
             precioHTML = `
                 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 20px;">
@@ -916,10 +948,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelectorAll('.qty-val').forEach(el => el.textContent = '0');
         document.querySelectorAll('.minus').forEach(el => el.disabled = true);
         document.querySelectorAll('.service-row').forEach(el => el.classList.remove('selected-active'));
-        
-        // Restaurar barberos
-        populateBarberSelect(BARBERS_CONFIG);
-        
         updateStep();
     }
 

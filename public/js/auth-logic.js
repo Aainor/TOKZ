@@ -16,7 +16,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // ==========================================
-// 🚨 CONFIGURACIÓN DE STAFF (LISTA BLANCA)
+// 🚨 CONFIGURACIÓN DE STAFF (BARBEROS)
 // ==========================================
 const STAFF_EMAILS = {
     "jonathanrimada9@icloud.com": "Jonathan",
@@ -24,11 +24,9 @@ const STAFF_EMAILS = {
     "marsanzmos@gmail.com": "Alejandra"
 };
 
-// ACÁ EL EMAIL DEL DUEÑO (ADMIN)
+// ACÁ EL EMAIL DEL DUEÑO Y ADMINS (PANEL DE ADMINISTRACIÓN)
 const ADMIN_EMAILS = [
-
-    "nicolasruibals4@gmail.com",
-    "larazobaji@gmail.com"
+    "fnvillalva.17@gmail.com", // El email del dueño
 ];
 
 // Variable global para la instancia del calendario
@@ -38,25 +36,46 @@ let calendarInstance = null;
 // 🛠️ UTILIDADES VISUALES
 // ==========================================
 
-function injectDeleteModalHTML() {
-    // Solo lo creamos si no existe
-    if (!document.getElementById('modal-delete-overlay')) {
-        const modalHTML = `
-        <div id="modal-delete-overlay" class="modal-overlay">
-            <div class="modal-box">
-                <h3>¿Estás seguro?</h3>
-                <p>¿Querés borrar este turno de forma permanente? Esta acción no se puede deshacer.</p>
-                <div class="modal-actions">
-                    <button id="btn-confirm-no" class="btn-modal btn-cancel">Cancelar</button>
-                    <button id="btn-confirm-yes" class="btn-modal btn-confirm">Sí, borrar</button>
-                </div>
-            </div>
-        </div>`;
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
+// --- 1. FUNCIÓN LINK MÁGICO DE GOOGLE CALENDAR ---
+// Se llama al confirmar la reserva en login.html
+window.abrirLinkGoogleCalendar = function(turnoData) {
+    if (!turnoData) return;
+
+    // Mapa de emails para invitaciones
+    const EMAILS_BARBEROS = {
+        "Jonathan": "jonathanrimada9@icloud.com",
+        "Lautaro": "lautabarber.17@gmail.com",
+        "Alejandra": "marsanzmos@gmail.com",
+        "Nicolás": "nicolasruibals4@gmail.com",
+         // Email personal de Nico para sus turnos
+    };
+
+    const nombreBarbero = turnoData.barbero || turnoData.barberoNombre;
+    const emailBarbero = EMAILS_BARBEROS[nombreBarbero];
+
+    // Formatear fechas (YYYYMMDDTHHmmss)
+    const fechaLimpia = turnoData.fecha.replace(/-/g, '');
+    const horaLimpia = turnoData.hora.replace(/:/g, '') + '00';
+    const fechasGoogle = `${fechaLimpia}T${horaLimpia}/${fechaLimpia}T${horaLimpia}`;
+
+    // Construir URL
+    const baseUrl = "https://calendar.google.com/calendar/render";
+    const params = new URLSearchParams({
+        action: "TEMPLATE",
+        text: `Corte con ${nombreBarbero} - Tokz Barber`,
+        details: `Servicio: ${turnoData.servicio}. \n¡Te esperamos en el local!`,
+        dates: fechasGoogle,
+        location: "Tokz Barber Shop"
+    });
+
+    if (emailBarbero) {
+        params.append('add', emailBarbero); // Invitar al barbero
     }
+
+    window.open(`${baseUrl}?${params.toString()}`, '_blank');
 }
 
-// Inyectar HTML del Modal (SOLO para ver DETALLES del turno en el calendario)
+// --- 2. MODAL DE DETALLES (Solo visualización en Agenda) ---
 function injectModalHTML() {
     if (!document.getElementById('modal-detalle-overlay')) {
         const modalHTML = `
@@ -103,7 +122,6 @@ function injectModalHTML() {
     }
 }
 
-// Función global para cerrar modal de detalles
 window.closeDetalleModal = function () {
     const el = document.getElementById('modal-detalle-overlay');
     if (el) el.classList.remove('active');
@@ -113,10 +131,9 @@ window.closeDetalleModal = function () {
 // 🚀 INICIO DE LA APP
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Iniciando App Integrada (Versión Borrado Directo)...");
+    console.log("Iniciando App Integrada (Admin Nico + Calendar Link + Borrado Directo)...");
 
     injectModalHTML();
-    injectDeleteModalHTML();
 
     // --- REFERENCIAS DOM ---
     const viewLogin = document.getElementById('view-login');
@@ -133,6 +150,55 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnLogoutAdmin = document.getElementById('btn-logout-admin');
     const btnGoCalendar = document.getElementById('btn-go-calendar');
     const btnBackAdmin = document.getElementById('btn-back-admin');
+    const btnAddManual = document.getElementById('btn-add-manual');
+
+    if (btnAddManual) {
+        btnAddManual.addEventListener('click', async () => {
+            // 1. Pedir datos rápidos (Podrías hacer un modal mejor luego)
+            const cliente = prompt("Nombre del Cliente:");
+            if (!cliente) return;
+
+            // Fecha y hora actuales por defecto o pedir
+            const hoy = new Date();
+            const fechaStr = hoy.toISOString().split('T')[0]; // YYYY-MM-DD
+            const horaStr = prompt("Hora del turno (HH:MM):", "10:00");
+            
+            // Nombre del barbero actual (lo sacamos del título de la pantalla)
+            const nombreBarbero = document.getElementById('barber-name-display').textContent;
+
+            // 2. Objeto del Turno
+            const nuevoTurno = {
+                clientName: cliente,
+                date: fechaStr,
+                time: horaStr,
+                pro: nombreBarbero,
+                services: ["Turno Manual"], // Servicio genérico
+                total: "$0", // Precio a definir
+                status: "confirmed"
+            };
+
+            try {
+                // 3. Guardar en Firebase
+                await addDoc(collection(db, "turnos"), nuevoTurno);
+                
+                // 4. Refrescar calendario visualmente
+                loadBarberAgenda(nombreBarbero);
+
+                // 5. 📅 MAGIA DE GOOGLE CALENDAR
+                // Usamos la función global que creamos antes
+                window.abrirLinkGoogleCalendar({
+                    fecha: fechaStr,
+                    hora: horaStr,
+                    barbero: nombreBarbero, // Se usará para buscar el email en la lista
+                    servicio: "Turno Manual"
+                });
+
+            } catch (error) {
+                console.error("Error creando turno manual:", error);
+                alert("Error al guardar.");
+            }
+        });
+    }
 
     // 1. Botón BUSCAR (Admin)
     if (btnAdminRefresh) {
@@ -181,9 +247,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // LOGICA DE AUTENTICACIÓN
+    // LOGICA DE AUTENTICACIÓN Y ROLES
     // ==========================================
-
     let currentUserUid = null;
     let myTurnos = [];
 
@@ -223,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                // 3. REDIRECCIONAR
+                // 3. REDIRECCIONAR SEGÚN ROL
                 if (rolDetectado === 'admin') {
                     switchView(viewAdmin);
 
@@ -232,11 +297,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         btnBackAdmin.classList.remove('hidden');
 
                         btnGoCalendar.onclick = () => {
-                            const nombreAgendaAdmin = "Nicolás";
+                            const nombreAgendaAdmin = "Nicolás"; // Admin ve agenda de Nico
                             console.log("Admin yendo a agenda de:", nombreAgendaAdmin);
 
                             loadBarberAgenda(nombreAgendaAdmin);
-
                             const barberNameDisplay = document.getElementById('barber-name-display');
                             if (barberNameDisplay) barberNameDisplay.textContent = nombreAgendaAdmin;
 
@@ -313,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // B. RENDER TURNOS CLIENTE
+    // B. RENDER TURNOS CLIENTE (CON BORRADO DIRECTO)
     function renderBookings() {
         bookingsListContainer.innerHTML = '';
         if (myTurnos.length === 0) {
@@ -344,114 +408,56 @@ document.addEventListener('DOMContentLoaded', () => {
                     </button>
                 </div>`;
         });
-
-        // Adjuntamos los eventos de borrado directo
+        
         attachDeleteEvents();
     }
-    // ==========================================
-    // C. BORRADO CON CONFIRMACIÓN (MODAL ESTILO CSS)
-    // ==========================================
 
-    // Variables temporales
-    let idParaBorrar = null;
-    let btnBorrarPresionado = null;
-
+    // C. FUNCIÓN DE BORRADO DIRECTO (SIN MODAL)
     function attachDeleteEvents() {
-        // 1. Detectar clicks en los tachos de basura
         document.querySelectorAll('.btn-delete-booking').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault(); 
+                const btnElement = e.currentTarget;
+                const idToDelete = btnElement.getAttribute('data-id');
+                
+                // 1. Spinner Visual
+                btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+                btnElement.disabled = true; 
 
-                // Guardar referencia
-                btnBorrarPresionado = e.currentTarget;
-                idParaBorrar = btnBorrarPresionado.getAttribute('data-id');
-
-                // Mostrar el Modal (agregando la clase .active definida en tu CSS)
-                const overlay = document.getElementById('modal-delete-overlay');
-                if (overlay) {
-                    overlay.classList.add('active');
+                try {
+                    console.log("🗑️ Iniciando borrado directo del ID:", idToDelete);
+                    await deleteDoc(doc(db, "turnos", idToDelete));
+                    
+                    // 2. Actualizar visualmente
+                    myTurnos = myTurnos.filter(t => t.id !== idToDelete);
+                    renderBookings();
+                    
+                } catch (error) {
+                    console.error("❌ Error al borrar:", error);
+                    alert("No se pudo borrar el turno. Revisá tu conexión.");
+                    btnElement.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                    btnElement.disabled = false;
                 }
             });
         });
     }
 
-    // --- LÓGICA DE LOS BOTONES DEL MODAL ---
-
-    // Configurar listeners globales una sola vez
-    // (Esto evita que se dupliquen los eventos si se recarga la lista)
-    document.addEventListener('click', async (e) => {
-
-        // A. SI CLICKEA "CANCELAR" O EL FONDO NEGRO
-        if (e.target.id === 'btn-confirm-no' || e.target.id === 'modal-delete-overlay') {
-            const overlay = document.getElementById('modal-delete-overlay');
-            if (overlay) overlay.classList.remove('active');
-
-            // Limpiar variables
-            idParaBorrar = null;
-            btnBorrarPresionado = null;
-        }
-
-        // B. SI CLICKEA "SÍ, BORRAR"
-        if (e.target.id === 'btn-confirm-yes') {
-            // 1. Cerrar modal visualmente
-            const overlay = document.getElementById('modal-delete-overlay');
-            if (overlay) overlay.classList.remove('active');
-
-            if (!idParaBorrar) return;
-
-            // 2. Efecto visual de carga en el botón original (opcional)
-            if (btnBorrarPresionado) {
-                btnBorrarPresionado.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-                btnBorrarPresionado.disabled = true;
-            }
-
-            try {
-                console.log("🗑️ Ejecutando borrado de ID:", idParaBorrar);
-
-                // 3. BORRAR DE FIREBASE
-                await deleteDoc(doc(db, "turnos", idParaBorrar));
-
-                console.log("✅ Borrado exitoso");
-
-                // 4. ACTUALIZAR LISTA VISUAL
-                // Eliminamos del array local
-                myTurnos = myTurnos.filter(t => t.id !== idParaBorrar);
-                // Volvemos a pintar la lista
-                renderBookings();
-
-            } catch (error) {
-                console.error("❌ Error al borrar:", error);
-                alert("Error al borrar. Revisá tu conexión.");
-
-                // Si falla, restaurar icono
-                if (btnBorrarPresionado) {
-                    btnBorrarPresionado.innerHTML = '<i class="fa-solid fa-trash"></i>';
-                    btnBorrarPresionado.disabled = false;
-                }
-            }
-
-            // Limpiar variables
-            idParaBorrar = null;
-            btnBorrarPresionado = null;
-        }
-    });
-
     if (btnViewBookings) btnViewBookings.addEventListener('click', () => { renderBookings(); switchView(viewBooking); });
     if (btnBackDashboard) btnBackDashboard.addEventListener('click', () => { switchView(viewUser); });
 
     // =================================================================
-    // 3. FUNCIÓN BARBERO (FIX VISUAL + VISTAS + IDIOMA + MODAL DETALLE)
+    // 3. FUNCIÓN BARBERO (AGENDA OPTIMIZADA)
     // =================================================================
     async function loadBarberAgenda(nombreBarbero) {
         const calendarEl = document.getElementById('calendar-barber');
         if (!calendarEl) return;
 
-        injectModalHTML(); // Asegura que el modal de detalles exista
+        injectModalHTML(); 
 
         calendarEl.innerHTML = '';
 
         try {
-            console.log(`📅 Cargando calendario optimizado para: "${nombreBarbero}"`);
+            console.log(`📅 Cargando calendario para: "${nombreBarbero}"`);
 
             const q = query(collection(db, "turnos"), where("pro", "==", nombreBarbero));
             const querySnapshot = await getDocs(q);
@@ -461,9 +467,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = doc.data();
                 if (data.date && data.time) {
                     const startStr = `${data.date}T${data.time}:00`;
-                    // 30 minutos por turno por defecto
+                    // 30 minutos por turno
                     let endDate = new Date(new Date(startStr).getTime() + 30 * 60000);
-
                     let serviciosTexto = Array.isArray(data.services) ? data.services.join(" + ") : data.services;
 
                     eventos.push({

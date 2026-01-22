@@ -29,7 +29,7 @@ const provider = new GoogleAuthProvider();
 if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
     console.log("🛠️ Usando EMULADORES Locales");
     // Conectamos Firestore al puerto 8080 (Defecto)
-   connectFirestoreEmulator(db, '127.0.0.1', 8085);
+   connectFirestoreEmulator(db, '127.0.0.1', 8084);
     // Conectamos Auth al puerto 9099 (Defecto)
     connectAuthEmulator(auth, "http://127.0.0.1:9099");
 } else {
