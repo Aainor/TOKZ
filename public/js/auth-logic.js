@@ -12,7 +12,9 @@ import {
     setDoc,
     getDoc,
     updateDoc,
-    deleteDoc
+    deleteDoc,       // <--- ¡No te olvides de poner esta coma!
+    addDoc,          // <--- AGREGÁ ESTO
+    serverTimestamp  // <--- AGREGÁ ESTO
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // ==========================================
@@ -143,6 +145,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const viewBooking = document.getElementById('booking-mod');
     const viewBarber = document.getElementById('view-barber');
     const viewAdmin = document.getElementById('view-admin');
+    const btnPublishDirect = document.getElementById('btn-publish-direct');
+    const inputNewsDirect = document.getElementById('admin-news-input');
 
     // Botones Admin
     const btnAdminRefresh = document.getElementById('btn-admin-refresh');
@@ -151,6 +155,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnGoCalendar = document.getElementById('btn-go-calendar');
     const btnBackAdmin = document.getElementById('btn-back-admin');
     const btnAddManual = document.getElementById('btn-add-manual');
+
+    // ======================================================
+    // ✅ NUEVO: LÓGICA PARA PUBLICAR NOVEDADES (TOKZ NEWS)
+    // ======================================================
+    if (btnPublishDirect && inputNewsDirect) {
+        btnPublishDirect.addEventListener('click', async () => {
+            const texto = inputNewsDirect.value;
+
+            // 1. Validar que no esté vacío
+            if (texto.trim() === "") {
+                alert("⚠️ Escribí algo antes de publicar.");
+                return;
+            }
+
+            // 2. Efecto visual de carga
+            const btnOriginalText = btnPublishDirect.innerHTML;
+            btnPublishDirect.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> PUBLICANDO...';
+            btnPublishDirect.disabled = true;
+
+            try {
+                // 3. Guardar en Firebase (Colección 'novedades')
+                await addDoc(collection(db, "novedades"), {
+                    texto: texto,
+                    fecha: serverTimestamp(),
+                    autor: "AdminPanel"
+                });
+
+                alert("✅ ¡Mensaje publicado en el inicio!");
+                inputNewsDirect.value = ""; // Limpiar la cajita
+            } catch (error) {
+                console.error("Error publicando:", error);
+                alert("❌ Error al publicar. Verificá tu conexión.");
+            } finally {
+                // 4. Restaurar botón
+                btnPublishDirect.innerHTML = btnOriginalText;
+                btnPublishDirect.disabled = false;
+            }
+        });
+    }
+    // ======================================================
 
     if (btnAddManual) {
         btnAddManual.addEventListener('click', async () => {
@@ -291,6 +335,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 3. REDIRECCIONAR SEGÚN ROL
                 if (rolDetectado === 'admin') {
                     switchView(viewAdmin);
+
+                    // FORZAR VISIBILIDAD DEL PANEL NUEVO
+                if (viewAdmin) {
+                    viewAdmin.style.display = 'block';
+                    viewAdmin.classList.remove('hidden');
+                }
 
                     // LOGICA BOTÓN "MI AGENDA" (Admin -> Calendar)
                     if (btnGoCalendar && btnBackAdmin) {
