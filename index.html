@@ -481,6 +481,21 @@
             </div>
         </section>
 
+        <section id="tokz-blog" class="blog-section fade-in">
+            <div class="blog-container">
+                <div class="blog-header-main">
+                    <span class="tag">TOKZ NEWS</span>
+                    <h2>Novedades y Avisos</h2>
+                    <p>Información oficial de la barbería.</p>
+                </div>
+
+                <div id="feed-container" class="feed-wrapper">
+                    <p style="text-align:center; color: #555; padding: 20px;">Cargando novedades...</p>
+                </div>
+            </div>
+        </section>
+
+
         <section class="social-card" id="redes">
             <div class="container social-split-grid">
 
@@ -524,6 +539,7 @@
         </section>
 
         <section id="educacion"></section>
+
     </main>
     <div id="footer-placeholder"></div>
 
@@ -538,6 +554,55 @@
     <script src="/public/js/auth-logic.js"></script>
     <script src="/public/js/prices.js"></script>
     <script src="/public/js/guard.js"></script>
+
+    <script type="module">
+        // 1. IMPORTAMOS LO QUE TU FIREBASE YA EXPORTA
+        import { db, collection, query } from '/public/js/firebase.js'; 
+        
+        // 2. IMPORTAMOS LO QUE FALTA DESDE INTERNET (Misma versión que usás: 10.7.1)
+        import { orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const feedContainer = document.getElementById('feed-container');
+        const q = query(collection(db, "novedades"), orderBy("fecha", "desc"));
+
+        onSnapshot(q, (snapshot) => {
+            feedContainer.innerHTML = ''; 
+            
+            if (snapshot.empty) {
+                feedContainer.innerHTML = '<p style="text-align:center; padding:20px; color:#777;">Aún no hay novedades.</p>';
+            }
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                // Verificación de fecha para que no rompa
+                const fechaObj = data.fecha && data.fecha.toDate ? data.fecha.toDate() : new Date();
+                const fechaLegible = fechaObj.toLocaleDateString("es-AR", { day: 'numeric', month: 'short', year: 'numeric' });
+
+                const postHTML = `
+                <div class="tokz-post">
+                    <div class="post-side">
+                        <img src="/public/img/iconos/favicon.png" alt="Tokz Admin" class="post-avatar">
+                    </div>
+                    <div class="post-body">
+                        <div class="post-user-info">
+                            <strong>Tokz Barber</strong> <i class="fa-solid fa-circle-check" style="color: #AE0E30; font-size: 12px;"></i>
+                            <span>@tokzbarber · <small>Admin</small></span>
+                        </div>
+                        <p class="post-text">${data.texto}</p>
+                        <div class="post-footer-date">
+                            <span>Publicado el ${fechaLegible}</span>
+                        </div>
+                    </div>
+                </div>`;
+                
+                feedContainer.innerHTML += postHTML;
+            });
+        }, (error) => {
+            console.error("Error leyendo novedades:", error);
+            // Evitamos romper la página si falla Firebase
+            feedContainer.innerHTML = '<p style="text-align:center; color:#555;">No se pudieron cargar las noticias.</p>';
+        });
+    </script>
 
 </body>
 

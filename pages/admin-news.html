@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - Tokz News</title>
+    <link rel="icon" href="../public/img/iconos/favicon.png" type="image/png">
+    <link rel="stylesheet" href="../public/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        body { 
+            background-color: #000; color: white; font-family: 'Montserrat', sans-serif; 
+            display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column;
+            margin: 0;
+        }
+        .admin-box { 
+            width: 90%; max-width: 500px; padding: 30px; 
+            border: 1px solid #333; border-radius: 10px; background: #111; 
+            box-shadow: 0 0 20px rgba(174, 14, 48, 0.2);
+            text-align: center;
+        }
+        textarea { 
+            width: 100%; height: 120px; background: #000; border: 1px solid #333; 
+            color: white; padding: 15px; font-family: inherit; resize: none; 
+            border-radius: 5px; margin-bottom: 20px; font-size: 16px;
+            box-sizing: border-box;
+        }
+        textarea:focus { outline: 1px solid #AE0E30; }
+        button { 
+            width: 100%; padding: 15px; background: #AE0E30; border: none; 
+            color: white; font-weight: bold; cursor: pointer; border-radius: 5px; 
+            text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
+            font-size: 14px;
+        }
+        button:hover { background: #d6133b; transform: scale(1.02); }
+        button:disabled { background: #555; cursor: not-allowed; transform: none; }
+        
+        .logo-admin { width: 80px; margin-bottom: 20px; }
+        h2 { color: white; margin: 10px 0; font-size: 24px; }
+        p { color: #777; font-size: 12px; margin-bottom: 20px; }
+        .back-link { margin-top: 20px; display: inline-block; color: #777; text-decoration: none; font-size: 12px; }
+        .back-link:hover { color: #AE0E30; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-box">
+        <img src="../public/img/logos/Imagen3.png" alt="Tokz" class="logo-admin">
+        <h2>Publicar Novedad</h2>
+        <p>Escribí el mensaje y aparecerá en el inicio al instante.</p>
+        
+        <textarea id="newsText" placeholder="Ej: ¡Este finde abrimos hasta las 22hs! 💈"></textarea>
+        
+        <button id="btnPublicar"><i class="fa-solid fa-paper-plane"></i> PUBLICAR AHORA</button>
+
+        <br>
+        <a href="../index.html" class="back-link">← Volver al inicio</a>
+    </div>
+
+    <script type="module">
+        // Importamos db, collection, addDoc de TU archivo (subimos un nivel)
+        import { db, collection, addDoc } from '../public/js/firebase.js';
+        
+        // Importamos serverTimestamp de Internet
+        import { serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        document.getElementById('btnPublicar').addEventListener('click', async () => {
+            const btn = document.getElementById('btnPublicar');
+            const input = document.getElementById('newsText');
+            const texto = input.value;
+
+            if (texto.trim() === "") {
+                alert("⚠️ El mensaje no puede estar vacío.");
+                return;
+            }
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> PUBLICANDO...';
+            btn.disabled = true;
+
+            try {
+                // Guardar en la colección "novedades"
+                await addDoc(collection(db, "novedades"), {
+                    texto: texto,
+                    fecha: serverTimestamp(),
+                    autor: "Admin"
+                });
+                
+                alert("✅ ¡Publicado correctamente!");
+                input.value = ""; 
+            } catch (e) {
+                console.error("Error: ", e);
+                alert("❌ Hubo un error al publicar.");
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> PUBLICAR AHORA';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
