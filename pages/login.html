@@ -101,6 +101,12 @@
     </div>
 
     <div id="view-barber" class="hidden">
+       
+        <a href="/index.html" class="dashboard-back-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px" fill="currentColor">
+                <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z" />
+            </svg>
+        </a>
 
         <div class="dashboard-header">
             <div style="text-align: left;">
@@ -141,39 +147,112 @@
     </div>
 
     <div id="view-admin" class="hidden">
+        <a href="/index.html" class="dashboard-back-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px" fill="currentColor">
+                <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z" />
+            </svg>
+        </a>
+        
         <div class="admin-container fade-in">
+            
             <div class="dashboard-header">
                 <p class="admin-subtitle">PANEL DE CONTROL</p>
                 <h2 class="admin-title">Administración General</h2>
             </div>
 
-            <div class="admin-controls">
-                <input type="date" id="admin-date-picker" class="admin-input">
+            <div class="editor-panel" style="background: #111; padding: 20px; border-radius: 8px; border: 1px solid #333; margin: 20px 0;">
+                
+                <div style="text-align: center; margin-bottom: 20px; color: #AE0E30; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
+                    <i class="fa-solid fa-pen-to-square"></i> Editor de Contenidos Web
+                </div>
 
-                <button id="btn-admin-refresh" class="cta-button">
-                    <i class="fa-solid fa-magnifying-glass"></i> Buscar
+                <div class="editor-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    
+                    <div class="col-left">
+                        <label style="color: #ae0e30; font-size: 0.8rem; display:block; margin-bottom: 5px; font-weight: bold;">
+                            <i class="fa-solid fa-bullhorn"></i> BARRA PROMO (INICIO)
+                        </label>
+                        <input type="text" id="admin-promo" placeholder="Ej: 20% OFF..." 
+                            style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-bottom: 20px; box-sizing: border-box;">
+
+                        <label style="color: #ae0e30; font-size: 0.8rem; display:block; margin-bottom: 5px; font-weight: bold;">
+                            <i class="fa-solid fa-scissors"></i> TÍTULO SERVICIOS
+                        </label>
+                        <input type="text" id="admin-serv-titulo" placeholder="Ej: Somos expertos..." 
+                            style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-bottom: 10px; box-sizing: border-box;">
+
+                        <label style="color: #777; font-size: 0.75rem; display:block; margin-bottom: 5px;" /label>
+                        <textarea id="admin-serv-desc" rows="4" 
+                                style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-bottom: 15px; resize: none; box-sizing: border-box;"></textarea>
+                    </div>
+
+                    <div class="col-right">
+                        <label style="color: #ae0e30; font-size: 0.8rem; display:block; margin-bottom: 5px; font-weight: bold;">
+                            <i class="fa-solid fa-calendar-check"></i> TÍTULO TURNOS
+                        </label>
+                        <input type="text" id="admin-turnos-titulo" placeholder="Título sección turnos" 
+                            style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-bottom: 10px; box-sizing: border-box;">
+
+                        <label style="color: #777; font-size: 0.75rem; display:block; margin-bottom: 5px;"/label>
+                        <textarea id="admin-turnos-desc" rows="4" placeholder="En Tokz valoramos a nuestros clientes..." 
+                                style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-bottom: 20px; resize: none; box-sizing: border-box;"></textarea>
+
+
+                        <label style="color: #ae0e30; font-size: 0.8rem; display:block; margin-bottom: 5px; font-weight: bold;">
+                            <i class="fa-solid fa-graduation-cap"></i> TÍTULO EDUCACIÓN
+                        </label>
+                        <input type="text" id="admin-edu-titulo" placeholder="Título sección educación" 
+                            style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-bottom: 10px; box-sizing: border-box;">
+
+                        <textarea id="admin-edu-desc" rows="4" placeholder="Descripción Educación" 
+                                style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-bottom: 15px; resize: none; box-sizing: border-box;"></textarea>
+                    </div>
+
+                </div>
+
+                <button id="btn-guardar-todo" class="cta-button" 
+                        style="width: 100%; background-color: #ae0e30; color: white; padding: 15px; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px; transition: background 0.3s;">
+                    <i class="fa-solid fa-save"></i> Guardar todos los cambios
                 </button>
 
-                <button id="btn-go-calendar" class="cta-button btn-dark">
-                    <i class="fa-regular fa-calendar"></i> Mi Agenda
-                </button>
             </div>
 
-            <div class="table-responsive">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Hora</th>
-                            <th>Cliente</th>
-                            <th>Servicio</th>
-                            <th>Barbero</th>
-                            <th>Precio</th>
-                        </tr>
-                    </thead>
-                    <tbody id="admin-table-body">
-                    </tbody>
-                </table>
-                <p id="admin-loading-msg" class="loading-msg">Seleccioná una fecha para ver los turnos.</p>
+            <hr style="border: 0; border-top: 1px solid #333; margin: 30px 0;">
+
+            <div class="turnos-section" style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px;">
+                
+                <h3 style="color: white; font-size: 1.2rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-list-check" style="color: #AE0E30;"></i> Control de Turnos
+                </h3>
+
+                <div class="admin-controls" style="margin-bottom: 20px;">
+                    <input type="date" id="admin-date-picker" class="admin-input">
+
+                    <button id="btn-admin-refresh" class="cta-button">
+                        <i class="fa-solid fa-magnifying-glass"></i> Buscar
+                    </button>
+
+                    <button id="btn-go-calendar" class="cta-button btn-dark">
+                        <i class="fa-regular fa-calendar"></i> Mi Agenda
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Hora</th>
+                                <th>Cliente</th>
+                                <th>Servicio</th>
+                                <th>Barbero</th>
+                                <th>Precio</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-body">
+                        </tbody>
+                    </table>
+                    <p id="admin-loading-msg" class="loading-msg">Seleccioná una fecha para ver los turnos.</p>
+                </div>
             </div>
 
             <div class="admin-footer">
@@ -183,6 +262,8 @@
             </div>
         </div>
     </div>
+
+    
 
 
     <script src="/public/js/goBack.js"></script>

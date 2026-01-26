@@ -20,8 +20,8 @@
 
 <body class="home-page">
     <div class="promo-bar" id="promoBar">
-        <div class="promo-message">
-            ¡Clientes registrados reciben un <strong>10% de descuento</strong> en su primer reserva!
+        <div class="promo-message" id="txt-promo-dinamico">
+            ¡Cargando promo...!
         </div>
         <button class="promo-close" id="closePromo">×</button>
     </div>
@@ -257,9 +257,9 @@
 
         <section id="servicios" class="services-section">
             <div class="services-intro-content fade-in">
-                <span class="tag">¿QUÉ SABEMOS HACER?</span>
-                <h2>Somos expertos en el cuidado de tu imagen</h2>
-                <p>Antes de cada momento importante, ¿Qué es lo que hay que hacer? Pasar por tu barbería y emprolijar
+                <span class="tag" id="txt-serv-tag">¿QUÉ SABEMOS HACER?</span>
+                <h2 id="txt-serv-titulo">Somos expertos en el cuidado de tu imagen</h2>
+                <p id="txt-serv-desc">Antes de cada momento importante, ¿Qué es lo que hay que hacer? Pasar por tu barbería y emprolijar
                     esa peluca o arreglarse la barba. Conoce todos los servicios que tenemos disponibles para vos.</p>
 
                 <div class="service-buttons">
@@ -423,8 +423,8 @@
             </div>
             <div class="title fade-in">
                 <span class="tag">TURNOS</span>
-                <h4 class="paragraph">Personalizá tu reserva con nosotros.</h4>
-                <p>En TOKZ valoramos a nuestros clientes y buscamos brindarles el mejor servicio.<br>Siempre se puede
+                <h4 class="paragraph" id="txt-turnos-titulo">Personalizá tu reserva con nosotros.</h4>
+                <p id="txt-turnos-desc">En TOKZ valoramos a nuestros clientes y buscamos brindarles el mejor servicio.<br>Siempre se puede
                     crecer, por eso ahora podes reservar tu lugar de una manera simple y rápida a través de nuestra
                     Agenda Virtual.</p>
                 <a class="cta-button" href="/pages/turnos.html">Reservar</a>
@@ -463,8 +463,8 @@
 
             <div class="services-intro-content fade-in">
                 <span class="tag">CONVERTITE EN PROFESIONAL</span>
-                <h2>Educación y Cursos</h2>
-                <p>
+                <h2 id="txt-edu-titulo">Educación y Cursos</h2>
+                <p id="txt-edu-desc">
                     La barbería es un oficio con salida laboral inmediata. En <strong>TOKZ BARBER</strong> te enseñamos
                     las técnicas reales: desde el corte clásico hasta las últimas tendencias y diseños.
                     <br><br>
@@ -551,7 +551,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
     <script src="/public/js/sobre_nosotros.js"></script>
     <script src="/public/js/seeMore.js"></script>
-    <script src="/public/js/auth-logic.js"></script>
+    <script type="module" src="/public/js/auth-logic.js"></script>
     <script src="/public/js/prices.js"></script>
     <script src="/public/js/guard.js"></script>
 
@@ -601,6 +601,44 @@
             console.error("Error leyendo novedades:", error);
             // Evitamos romper la página si falla Firebase
             feedContainer.innerHTML = '<p style="text-align:center; color:#555;">No se pudieron cargar las noticias.</p>';
+        });
+
+    </script>
+
+    <script type="module">
+        import { db } from '/public/js/firebase.js'; 
+        import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Conectamos con el documento "textos_landing"
+        const docRef = doc(db, "configuracion", "textos_landing");
+
+        console.log("Escuchando cambios de textos...");
+
+        onSnapshot(docRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                console.log("Datos recibidos:", data);
+
+                // 1. BARRA PROMO
+                const promoBar = document.getElementById('txt-promo-dinamico');
+                if(promoBar && data.promo_texto) promoBar.innerHTML = data.promo_texto;
+
+                // 2. SECCIÓN SERVICIOS
+                if(data.serv_titulo) document.getElementById('txt-serv-titulo').innerText = data.serv_titulo;
+                if(data.serv_desc) document.getElementById('txt-serv-desc').innerText = data.serv_desc;
+
+                // 3. SECCIÓN TURNOS (BARBEROS)
+                if(data.turnos_titulo) document.getElementById('txt-turnos-titulo').innerText = data.turnos_titulo;
+                // Aquí actualizamos la descripción que faltaba
+                if(data.turnos_desc) document.getElementById('txt-turnos-desc').innerText = data.turnos_desc;
+
+                // 4. SECCIÓN EDUCACIÓN
+                if(data.edu_titulo) document.getElementById('txt-edu-titulo').innerText = data.edu_titulo;
+                if(data.edu_desc) {
+                    // Usamos innerHTML por si querés poner saltos de linea <br>
+                    document.getElementById('txt-edu-desc').innerHTML = data.edu_desc.replace(/\n/g, "<br>");
+                }
+            }
         });
     </script>
 
