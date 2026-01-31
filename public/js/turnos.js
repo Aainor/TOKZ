@@ -26,6 +26,12 @@ function getLocalDateISO(dateObj) {
     return localTime.toISOString().split('T')[0];
 }
 
+// --- UTILIDAD: Formatear Dinero ---
+function formatMoney(amount) {
+    if (!amount || amount === 0 || amount === '0') return '$ -';
+    return '$' + Number(amount).toLocaleString('es-AR');
+}
+
 // Abrir Google Calendar
 function abrirLinkGoogleCalendar(turnoData) {
     if (!turnoData) return;

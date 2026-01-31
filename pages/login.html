@@ -262,7 +262,45 @@
             </div>
         </div>
     </div>
+    
+    
 
+    <div id="manual-modal-overlay" class="modal-overlay hidden">
+    <div class="modal-box manual-box">
+        <div class="modal-header">
+            <h3>Nuevo Turno Manual</h3>
+            <button id="close-manual-btn" class="close-btn">×</button>
+        </div>
+
+        <div class="manual-form-body">
+            <label>Cliente:</label>
+            <input type="text" id="manual-client-name" placeholder="Nombre completo" class="input-manual">
+
+            <label>Contacto:</label>
+            <input type="text" id="manual-client-contact" placeholder="Email o Teléfono" class="input-manual">
+
+            <label>Servicio:</label>
+            <select id="manual-service-select" class="input-manual">
+                <option value="Corte de Cabello">Corte de Cabello</option>
+                <option value="Barba">Barba</option>
+                <option value="Corte + Barba">Corte + Barba</option>
+                <option value="Color">Color</option>
+            </select>
+
+            <label>Fecha:</label>
+            <input type="date" id="manual-date-picker" class="input-manual">
+
+            <label>Horario Disponible:</label>
+            <div id="manual-time-grid" class="time-grid-manual">
+                <p style="color: #666; font-size: 0.8rem;">Seleccioná una fecha para ver horarios.</p>
+            </div>
+        </div>
+
+        <button id="btn-save-manual" class="cta-button" disabled style="width: 100%; margin-top: 20px;">
+            Confirmar Turno
+        </button>
+    </div>
+</div>
     
 
 
