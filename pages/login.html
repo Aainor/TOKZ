@@ -101,9 +101,10 @@
     </div>
 
     <div id="view-barber" class="hidden">
-       
+
         <a href="/index.html" class="dashboard-back-arrow">
-            <svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px"
+                fill="currentColor">
                 <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z" />
             </svg>
         </a>
@@ -148,70 +149,79 @@
 
     <div id="view-admin" class="hidden">
         <a href="/index.html" class="dashboard-back-arrow">
-            <svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px"
+                fill="currentColor">
                 <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z" />
             </svg>
         </a>
-        
+
         <div class="admin-container fade-in">
-            
+
             <div class="dashboard-header">
                 <p class="admin-subtitle">PANEL DE CONTROL</p>
                 <h2 class="admin-title">Administración General</h2>
             </div>
 
-            <div class="editor-panel" style="background: #111; padding: 20px; border-radius: 8px; border: 1px solid #333; margin: 20px 0;">
-                
-                <div style="text-align: center; margin-bottom: 20px; color: #AE0E30; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
+            <div class="editor-panel"
+                style="background: #111; padding: 20px; border-radius: 8px; border: 1px solid #333; margin: 20px 0;">
+
+                <div
+                    style="text-align: center; margin-bottom: 20px; color: #AE0E30; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
                     <i class="fa-solid fa-pen-to-square"></i> Editor de Contenidos Web
                 </div>
 
-                <div class="editor-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                    
+                <div class="editor-grid"
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+
                     <div class="col-left">
-                        <label style="color: #ae0e30; font-size: 0.8rem; display:block; margin-bottom: 5px; font-weight: bold;">
+                        <label
+                            style="color: #ae0e30; font-size: 0.8rem; display:block; margin-bottom: 5px; font-weight: bold;">
                             <i class="fa-solid fa-bullhorn"></i> BARRA PROMO (INICIO)
                         </label>
-                        <input type="text" id="admin-promo" placeholder="Ej: 20% OFF..." 
+                        <input type="text" id="admin-promo" placeholder="Ej: 20% OFF..."
                             style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-bottom: 20px; box-sizing: border-box;">
 
-                        <label style="color: #ae0e30; font-size: 0.8rem; display:block; margin-bottom: 5px; font-weight: bold;">
+                        <label
+                            style="color: #ae0e30; font-size: 0.8rem; display:block; margin-bottom: 5px; font-weight: bold;">
                             <i class="fa-solid fa-scissors"></i> TÍTULO SERVICIOS
                         </label>
-                        <input type="text" id="admin-serv-titulo" placeholder="Ej: Somos expertos..." 
+                        <input type="text" id="admin-serv-titulo" placeholder="Ej: Somos expertos..."
                             style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-bottom: 10px; box-sizing: border-box;">
 
                         <label style="color: #777; font-size: 0.75rem; display:block; margin-bottom: 5px;" /label>
-                        <textarea id="admin-serv-desc" rows="4" 
+                            <textarea id="admin-serv-desc" rows="4"
                                 style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-bottom: 15px; resize: none; box-sizing: border-box;"></textarea>
                     </div>
 
                     <div class="col-right">
-                        <label style="color: #ae0e30; font-size: 0.8rem; display:block; margin-bottom: 5px; font-weight: bold;">
+                        <label
+                            style="color: #ae0e30; font-size: 0.8rem; display:block; margin-bottom: 5px; font-weight: bold;">
                             <i class="fa-solid fa-calendar-check"></i> TÍTULO TURNOS
                         </label>
-                        <input type="text" id="admin-turnos-titulo" placeholder="Título sección turnos" 
+                        <input type="text" id="admin-turnos-titulo" placeholder="Título sección turnos"
                             style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-bottom: 10px; box-sizing: border-box;">
 
-                        <label style="color: #777; font-size: 0.75rem; display:block; margin-bottom: 5px;"/label>
-                        <textarea id="admin-turnos-desc" rows="4" placeholder="En Tokz valoramos a nuestros clientes..." 
+                        <label style="color: #777; font-size: 0.75rem; display:block; margin-bottom: 5px;" /label>
+                            <textarea id="admin-turnos-desc" rows="4"
+                                placeholder="En Tokz valoramos a nuestros clientes..."
                                 style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-bottom: 20px; resize: none; box-sizing: border-box;"></textarea>
 
 
-                        <label style="color: #ae0e30; font-size: 0.8rem; display:block; margin-bottom: 5px; font-weight: bold;">
-                            <i class="fa-solid fa-graduation-cap"></i> TÍTULO EDUCACIÓN
-                        </label>
-                        <input type="text" id="admin-edu-titulo" placeholder="Título sección educación" 
-                            style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-bottom: 10px; box-sizing: border-box;">
+                            <label
+                                style="color: #ae0e30; font-size: 0.8rem; display:block; margin-bottom: 5px; font-weight: bold;">
+                                <i class="fa-solid fa-graduation-cap"></i> TÍTULO EDUCACIÓN
+                            </label>
+                            <input type="text" id="admin-edu-titulo" placeholder="Título sección educación"
+                                style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-bottom: 10px; box-sizing: border-box;">
 
-                        <textarea id="admin-edu-desc" rows="4" placeholder="Descripción Educación" 
+                            <textarea id="admin-edu-desc" rows="4" placeholder="Descripción Educación"
                                 style="width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-bottom: 15px; resize: none; box-sizing: border-box;"></textarea>
                     </div>
 
                 </div>
 
-                <button id="btn-guardar-todo" class="cta-button" 
-                        style="width: 100%; background-color: #ae0e30; color: white; padding: 15px; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px; transition: background 0.3s;">
+                <button id="btn-guardar-todo" class="cta-button"
+                    style="width: 100%; background-color: #ae0e30; color: white; padding: 15px; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px; transition: background 0.3s;">
                     <i class="fa-solid fa-save"></i> Guardar todos los cambios
                 </button>
 
@@ -220,8 +230,9 @@
             <hr style="border: 0; border-top: 1px solid #333; margin: 30px 0;">
 
             <div class="turnos-section" style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px;">
-                
-                <h3 style="color: white; font-size: 1.2rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+
+                <h3
+                    style="color: white; font-size: 1.2rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
                     <i class="fa-solid fa-list-check" style="color: #AE0E30;"></i> Control de Turnos
                 </h3>
 
@@ -254,54 +265,61 @@
                     <p id="admin-loading-msg" class="loading-msg">Seleccioná una fecha para ver los turnos.</p>
                 </div>
             </div>
+        </div>
 
-            <div class="admin-footer">
-                <button id="btn-logout-admin" class="cta-button btn-dark">
-                    Cerrar Sesión Admin
-                </button>
-            </div>
+        <div style="margin-bottom: 20px; text-align: center;">
+            <a href="admin-news.html" class="btn-news">
+                <i class="fas fa-newspaper"></i> Publicar nueva noticia
+            </a>
+        </div>
+
+        <div class="admin-footer">
+            <button id="btn-logout-admin" class="cta-button btn-dark">
+                Cerrar Sesión Admin
+            </button>
         </div>
     </div>
-    
-    
+    </div>
+
+
 
     <div id="manual-modal-overlay" class="modal-overlay hidden">
-    <div class="modal-box manual-box">
-        <div class="modal-header">
-            <h3>Nuevo Turno Manual</h3>
-            <button id="close-manual-btn" class="close-btn">×</button>
-        </div>
-
-        <div class="manual-form-body">
-            <label>Cliente:</label>
-            <input type="text" id="manual-client-name" placeholder="Nombre completo" class="input-manual">
-
-            <label>Contacto:</label>
-            <input type="text" id="manual-client-contact" placeholder="Email o Teléfono" class="input-manual">
-
-            <label>Servicio:</label>
-            <select id="manual-service-select" class="input-manual">
-                <option value="Corte de Cabello">Corte de Cabello</option>
-                <option value="Barba">Barba</option>
-                <option value="Corte + Barba">Corte + Barba</option>
-                <option value="Color">Color</option>
-            </select>
-
-            <label>Fecha:</label>
-            <input type="date" id="manual-date-picker" class="input-manual">
-
-            <label>Horario Disponible:</label>
-            <div id="manual-time-grid" class="time-grid-manual">
-                <p style="color: #666; font-size: 0.8rem;">Seleccioná una fecha para ver horarios.</p>
+        <div class="modal-box manual-box">
+            <div class="modal-header">
+                <h3>Nuevo Turno Manual</h3>
+                <button id="close-manual-btn" class="close-btn">×</button>
             </div>
-        </div>
 
-        <button id="btn-save-manual" class="cta-button" disabled style="width: 100%; margin-top: 20px;">
-            Confirmar Turno
-        </button>
+            <div class="manual-form-body">
+                <label>Cliente:</label>
+                <input type="text" id="manual-client-name" placeholder="Nombre completo" class="input-manual">
+
+                <label>Contacto:</label>
+                <input type="text" id="manual-client-contact" placeholder="Email o Teléfono" class="input-manual">
+
+                <label>Servicio:</label>
+                <select id="manual-service-select" class="input-manual">
+                    <option value="Corte de Cabello">Corte de Cabello</option>
+                    <option value="Barba">Barba</option>
+                    <option value="Corte + Barba">Corte + Barba</option>
+                    <option value="Color">Color</option>
+                </select>
+
+                <label>Fecha:</label>
+                <input type="date" id="manual-date-picker" class="input-manual">
+
+                <label>Horario Disponible:</label>
+                <div id="manual-time-grid" class="time-grid-manual">
+                    <p style="color: #666; font-size: 0.8rem;">Seleccioná una fecha para ver horarios.</p>
+                </div>
+            </div>
+
+            <button id="btn-save-manual" class="cta-button" disabled style="width: 100%; margin-top: 20px;">
+                Confirmar Turno
+            </button>
+        </div>
     </div>
-</div>
-    
+
 
 
     <script src="/public/js/goBack.js"></script>
