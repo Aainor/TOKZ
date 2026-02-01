@@ -2,10 +2,10 @@
 // 1. IMPORTACIONES
 // ==========================================
 import { auth, provider, db } from './firebase.js';
-import { 
-    signInWithPopup, 
-    signOut, 
-    onAuthStateChanged 
+import {
+    signInWithPopup,
+    signOut,
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
     collection,
@@ -37,15 +37,16 @@ const STAFF_EMAILS = {
 
 // ADMIN: Si el email coincide, entra al Panel de Control
 const ADMIN_EMAILS = [
-    "fnvillalva.17@gmail.com" 
+    "fnvillalva.17@gmail.com",
+    "nicolasruibals4@gmail.com"
 ];
 
 // VARIABLES GLOBALES
-let currentUser = null; 
-let calendarInstance = null; 
+let currentUser = null;
+let calendarInstance = null;
 let BARBERS_CONFIG = []; // Se llena desde barberos.json
-let PRICES_DB = {}; 
-let myTurnos = []; 
+let PRICES_DB = {};
+let myTurnos = [];
 
 
 // ==========================================
@@ -65,10 +66,10 @@ function formatMoney(amount) {
 }
 
 // FUNCIÓN GOOGLE CALENDAR
-window.abrirLinkGoogleCalendar = function(turnoData) {
+window.abrirLinkGoogleCalendar = function (turnoData) {
     if (!turnoData) return;
     const nombreBarbero = turnoData.barbero || turnoData.barberoNombre;
-    
+
     // Emails para invitación a calendario
     const EMAILS_BARBEROS = {
         "Jonathan": "jonathanrimada9@icloud.com",
@@ -80,7 +81,7 @@ window.abrirLinkGoogleCalendar = function(turnoData) {
         "Nicolás": "fnvillalva.17@gmail.com",
         "Nicolás Ruibal": "fnvillalva.17@gmail.com"
     };
-    
+
     // Buscar email exacto o parcial
     let emailBarbero = EMAILS_BARBEROS[nombreBarbero];
     if (!emailBarbero) {
@@ -91,7 +92,7 @@ window.abrirLinkGoogleCalendar = function(turnoData) {
     const fechaLimpia = turnoData.fecha.replace(/-/g, '');
     const horaLimpia = turnoData.hora.replace(/:/g, '') + '00';
     const fechasGoogle = `${fechaLimpia}T${horaLimpia}/${fechaLimpia}T${horaLimpia}`;
-    
+
     const baseUrl = "https://calendar.google.com/calendar/render";
     const params = new URLSearchParams({
         action: "TEMPLATE",
@@ -145,7 +146,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (googleBtn) {
         const newGoogleBtn = googleBtn.cloneNode(true);
         googleBtn.parentNode.replaceChild(newGoogleBtn, googleBtn);
-        
+
         newGoogleBtn.addEventListener('click', async (e) => {
             e.preventDefault();
             try {
@@ -163,27 +164,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     const viewLogin = document.getElementById('view-login');
     const viewRegister = document.getElementById('view-register');
     const viewUser = document.getElementById('view-user');
-    const viewBooking = document.getElementById('booking-mod'); 
+    const viewBooking = document.getElementById('booking-mod');
     const viewBarber = document.getElementById('view-barber');
     const viewAdmin = document.getElementById('view-admin');
-    
+
     // --- FUNCIÓN SWITCH VIEW CORREGIDA (FIX PANTALLA NEGRA) ---
     function switchView(viewToShow) {
-        if (!viewLogin) return; 
-        
+        if (!viewLogin) return;
+
         // 1. Ocultar todo y resetear clases
         [viewLogin, viewRegister, viewUser, viewBooking, viewBarber, viewAdmin].forEach(el => {
-            if (el) { 
-                el.classList.add('hidden'); 
-                el.classList.remove('fade-in', 'appear'); 
-                el.style.display = ''; 
+            if (el) {
+                el.classList.add('hidden');
+                el.classList.remove('fade-in', 'appear');
+                el.style.display = '';
             }
         });
-        
+
         // 2. Mostrar la vista elegida
         if (viewToShow) {
             viewToShow.classList.remove('hidden');
-            
+
             // Si es Admin o Barbero, display block directo (sin fade)
             if (viewToShow === viewBarber || viewToShow === viewAdmin) {
                 viewToShow.style.display = 'block';
@@ -238,14 +239,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 } catch (e) { console.error("Error Auth:", e); }
             }
-            if(typeof updateUI === 'function') updateUI();
+            if (typeof updateUI === 'function') updateUI();
 
         } else {
             console.log("⚪ Sin usuario.");
             currentUser = null;
             // Si estamos en login.html, mostramos el login
-            if (viewLogin) switchView(viewLogin); 
-            if(typeof updateUI === 'function') updateUI();
+            if (viewLogin) switchView(viewLogin);
+            if (typeof updateUI === 'function') updateUI();
         }
     });
 
@@ -256,7 +257,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const configRef = doc(db, "configuracion", "textos_landing");
         async function cargarDatosEditor() {
             const inputPromo = document.getElementById('admin-promo');
-            if (!inputPromo) return; 
+            if (!inputPromo) return;
             try {
                 const docSnap = await getDoc(configRef);
                 if (docSnap.exists()) {
@@ -294,7 +295,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 try {
                     await setDoc(configRef, data, { merge: true });
                     alert("¡Cambios guardados correctamente en la web!");
-                } catch (e) { alert("Error al guardar."); } 
+                } catch (e) { alert("Error al guardar."); }
                 finally {
                     nuevoBtn.innerHTML = txtOriginal;
                     nuevoBtn.disabled = false;
@@ -307,7 +308,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (btnAdminRefresh) {
         btnAdminRefresh.addEventListener('click', () => {
             const f = document.getElementById('admin-date-picker').value;
-            if(f) loadAdminDashboard(f);
+            if (f) loadAdminDashboard(f);
             else alert("Seleccioná una fecha");
         });
     }
@@ -322,7 +323,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnBackAdmin = document.getElementById('btn-back-admin');
     if (btnGoCalendar) {
         btnGoCalendar.onclick = () => {
-            const nombreAgenda = "Nicolás"; 
+            const nombreAgenda = "Nicolás";
             loadBarberAgenda(nombreAgenda);
             const bName = document.getElementById('barber-name-display');
             if (bName) bName.textContent = nombreAgenda;
@@ -330,27 +331,27 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (btnBackAdmin) btnBackAdmin.classList.remove('hidden');
         };
     }
-    if(btnBackAdmin) btnBackAdmin.onclick = () => switchView(viewAdmin);
+    if (btnBackAdmin) btnBackAdmin.onclick = () => switchView(viewAdmin);
 
-   // ==========================================
+    // ==========================================
     // LÓGICA DE CARGA MANUAL (MEJORADA)
     // ==========================================
     const manualModal = document.getElementById('manual-modal-overlay');
     const btnOpenManual = document.getElementById('btn-add-manual');
     const btnCloseManual = document.getElementById('close-manual-btn');
     const btnSaveManual = document.getElementById('btn-save-manual');
-    
+
     // Inputs del modal
     const inpManualName = document.getElementById('manual-client-name');
     const inpManualContact = document.getElementById('manual-client-contact');
     const inpManualService = document.getElementById('manual-service-select');
     const inpManualDate = document.getElementById('manual-date-picker');
     const gridManualTime = document.getElementById('manual-time-grid');
-    
+
     let manualTimeSelected = null;
 
     if (btnOpenManual && manualModal) {
-        
+
         // 1. ABRIR MODAL
         btnOpenManual.addEventListener('click', () => {
             // Limpiar campos
@@ -360,10 +361,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             manualTimeSelected = null;
             btnSaveManual.disabled = true;
             btnSaveManual.style.opacity = '0.5';
-            
+
             // Cargar horarios para hoy automáticamente
             loadManualTimeSlots();
-            
+
             manualModal.classList.remove('hidden');
             manualModal.classList.add('active'); // Usar clase active si la tenés en CSS para fade
         });
@@ -378,10 +379,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         inpManualDate.addEventListener('change', loadManualTimeSlots);
 
         // 4. FUNCIÓN CARGAR HORARIOS DEL BARBERO ACTUAL
-       // 4. FUNCIÓN CARGAR HORARIOS DEL BARBERO ACTUAL (CORREGIDA)
+        // 4. FUNCIÓN CARGAR HORARIOS DEL BARBERO ACTUAL (CORREGIDA)
         async function loadManualTimeSlots() {
             gridManualTime.innerHTML = '<p style="color:#888; font-size:0.8rem;">Cargando horarios...</p>';
-            
+
             const dateStr = inpManualDate.value;
             if (!dateStr) return;
 
@@ -446,17 +447,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 } else {
                     q = query(collection(db, "turnos"), where("date", "==", dateStr));
                 }
-                
+
                 const snap = await getDocs(q);
                 const takenSlots = snap.docs.map(doc => doc.data().time);
 
                 gridManualTime.innerHTML = '';
-                
+
                 sortedHours.forEach(h => {
                     const btn = document.createElement('button');
-                    
+
                     // CLASE BASE: Solo asignamos la clase, sin estilos .style aquí
-                    btn.className = 'time-btn'; 
+                    btn.className = 'time-btn';
                     btn.textContent = h;
 
                     if (takenSlots.includes(h)) {
@@ -470,11 +471,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                             document.querySelectorAll('#manual-time-grid .time-btn').forEach(b => {
                                 b.classList.remove('active');
                             });
-                            
+
                             // Activar el actual
                             btn.classList.add('active');
                             manualTimeSelected = h;
-                            
+
                             // Habilitar botón de guardar
                             btnSaveManual.disabled = false;
                             btnSaveManual.style.opacity = '1';
@@ -496,7 +497,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const contact = inpManualContact.value.trim();
                 const service = inpManualService.value;
                 const date = inpManualDate.value;
-                
+
                 if (!name || !manualTimeSelected) {
                     alert("Faltan datos: Asegurate de poner nombre y elegir un horario.");
                     return;
@@ -525,12 +526,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                     await addDoc(collection(db, "turnos"), {
                         clientName: name,
                         clientEmail: contact || "No especificado",
-                        services: [service], 
+                        services: [service],
                         date: date,
                         time: manualTimeSelected,
                         pro: currentBarberName,
                         total: precioFinal, // <--- ACÁ SE GUARDA EL PRECIO CORRECTO
-                        status: "confirmed", 
+                        status: "confirmed",
                         type: "manual_admin",
                         created_at: new Date()
                     });
@@ -538,7 +539,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     alert(`¡Turno guardado! Precio registrado: $${precioFinal}`);
                     manualModal.classList.add('hidden');
                     manualModal.classList.remove('active');
-                    
+
                     // Recargar la agenda para ver el cambio
                     loadBarberAgenda(currentBarberName);
 
@@ -563,7 +564,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (bookingsListContainer) {
         if (btnLogout) btnLogout.addEventListener('click', () => signOut(auth));
-        
+
         if (btnViewBookings) btnViewBookings.addEventListener('click', () => { renderBookings(); switchView(viewBooking); });
         if (btnBackDashboard) btnBackDashboard.addEventListener('click', () => switchView(viewUser));
     }
@@ -582,12 +583,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!bookingsListContainer) return;
         bookingsListContainer.innerHTML = '';
         if (myTurnos.length === 0) { bookingsListContainer.innerHTML = '<p style="color:#777; text-align:center;">No tenés turnos.</p>'; return; }
-        myTurnos.sort((a,b) => new Date(a.date) - new Date(b.date));
+        myTurnos.sort((a, b) => new Date(a.date) - new Date(b.date));
         myTurnos.forEach(t => {
             bookingsListContainer.innerHTML += `
             <div class="booking-item" style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:15px; border-radius:8px; margin-bottom:10px; border-left:3px solid #AE0E30;">
                 <div style="text-align:left;">
-                    <h4 style="color:white; margin:0;">${Array.isArray(t.services)?t.services.join(" + "):t.services}</h4>
+                    <h4 style="color:white; margin:0;">${Array.isArray(t.services) ? t.services.join(" + ") : t.services}</h4>
                     <small style="color:#aaa;">📅 ${t.date} - ${t.time} | 💈 ${t.pro}</small>
                 </div>
                 <button class="btn-delete-booking" data-id="${t.id}" style="background:none; border:none; color:#ff4444; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
@@ -595,20 +596,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
         document.querySelectorAll('.btn-delete-booking').forEach(btn => {
             btn.addEventListener('click', async (e) => {
-                if(!confirm("¿Cancelar turno?")) return;
+                if (!confirm("¿Cancelar turno?")) return;
                 const id = e.currentTarget.getAttribute('data-id');
                 try {
                     await deleteDoc(doc(db, "turnos", id));
                     myTurnos = myTurnos.filter(t => t.id !== id);
                     renderBookings();
-                } catch(e) { alert("Error al cancelar"); }
+                } catch (e) { alert("Error al cancelar"); }
             });
         });
     }
 
 
     // AGENDA BARBERO
-   // ==========================================
+    // ==========================================
     // AGENDA BARBERO (VISUALIZACIÓN)
     // ==========================================
     async function loadBarberAgenda(nombreBarbero) {
@@ -621,27 +622,27 @@ document.addEventListener('DOMContentLoaded', async () => {
             const q = query(collection(db, "turnos"), where("pro", "==", nombreBarbero));
             const snap = await getDocs(q);
             let eventos = [];
-            
+
             snap.forEach(d => {
                 const data = d.data();
-                if(data.date && data.time) {
+                if (data.date && data.time) {
                     const start = `${data.date}T${data.time}:00`;
                     // Calculamos fin (30 mins por defecto)
-                    const end = new Date(new Date(start).getTime() + 30*60000).toISOString();
-                    
+                    const end = new Date(new Date(start).getTime() + 30 * 60000).toISOString();
+
                     eventos.push({
                         id: d.id,
                         title: data.clientName || 'Cliente',
-                        start: start, 
+                        start: start,
                         end: end,
-                        backgroundColor: '#AE0E30', 
+                        backgroundColor: '#AE0E30',
                         borderColor: '#ffffff',
                         textColor: '#ffffff',
-                        extendedProps: { 
+                        extendedProps: {
                             servicio: Array.isArray(data.services) ? data.services.join(" + ") : data.services,
                             email: data.clientEmail || 'No especificado',
                             // ACÁ USAMOS LA FUNCIÓN NUEVA PARA QUE SE VEA EL $
-                            precio: formatMoney(data.total) 
+                            precio: formatMoney(data.total)
                         }
                     });
                 }
@@ -653,9 +654,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 initialView: window.innerWidth < 768 ? 'timeGridDay' : 'timeGridWeek',
                 headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
                 locale: 'es',
-                slotMinTime: '09:00:00', 
+                slotMinTime: '09:00:00',
                 slotMaxTime: '21:00:00',
-                allDaySlot: false,       
+                allDaySlot: false,
                 height: '100%',
                 contentHeight: 'auto',
                 slotDuration: '00:30:00',
@@ -669,18 +670,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                     };
                 },
                 events: eventos,
-                eventClick: function(info) {
+                eventClick: function (info) {
                     const p = info.event.extendedProps;
                     // Llenamos el modal negro con los datos
                     document.getElementById('modal-cliente').textContent = info.event.title;
                     document.getElementById('modal-servicio').textContent = p.servicio;
                     document.getElementById('modal-precio').textContent = p.precio; // Ya viene con formato $
                     document.getElementById('modal-email').textContent = p.email;
-                    
+
                     const fechaObj = info.event.start;
                     const horaStr = fechaObj.getHours().toString().padStart(2, '0') + ':' + fechaObj.getMinutes().toString().padStart(2, '0');
                     document.getElementById('modal-horario').textContent = `${horaStr} hs`;
-                    
+
                     document.getElementById('modal-detalle-overlay').classList.add('active');
                 },
                 windowResize: function (arg) {
@@ -689,29 +690,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             });
             calendarInstance.render();
-        } catch(e) { console.error("Error calendario:", e); }
+        } catch (e) { console.error("Error calendario:", e); }
     }
 
     // ADMIN DASHBOARD
     async function loadAdminDashboard(fecha) {
         const tbody = document.getElementById('admin-table-body');
-        if(!tbody) return;
+        if (!tbody) return;
         tbody.innerHTML = 'Cargando...';
         try {
             const snap = await getDocs(collection(db, "turnos"));
             tbody.innerHTML = '';
             let total = 0;
             const [y, m, d] = fecha.split('-');
-            const format1 = `${y}-${m}-${d}`; 
-            
+            const format1 = `${y}-${m}-${d}`;
+
             let turnos = [];
             snap.forEach(doc => {
                 const data = doc.data();
-                if(data.date === format1) turnos.push(data);
+                if (data.date === format1) turnos.push(data);
             });
 
-            if(turnos.length === 0) { tbody.innerHTML = '<tr><td colspan="5">No hay turnos</td></tr>'; return; }
-            turnos.sort((a,b) => a.time.localeCompare(b.time));
+            if (turnos.length === 0) { tbody.innerHTML = '<tr><td colspan="5">No hay turnos</td></tr>'; return; }
+            turnos.sort((a, b) => a.time.localeCompare(b.time));
 
             turnos.forEach(data => {
                 const price = Number(data.total) || 0;
@@ -720,12 +721,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <tr>
                     <td>${data.time}</td>
                     <td>${data.clientName}</td>
-                    <td>${Array.isArray(data.services)?data.services.join("+"):data.services}</td>
+                    <td>${Array.isArray(data.services) ? data.services.join("+") : data.services}</td>
                     <td>${data.pro}</td>
                     <td style="color:#4CAF50; font-weight:bold;">$${price}</td>
                 </tr>`;
             });
             tbody.innerHTML += `<tr style="background:#333; font-weight:bold;"><td colspan="4" style="text-align:right;">TOTAL:</td><td style="color:#AE0E30;">$${total}</td></tr>`;
-        } catch(e) { console.error(e); }
+        } catch (e) { console.error(e); }
     }
 });
