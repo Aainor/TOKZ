@@ -38,13 +38,13 @@ function abrirLinkGoogleCalendar(turnoData) {
 
     const EMAILS_BARBEROS = {
         "Jonathan": "jonathanrimada9@icloud.com",
-        "Jonatan Rimada": "jonathanrimada9@icloud.com",
+        "Jonathan Rimada": "jonathanrimada9@icloud.com",
         "Lautaro": "lautabarber.17@gmail.com",
         "Lautaro Ribeiro": "lautabarber.17@gmail.com",
         "Alejandra": "marsanzmos@gmail.com",
         "Alejandra Sanchez": "marsanzmos@gmail.com",
-        "Nicolás": "nicolasruibals4@gmail.com",
-        "Nicolás Ruibal": "nicolasruibals4@gmail.com"
+        "Nicolás": "mauriiciyo01@gmail.com",
+        "Nicolás Ruibal": "mauriiciyo01@gmail.com"
     };
 
     let emailBarbero = EMAILS_BARBEROS[turnoData.barbero];
