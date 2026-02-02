@@ -535,6 +535,39 @@ document.addEventListener('DOMContentLoaded', async () => {
                         created_at: new Date()
                     });
 
+                    // ============================================================
+                    // 2. NUEVO: ENVIAR EMAIL AL CLIENTE (Si tiene email puesto)
+                    // ============================================================
+                    if (contact && contact.includes('@')) {
+                        console.log("📧 Enviando confirmación a:", contact);
+                        
+                        // Usamos las constantes que ya tenés definidas arriba en el archivo
+                        await emailjs.send(EMAIL_SERVICE_ID, EMAIL_TEMPLATE_ID, {
+                            to_name: name,
+                            to_email: contact,
+                            service_list: service,
+                            date_info: date + " " + manualTimeSelected,
+                            professional: currentBarberName,
+                            total_price: "$" + precioFinal,
+                            message: "Turno reservado manualmente por el staff."
+                        });
+                        console.log("✅ Email enviado correctamente");
+                    }
+
+                    // ============================================================
+                    // 3. NUEVO: ABRIR GOOGLE CALENDAR (RECORDATORIO PARA EL BARBERO)
+                    // ============================================================
+                    // Esto abrirá la pestaña que mostraste en la foto con los datos precargados
+                    if (typeof window.abrirLinkGoogleCalendar === 'function') {
+                        window.abrirLinkGoogleCalendar({
+                            fecha: date,
+                            hora: manualTimeSelected,
+                            barbero: currentBarberName,
+                            // Truco: Agregamos el nombre del cliente al servicio para que se lea en la descripción
+                            servicio: `${service} - Cliente: ${name}`
+                        });
+                    }
+
                     alert(`¡Turno guardado! Precio registrado: $${precioFinal}`);
                     manualModal.classList.add('hidden');
                     manualModal.classList.remove('active');
