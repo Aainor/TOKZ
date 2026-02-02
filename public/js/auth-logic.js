@@ -37,7 +37,6 @@ const STAFF_EMAILS = {
 
 // ADMIN: Si el email coincide, entra al Panel de Control
 const ADMIN_EMAILS = [
-    "fnvillalva.17@gmail.com",
     "nicolasruibals4@gmail.com"
 ];
 

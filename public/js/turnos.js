@@ -43,8 +43,8 @@ function abrirLinkGoogleCalendar(turnoData) {
         "Lautaro Ribeiro": "lautabarber.17@gmail.com",
         "Alejandra": "marsanzmos@gmail.com",
         "Alejandra Sanchez": "marsanzmos@gmail.com",
-        "Nicolás": "fnvillalva.17@gmail.com",
-        "Nicolás Ruibal": "fnvillalva.17@gmail.com"
+        "Nicolás": "nicolasruibals4@gmail.com",
+        "Nicolás Ruibal": "nicolasruibals4@gmail.com"
     };
 
     let emailBarbero = EMAILS_BARBEROS[turnoData.barbero];
