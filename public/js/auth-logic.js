@@ -37,7 +37,7 @@ const STAFF_EMAILS = {
 
 // ADMIN: Si el email coincide, entra al Panel de Control
 const ADMIN_EMAILS = [
-    "nicolasruibals4@gmail.com"
+    "mauriiciyo01@gmail,com"
 ];
 
 // VARIABLES GLOBALES
@@ -77,8 +77,8 @@ window.abrirLinkGoogleCalendar = function (turnoData) {
         "Lautaro Ribeiro": "lautabarber.17@gmail.com",
         "Alejandra": "marsanzmos@gmail.com",
         "Alejandra Sanchez": "marsanzmos@gmail.com",
-        "Nicolás": "fnvillalva.17@gmail.com",
-        "Nicolás Ruibal": "fnvillalva.17@gmail.com"
+        "Nicolás": "mauriiciyo01@gmail.com",
+        "Nicolás Ruibal": "mauriiciyo01@gmail.com"
     };
 
     // Buscar email exacto o parcial
