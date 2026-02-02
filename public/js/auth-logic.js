@@ -37,7 +37,7 @@ const STAFF_EMAILS = {
 
 // ADMIN: Si el email coincide, entra al Panel de Control
 const ADMIN_EMAILS = [
-    "mauriiciyo01@gmail,com"
+    "mauriiciyo01@gmail.com"
 ];
 
 // VARIABLES GLOBALES
