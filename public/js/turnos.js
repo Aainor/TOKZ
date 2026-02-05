@@ -479,13 +479,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateStep();
     });
 
-    function prepareCalendarStep() {
+   function prepareCalendarStep() {
     bookingData.time = null;
+    
+    // 1. Buscamos el selector y su caja para ocultarla
     const proSelect = document.getElementById('pro-select');
     const selectorContainer = proSelect ? proSelect.closest('.pro-selector') : null;
 
+    // 2. LEEMOS EL NOMBRE REAL DIRECTAMENTE DEL SELECTOR (La única fuente de verdad)
+    // Esto asegura que si el select dice "Alejandra", leamos "Alejandra"
+    const nombreSeleccionado = proSelect ? proSelect.options[proSelect.selectedIndex].text : "";
+
     if (bookingData.mode === 'separate') {
-        // En modo separado (varios turnos) SIEMPRE mostramos el selector
         if (selectorContainer) selectorContainer.style.display = 'block';
         const srvName = bookingData.services[serviceIndex];
         if (serviceTitle) {
@@ -493,21 +498,25 @@ document.addEventListener('DOMContentLoaded', async () => {
             serviceTitle.style.display = 'block';
         }
     } else {
-        // MODO NORMAL: Si el barbero ya no es "Cualquiera", ocultamos el selector
-        if (bookingData.professional && !bookingData.professional.includes("Cualquiera")) {
+        // MODO NORMAL:
+        // Si el nombre no es "Cualquiera"
+        if (nombreSeleccionado && !nombreSeleccionado.includes("Cualquiera")) {
+            // OCULTAMOS el selector que ya no sirve
             if (selectorContainer) selectorContainer.style.display = 'none';
+            
+            // ACTUALIZAMOS EL TÍTULO CON EL NOMBRE QUE ACABAMOS DE LEER
             if (serviceTitle) {
-                serviceTitle.textContent = `Turno con ${bookingData.professional}`;
                 serviceTitle.style.display = 'block';
+                serviceTitle.innerHTML = `Turno con <span style="color: #AE0E30;">${nombreSeleccionado}</span>`;
             }
         } else {
-            // Si no eligió nada afuera, que se vea el selector normal
             if (selectorContainer) selectorContainer.style.display = 'block';
+            if (serviceTitle) serviceTitle.textContent = "Elegí profesional y horario";
         }
     }
+    
     renderTimeSlots();
 }
-
     async function finalizarReserva() {
         if (!currentUser && !guestData) return;
 
@@ -646,17 +655,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 window.selectBarber = function(element, barberId) {
+    // 1. Efecto visual
     const cards = document.querySelectorAll('.barber-card');
     cards.forEach(card => card.classList.remove('active'));
     element.classList.add('active');
 
+    // 2. Sincronizar el select
     const proSelect = document.getElementById('pro-select');
     if (proSelect) {
         proSelect.value = barberId;
+        
+        // Disparamos el evento para que el sistema interno se entere del cambio
         proSelect.dispatchEvent(new Event('change'));
 
-        // ESTO OCULTA EL SELECTOR AL HACER CLIC EN LA FOTO
+        // Ocultamos el contenedor preventivamente
         const selectorContainer = proSelect.closest('.pro-selector');
-        if (selectorContainer) selectorContainer.style.display = 'none';
+        if (selectorContainer) {
+            selectorContainer.style.display = 'none';
+        }
     }
 };
