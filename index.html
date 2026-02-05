@@ -259,7 +259,8 @@
             <div class="services-intro-content fade-in">
                 <span class="tag" id="txt-serv-tag">¿QUÉ SABEMOS HACER?</span>
                 <h2 id="txt-serv-titulo">Somos expertos en el cuidado de tu imagen</h2>
-                <p id="txt-serv-desc">Antes de cada momento importante, ¿Qué es lo que hay que hacer? Pasar por tu barbería y emprolijar
+                <p id="txt-serv-desc">Antes de cada momento importante, ¿Qué es lo que hay que hacer? Pasar por tu
+                    barbería y emprolijar
                     esa peluca o arreglarse la barba. Conoce todos los servicios que tenemos disponibles para vos.</p>
 
                 <div class="service-buttons">
@@ -424,7 +425,8 @@
             <div class="title fade-in">
                 <span class="tag">TURNOS</span>
                 <h4 class="paragraph" id="txt-turnos-titulo">Personalizá tu reserva con nosotros.</h4>
-                <p id="txt-turnos-desc">En TOKZ valoramos a nuestros clientes y buscamos brindarles el mejor servicio.<br>Siempre se puede
+                <p id="txt-turnos-desc">En TOKZ valoramos a nuestros clientes y buscamos brindarles el mejor
+                    servicio.<br>Siempre se puede
                     crecer, por eso ahora podes reservar tu lugar de una manera simple y rápida a través de nuestra
                     Agenda Virtual.</p>
                 <a class="cta-button" href="/pages/turnos.html">Reservar</a>
@@ -484,7 +486,7 @@
         <section id="tokz-blog" class="blog-section fade-in">
             <div class="blog-container">
                 <div class="blog-header-main">
-                    <span class="tag">TOKZ NEWS</span>
+                    <span class="vip-tag">TOKZ NEWS</span>
                     <h2>Novedades y Avisos</h2>
                     <p>Información oficial de la barbería.</p>
                 </div>
@@ -609,8 +611,8 @@
 
     <script type="module">
         // 1. IMPORTAMOS LO QUE TU FIREBASE YA EXPORTA
-        import { db, collection, query } from '/public/js/firebase.js'; 
-        
+        import { db, collection, query } from '/public/js/firebase.js';
+
         // 2. IMPORTAMOS LO QUE FALTA DESDE INTERNET (Misma versión que usás: 10.7.1)
         import { orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -618,8 +620,8 @@
         const q = query(collection(db, "novedades"), orderBy("fecha", "desc"));
 
         onSnapshot(q, (snapshot) => {
-            feedContainer.innerHTML = ''; 
-            
+            feedContainer.innerHTML = '';
+
             if (snapshot.empty) {
                 feedContainer.innerHTML = '<p style="text-align:center; padding:20px; color:#777;">Aún no hay novedades.</p>';
             }
@@ -646,7 +648,7 @@
                         </div>
                     </div>
                 </div>`;
-                
+
                 feedContainer.innerHTML += postHTML;
             });
         }, (error) => {
@@ -658,7 +660,7 @@
     </script>
 
     <script type="module">
-        import { db } from '/public/js/firebase.js'; 
+        import { db } from '/public/js/firebase.js';
         import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         // Conectamos con el documento "textos_landing"
@@ -673,20 +675,20 @@
 
                 // 1. BARRA PROMO
                 const promoBar = document.getElementById('txt-promo-dinamico');
-                if(promoBar && data.promo_texto) promoBar.innerHTML = data.promo_texto;
+                if (promoBar && data.promo_texto) promoBar.innerHTML = data.promo_texto;
 
                 // 2. SECCIÓN SERVICIOS
-                if(data.serv_titulo) document.getElementById('txt-serv-titulo').innerText = data.serv_titulo;
-                if(data.serv_desc) document.getElementById('txt-serv-desc').innerText = data.serv_desc;
+                if (data.serv_titulo) document.getElementById('txt-serv-titulo').innerText = data.serv_titulo;
+                if (data.serv_desc) document.getElementById('txt-serv-desc').innerText = data.serv_desc;
 
                 // 3. SECCIÓN TURNOS (BARBEROS)
-                if(data.turnos_titulo) document.getElementById('txt-turnos-titulo').innerText = data.turnos_titulo;
+                if (data.turnos_titulo) document.getElementById('txt-turnos-titulo').innerText = data.turnos_titulo;
                 // Aquí actualizamos la descripción que faltaba
-                if(data.turnos_desc) document.getElementById('txt-turnos-desc').innerText = data.turnos_desc;
+                if (data.turnos_desc) document.getElementById('txt-turnos-desc').innerText = data.turnos_desc;
 
                 // 4. SECCIÓN EDUCACIÓN
-                if(data.edu_titulo) document.getElementById('txt-edu-titulo').innerText = data.edu_titulo;
-                if(data.edu_desc) {
+                if (data.edu_titulo) document.getElementById('txt-edu-titulo').innerText = data.edu_titulo;
+                if (data.edu_desc) {
                     // Usamos innerHTML por si querés poner saltos de linea <br>
                     document.getElementById('txt-edu-desc').innerHTML = data.edu_desc.replace(/\n/g, "<br>");
                 }
