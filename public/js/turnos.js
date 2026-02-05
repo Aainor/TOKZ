@@ -484,10 +484,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (bookingData.mode === 'separate') {
             const srvName = bookingData.services[serviceIndex];
             if (serviceTitle) {
-                serviceTitle.textContent = `Agendando: ${srvName} (${serviceIndex + 1}/${bookingData.services.length})`;
-                serviceTitle.style.display = 'block';
-                serviceTitle.style.color = "#AE0E30";
-            }
+        // En lugar de "Elegí profesional...", mostramos el barbero ya elegido
+        // Esto reemplaza el selector que ocultamos
+        serviceTitle.textContent = `Turno con ${bookingData.professional}`;
+        serviceTitle.style.display = 'block';
+        serviceTitle.style.color = "#AE0E30"; // Rojo Tokz para que resalte
+    }
         } else {
             if (serviceTitle) {
                 serviceTitle.textContent = bookingData.services.length > 1 ? "Agendando todo junto" : "";
@@ -635,19 +637,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 window.selectBarber = function(element, barberId) {
-    // 1. Mantiene el efecto visual en las tarjetas (el borde rojo/iluminado)
+    // 1. Mantiene el efecto de la tarjeta seleccionada
     const cards = document.querySelectorAll('.barber-card');
     cards.forEach(card => card.classList.remove('active'));
     element.classList.add('active');
 
-    // 2. Selecciona al profesional en el modal internamente
+    // 2. Sincroniza el barbero internamente
     const proSelect = document.getElementById('pro-select');
     if (proSelect) {
         proSelect.value = barberId;
-        // Esto prepara los horarios en segundo plano
         proSelect.dispatchEvent(new Event('change'));
+
+        // --- ESTO ES LO QUE QUERÉS ---
+        // Buscamos el div que dice "Profesional:" y tiene el desplegable
+        const selectorContainer = proSelect.closest('.pro-selector');
+        if (selectorContainer) {
+            // Lo ocultamos completamente de la vista del cliente
+            selectorContainer.style.display = 'none'; 
+        }
     }
-    
-    // NOTA: Borramos la parte de modal.classList.remove('hidden') 
-    // para que NO se abra solo al tocar la foto.
 };
