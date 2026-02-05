@@ -633,3 +633,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     renderServicesFromJSON();
 });
+
+window.selectBarber = function(element, barberId) {
+    // 1. Efecto visual en las tarjetas
+    const cards = document.querySelectorAll('.barber-card');
+    cards.forEach(card => card.classList.remove('active'));
+    element.classList.add('active');
+
+    // 2. Seleccionar automáticamente en el modal
+    const proSelect = document.getElementById('pro-select');
+    if (proSelect) {
+        proSelect.value = barberId;
+        // Disparamos el cambio para que cargue los horarios del barbero
+        proSelect.dispatchEvent(new Event('change'));
+    }
+
+    // 3. Abrir el modal automáticamente
+    const modal = document.getElementById('booking-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+    }
+};
