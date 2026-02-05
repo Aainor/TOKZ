@@ -635,22 +635,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 window.selectBarber = function(element, barberId) {
-    // 1. Efecto visual en las tarjetas
+    // 1. Mantiene el efecto visual en las tarjetas (el borde rojo/iluminado)
     const cards = document.querySelectorAll('.barber-card');
     cards.forEach(card => card.classList.remove('active'));
     element.classList.add('active');
 
-    // 2. Seleccionar automáticamente en el modal
+    // 2. Selecciona al profesional en el modal internamente
     const proSelect = document.getElementById('pro-select');
     if (proSelect) {
         proSelect.value = barberId;
-        // Disparamos el cambio para que cargue los horarios del barbero
+        // Esto prepara los horarios en segundo plano
         proSelect.dispatchEvent(new Event('change'));
     }
-
-    // 3. Abrir el modal automáticamente
-    const modal = document.getElementById('booking-modal');
-    if (modal) {
-        modal.classList.remove('hidden');
-    }
+    
+    // NOTA: Borramos la parte de modal.classList.remove('hidden') 
+    // para que NO se abra solo al tocar la foto.
 };
