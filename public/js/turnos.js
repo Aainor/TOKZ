@@ -1,33 +1,35 @@
 // ==========================================
 // 1. IMPORTACIONES
 // ==========================================
-
 import { db, auth } from './firebase.js';
-
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-import {
-    collection,
-    addDoc,
-    query,
-    where,
-    getDocs,
-    doc,
-    getDoc,
-    setDoc,
-    updateDoc,
-    increment
+    collection, addDoc, query, where, getDocs, doc, getDoc, setDoc, updateDoc, increment
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // ==========================================
-// 2. CONFIGURACIÓN Y ESTADO
+// 2. VARIABLES GLOBALES
 // ==========================================
+let BARBERS_CONFIG = [];
+let PRICES_DB = {};
+const EMAIL_SERVICE_ID = "service_hdoerpa";
+const EMAIL_TEMPLATE_ID = "template_16dkj9g";
+
+// ==========================================
+// 3. UTILIDADES
+// ==========================================
+
+// Obtener fecha local ISO (YYYY-MM-DD)
+function getLocalDateISO(dateObj) {
+    const offset = dateObj.getTimezoneOffset() * 60000;
+    const localTime = new Date(dateObj.getTime() - offset);
+    return localTime.toISOString().split('T')[0];
+}
+
+// Abrir Google Calendar
 function abrirLinkGoogleCalendar(turnoData) {
     if (!turnoData) return;
 
-    // MAPA DE EMAILS (Barbero -> Email)
     const EMAILS_BARBEROS = {
         "Jonathan": "jonathanrimada9@icloud.com",
         "Jonatan Rimada": "jonathanrimada9@icloud.com",
@@ -39,16 +41,12 @@ function abrirLinkGoogleCalendar(turnoData) {
         "Nicolás Ruibal": "fnvillalva.17@gmail.com"
     };
 
-    // Buscamos el email
     let emailBarbero = EMAILS_BARBEROS[turnoData.barbero];
-    
-    // Si no encontró por nombre exacto, buscamos coincidencia parcial
     if (!emailBarbero) {
         const nombreKey = Object.keys(EMAILS_BARBEROS).find(key => turnoData.barbero.includes(key));
         if (nombreKey) emailBarbero = EMAILS_BARBEROS[nombreKey];
     }
 
-    // Formatear fechas
     const fechaLimpia = turnoData.fecha.replace(/-/g, ''); 
     const horaLimpia = turnoData.hora.replace(/:/g, '') + '00'; 
     const fechasGoogle = `${fechaLimpia}T${horaLimpia}/${fechaLimpia}T${horaLimpia}`;
@@ -57,38 +55,28 @@ function abrirLinkGoogleCalendar(turnoData) {
     const params = new URLSearchParams({
         action: "TEMPLATE",
         text: `Corte con ${turnoData.barbero} - Tokz Barber`,
-        details: `Servicio: ${turnoData.servicio}. \n¡Te esperamos en el local!`,
+        details: `Servicio: ${turnoData.servicio}.`,
         dates: fechasGoogle,
         location: "Tokz Barber Shop"
     });
 
     if (emailBarbero) params.append('add', emailBarbero);
-
     window.open(`${baseUrl}?${params.toString()}`, '_blank');
 }
 
-let BARBERS_CONFIG = [];
-let PRICES_DB = {};
-// Configuración de EmailJS
-const EMAIL_SERVICE_ID = "service_hdoerpa";
-const EMAIL_TEMPLATE_ID = "template_16dkj9g";
-
-// === FUNCIÓN AUXILIAR FECHA ===
-function getLocalDateISO(dateObj) {
-    const offset = dateObj.getTimezoneOffset() * 60000;
-    const localTime = new Date(dateObj.getTime() - offset);
-    return localTime.toISOString().split('T')[0];
-}
-
+// ==========================================
+// 4. LÓGICA PRINCIPAL (DOM LOADED)
+// ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log("🚀 Iniciando Turnos.js (Versión Corregida)...");
 
-    // --- ESTADO INICIAL ---
+    // --- ESTADO ---
     let bookingData = {
         services: [],
         totalVip: 0,
         totalRegular: 0,
         mode: 'together',
-        date: null,
+        date: getLocalDateISO(new Date()),
         time: null,
         professional: '',
         appointments: []
@@ -99,7 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let guestData = null;
     let currentUser = null;
 
-    // --- DOM (ELEMENTOS HTML) ---
+    // --- ELEMENTOS DOM ---
     const modal = document.getElementById('booking-modal');
     const openBtn = document.querySelector('#reserva .cta-button'); 
     const closeBtn = document.getElementById('close-modal-btn');
@@ -108,127 +96,88 @@ document.addEventListener('DOMContentLoaded', async () => {
     const totalPriceEl = document.getElementById('total-price');
     const serviceTitle = document.getElementById('current-service-title');
     const servicesListContainer = document.querySelector('.services-list');
-    const steps = [
-        document.getElementById('step-1'),
-        document.getElementById('step-mode'),
-        document.getElementById('step-2'),
-        document.getElementById('step-3')
-    ];
+    const steps = [document.getElementById('step-1'), document.getElementById('step-mode'), document.getElementById('step-2'), document.getElementById('step-3')];
     const dots = document.querySelectorAll('.step-dot');
     const proSelect = document.getElementById('pro-select');
     const datePicker = document.getElementById('date-picker');
     const timeGridContainer = document.getElementById('time-grid-container');
 
-    if (!modal) console.error("❌ ERROR CRÍTICO: No encuentro el modal con id='booking-modal'.");
+    if (!modal) console.error("❌ ERROR: No se encontró el modal.");
 
-    // ==========================================
-    // LOGICA DE BARBEROS
-    // ==========================================
+    // --- CARGAR BARBEROS ---
     async function loadBarbersConfig() {
         try {
             const response = await fetch('/public/components/barberos.json');
-            if (!response.ok) throw new Error("No se pudo cargar barberos.json");
-
+            if (!response.ok) throw new Error("Error HTTP JSON");
             BARBERS_CONFIG = await response.json();
-
-            // Carga inicial
+            console.log("✅ Barberos cargados:", BARBERS_CONFIG);
             populateBarberSelect(BARBERS_CONFIG);
-
         } catch (e) {
-            console.error("Error crítico cargando configuración de barberos:", e);
-            BARBERS_CONFIG = [{ id: "any", name: "Cualquiera", days: [1, 2, 3, 4, 5, 6], hours: ["10:00", "18:00"] }];
+            console.error("Error cargando barberos, usando backup:", e);
+            // Backup por si falla el JSON
+            BARBERS_CONFIG = [
+                {id: "jonathan", name: "Jonathan", days: [1,2,3,4,5,6], hours: ["10:00","18:00"]},
+                {id: "lautaro", name: "Lautaro", days: [2,3,4,5,6], hours: ["10:00","18:00"]},
+                {id: "alejandra", name: "Alejandra", days: [2,3,4,5,6], hours: ["10:00","18:00"]},
+                {id: "nicolas", name: "Nicolás", days: [4,5,6], hours: ["14:00","19:00"]}
+            ];
+            populateBarberSelect(BARBERS_CONFIG);
         }
     }
 
-    // ✅ CORRECCIÓN CLAVE: Actualiza el estado inmediatamente al llenar el select
     function populateBarberSelect(barbersList) {
         if (!proSelect) return;
         proSelect.innerHTML = '';
-        
         barbersList.forEach(barber => {
             const option = document.createElement('option');
             option.value = barber.id;
             option.textContent = barber.name;
             proSelect.appendChild(option);
         });
-
-        // Forzamos la selección del primer elemento (Alejandra si está filtrado)
+        
+        // Seleccionar el primero por defecto
         if (proSelect.options.length > 0) {
             proSelect.selectedIndex = 0;
             bookingData.professional = proSelect.options[0].text;
-            console.log("Profesional actualizado a:", bookingData.professional);
         }
     }
 
-    // ✅ Lógica de exclusividad para Color
+    // --- FILTRO DE COLOR (ALEJANDRA) ---
     function filtrarBarberosPorServicio() {
         const SERVICIOS_COLOR = ["Claritos", "Color Global", "Franja"]; 
-
-        // Verificamos si alguno de los servicios seleccionados es de color
-        // Usamos el nombre FINAL (del PRICES_DB o del data-name) para comparar
         const tieneColor = bookingData.services.some(srv => SERVICIOS_COLOR.includes(srv));
 
         if (tieneColor) {
-            console.log("Detectado servicio de color. Filtrando a Alejandra...");
-            // Filtramos solo a Alejandra (asegúrate que en barberos.json el name tenga "Alejandra")
             const soloAlejandra = BARBERS_CONFIG.filter(b => b.name.toLowerCase().includes("alejandra"));
-            
-            if (soloAlejandra.length > 0) {
-                populateBarberSelect(soloAlejandra);
-            } else {
-                console.warn("ALERTA: No se encontró un barbero llamado 'Alejandra' en el JSON.");
-                // Si falla, mostramos todos para no romper la app
-                populateBarberSelect(BARBERS_CONFIG); 
-            }
+            if (soloAlejandra.length > 0) populateBarberSelect(soloAlejandra);
+            else populateBarberSelect(BARBERS_CONFIG); 
         } else {
-            // Si no hay color, restauramos a todos los barberos
             populateBarberSelect(BARBERS_CONFIG);
         }
     }
 
+    // --- INICIALIZACIÓN ---
     await loadBarbersConfig();
-
-    const today = new Date();
-    const todayFormatted = getLocalDateISO(today);
-
     if (datePicker) {
-        datePicker.min = todayFormatted;
-        datePicker.value = todayFormatted;
-        bookingData.date = todayFormatted;
+        datePicker.min = getLocalDateISO(new Date());
+        datePicker.value = getLocalDateISO(new Date());
+        bookingData.date = datePicker.value;
     }
 
-    // --- DETECCIÓN DE USUARIO ---
+    // --- AUTH ---
     onAuthStateChanged(auth, (user) => {
-        if (user) {
-            currentUser = user;
-            console.log("Usuario detectado:", currentUser.displayName);
-        } else {
-            currentUser = null;
-        }
+        currentUser = user;
         updateUI();
     });
 
-    // --- EVENTOS DE APERTURA/CIERRE ---
-    if (openBtn) {
-        openBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (modal) {
-                modal.classList.remove('hidden');
-            } else {
-                alert("Error: No se encuentra la ventana de reservas.");
-            }
-        });
-    }
-
+    // --- MODAL ---
+    if (openBtn) openBtn.addEventListener('click', (e) => { e.preventDefault(); modal.classList.remove('hidden'); });
     if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
 
-    // ==========================================
-    // CARGA DE SERVICIOS
-    // ==========================================
+    // --- CARGAR SERVICIOS ---
     async function renderServicesFromJSON() {
         try {
             const response = await fetch('/public/components/precios.json');
-            if (!response.ok) throw new Error("No se pudo cargar precios.json");
             const precios = await response.json();
             if (servicesListContainer) servicesListContainer.innerHTML = '';
 
@@ -242,34 +191,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             availableKeys.forEach(key => {
                 if (precios[key]) {
                     const item = precios[key];
-
-                    // Detección inteligente de precios nulos/texto
-                    let vipPrice = Number(item.destacado);
-                    if (isNaN(vipPrice)) vipPrice = null;
-
-                    let rawRegular = Number(item.accesorio);
-                    let regularPrice;
-                    if (isNaN(rawRegular)) {
-                        regularPrice = vipPrice; 
-                    } else {
-                        regularPrice = rawRegular;
-                    }
-
+                    let vipPrice = isNaN(Number(item.destacado)) ? null : Number(item.destacado);
+                    let regularPrice = isNaN(Number(item.accesorio)) ? vipPrice : Number(item.accesorio);
                     const finalName = SERVICE_NAMES[key] || key.toUpperCase();
 
                     PRICES_DB[finalName] = { vip: vipPrice, regular: regularPrice };
 
                     const html = `
-                        <div class="service-row" 
-                             data-id="${key}" 
+                        <div class="service-row" data-id="${key}" data-name="${finalName}" 
                              data-vip="${vipPrice !== null ? vipPrice : 'null'}" 
-                             data-regular="${regularPrice !== null ? regularPrice : 'null'}" 
-                             data-name="${finalName}">
+                             data-regular="${regularPrice !== null ? regularPrice : 'null'}">
                             <div class="srv-info">
                                 <span class="srv-name">${finalName}</span>
-                                <span class="srv-price">
-                                    ${vipPrice === null ? 'A consultar' : '$' + vipPrice.toLocaleString('es-AR')}
-                                </span>
+                                <span class="srv-price">${vipPrice === null ? 'A consultar' : '$' + vipPrice.toLocaleString('es-AR')}</span>
                             </div>
                             <div class="quantity-control">
                                 <button class="qty-btn minus" disabled>-</button>
@@ -281,9 +215,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             });
             attachServiceListeners();
-        } catch (e) {
-            console.error("Error cargando servicios:", e);
-        }
+        } catch (e) { console.error("Error servicios:", e); }
     }
 
     function attachServiceListeners() {
@@ -292,32 +224,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             const plus = row.querySelector('.plus');
             const valSpan = row.querySelector('.qty-val');
             const name = row.getAttribute('data-name');
-            
-            const rawVip = row.getAttribute('data-vip');
-            const vipPrice = rawVip === 'null' ? null : Number(rawVip);
-
-            const rawReg = row.getAttribute('data-regular');
-            const regularPrice = rawReg === 'null' ? null : Number(rawReg);
+            const vipPrice = row.getAttribute('data-vip') === 'null' ? null : Number(row.getAttribute('data-vip'));
+            const regularPrice = row.getAttribute('data-regular') === 'null' ? null : Number(row.getAttribute('data-regular'));
 
             plus.addEventListener('click', (e) => {
-                e.stopPropagation();
-                let currentQty = parseInt(valSpan.textContent);
-                currentQty++;
+                let currentQty = parseInt(valSpan.textContent) + 1;
                 valSpan.textContent = currentQty;
                 minus.disabled = false;
                 row.classList.add('selected-active');
-
                 bookingData.services.push(name);
-                
                 if (vipPrice !== null) bookingData.totalVip += vipPrice;
                 if (regularPrice !== null) bookingData.totalRegular += regularPrice;
-
                 checkModeCompatibility();
                 updateUI();
             });
 
             minus.addEventListener('click', (e) => {
-                e.stopPropagation();
                 let currentQty = parseInt(valSpan.textContent);
                 if (currentQty > 0) {
                     currentQty--;
@@ -340,47 +262,54 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function checkModeCompatibility() {
-        const modeTogetherBtn = document.getElementById('mode-together');
-        if (!modeTogetherBtn) return;
-
+        const modeBtn = document.getElementById('mode-together');
+        if (!modeBtn) return;
         const hasDuplicates = new Set(bookingData.services).size !== bookingData.services.length;
         if (hasDuplicates) {
             selectMode('separate');
-            modeTogetherBtn.classList.add('disabled-mode');
-            modeTogetherBtn.style.opacity = '0.4';
-            modeTogetherBtn.style.pointerEvents = 'none';
+            modeBtn.classList.add('disabled-mode');
+            modeBtn.style.pointerEvents = 'none';
+            modeBtn.style.opacity = '0.4';
         } else {
-            modeTogetherBtn.classList.remove('disabled-mode');
-            modeTogetherBtn.style.opacity = '1';
-            modeTogetherBtn.style.pointerEvents = 'auto';
+            modeBtn.classList.remove('disabled-mode');
+            modeBtn.style.pointerEvents = 'auto';
+            modeBtn.style.opacity = '1';
         }
     }
 
     window.selectMode = function (mode) {
         document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
-        const target = document.getElementById(`mode-${mode}`);
-        if (target) target.classList.add('selected');
+        document.getElementById(`mode-${mode}`).classList.add('selected');
         bookingData.mode = mode;
         updateUI();
     }
 
     // ==========================================
-    // LÓGICA CALENDARIO
+    // LÓGICA CALENDARIO (CORREGIDA)
     // ==========================================
     async function renderTimeSlots() {
         if (!timeGridContainer) return;
-        timeGridContainer.innerHTML = '<p style="color:white; text-align:center;">Cargando horarios...</p>';
+        timeGridContainer.innerHTML = '<p style="color:white; text-align:center;">Cargando...</p>';
 
         const selectedDateStr = datePicker.value;
-        if (!selectedDateStr) return;
+        if (!selectedDateStr) {
+            timeGridContainer.innerHTML = '<p style="color:white;">Seleccioná una fecha.</p>';
+            return;
+        }
 
+        // 1. LEER BARBERO SELECCIONADO EN EL MOMENTO
         const proId = proSelect.value;
-        const currentProName = proSelect.options[proSelect.selectedIndex].text;
+        const currentProName = proSelect.options[proSelect.selectedIndex]?.text || "Cualquiera";
+        
+        // 2. BUSCAR EN CONFIGURACIÓN
         const barber = BARBERS_CONFIG.find(b => b.id === proId) || BARBERS_CONFIG[0];
 
-        const dateObj = new Date(selectedDateStr + 'T00:00:00');
-        const dayOfWeek = dateObj.getDay();
-        if (dayOfWeek === 0 || !barber.days.includes(dayOfWeek)) {
+        // 3. CALCULO DE DÍA (FIX ZONA HORARIA)
+        const [y, m, d] = selectedDateStr.split('-').map(Number);
+        const fechaLocal = new Date(y, m - 1, d); 
+        const dayOfWeek = fechaLocal.getDay(); 
+
+        if (!barber.days.includes(dayOfWeek)) {
             timeGridContainer.innerHTML = `<p style="color:#888; width:100%; text-align:center;">No trabaja este día.</p>`;
             return;
         }
@@ -394,14 +323,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const querySnapshot = await getDocs(q);
             const dbTakenSlots = querySnapshot.docs.map(doc => doc.data().time);
-
+            
+            // Filtrar turnos locales si estamos en modo separado
             const localTakenSlots = bookingData.appointments
                 .filter(appt => appt.date === selectedDateStr && appt.pro === currentProName)
                 .map(appt => appt.time);
 
             const allTakenTimes = [...dbTakenSlots, ...localTakenSlots];
-
             const DURACION_TURNO = 45;
+            
+            // Convertir a minutos para comparar
             const rangosOcupados = allTakenTimes.map(timeStr => {
                 const [h, m] = timeStr.split(':').map(Number);
                 const inicioMin = h * 60 + m;
@@ -421,7 +352,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 let isPastTime = false;
                 const now = new Date();
-                if (selectedDateStr === getLocalDateISO(now)) {
+                const esHoy = selectedDateStr === getLocalDateISO(now);
+
+                if (esHoy) {
                     const currentHour = now.getHours();
                     const currentMin = now.getMinutes();
                     if (slotH < currentHour || (slotH === currentHour && slotM < currentMin)) {
@@ -456,31 +389,30 @@ document.addEventListener('DOMContentLoaded', async () => {
             updateUI();
 
         } catch (error) {
-            console.error("Error buscando horarios:", error);
+            console.error("Error horarios:", error);
             timeGridContainer.innerHTML = '<p style="color:red;">Error de conexión.</p>';
         }
-
-        if (proSelect) proSelect.addEventListener('change', () => {
-            bookingData.professional = proSelect.options[proSelect.selectedIndex].text;
-            bookingData.time = null;
-            renderTimeSlots();
-        });
-
-        if (datePicker) datePicker.addEventListener('change', (e) => {
-            bookingData.date = e.target.value;
-            bookingData.time = null;
-            renderTimeSlots();
-        });
     }
+    
+    // EVENT LISTENERS DEL CALENDARIO
+    if (proSelect) proSelect.addEventListener('change', () => {
+        bookingData.professional = proSelect.options[proSelect.selectedIndex].text;
+        bookingData.time = null;
+        renderTimeSlots();
+    });
+
+    if (datePicker) datePicker.addEventListener('change', (e) => {
+        bookingData.date = e.target.value;
+        bookingData.time = null;
+        renderTimeSlots();
+    });
 
     // ==========================================
     // NAVEGACIÓN
     // ==========================================
     if (btnNext) btnNext.addEventListener('click', async () => {
         if (currentStep === 1) {
-            // APLICAMOS FILTRO ANTES DE PASAR AL CALENDARIO
             filtrarBarberosPorServicio();
-
             if (bookingData.services.length > 1) currentStep = 2;
             else {
                 bookingData.mode = 'together';
@@ -492,8 +424,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (currentStep === 2) {
             if (bookingData.mode === 'separate') {
-                serviceIndex = 0;
-                bookingData.appointments = [];
+                serviceIndex = 0; bookingData.appointments = [];
             }
             prepareCalendarStep();
             currentStep = 3;
@@ -505,31 +436,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const currentService = bookingData.services[serviceIndex];
                 const finalProName = proSelect.options[proSelect.selectedIndex].text;
                 bookingData.appointments[serviceIndex] = {
-                    service: currentService,
-                    date: bookingData.date,
-                    time: bookingData.time,
-                    pro: finalProName
+                    service: currentService, date: bookingData.date, time: bookingData.time, pro: finalProName
                 };
                 serviceIndex++;
                 if (serviceIndex < bookingData.services.length) {
-                    prepareCalendarStep();
-                    updateStep();
-                    return;
+                    prepareCalendarStep(); updateStep(); return;
                 }
             }
             currentStep = 4;
             updateStep(); return;
         }
 
-        if (currentStep === 4) {
-            await finalizarReserva();
-        }
+        if (currentStep === 4) await finalizarReserva();
     });
 
     if (btnBack) btnBack.addEventListener('click', () => {
         if (currentStep === 4 && !currentUser && guestData !== null) {
-            guestData = null;
-            renderFinalStep(); return;
+            guestData = null; renderFinalStep(); return;
         }
         if (currentStep === 4) {
             currentStep = 3;
@@ -540,9 +463,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         } else if (currentStep === 3) {
             if (bookingData.mode === 'separate' && serviceIndex > 0) {
-                serviceIndex--;
-                prepareCalendarStep();
-                updateStep(); return;
+                serviceIndex--; prepareCalendarStep(); updateStep(); return;
             }
             if (bookingData.services.length > 1) currentStep = 2;
             else currentStep = 1;
@@ -570,133 +491,57 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderTimeSlots();
     }
 
-    // ==========================================
-    // FINALIZAR
-    // ==========================================
     async function finalizarReserva() {
-        if (!currentUser && !guestData) {
-            console.error("Intento de reserva bloqueado: No hay usuario autenticado.");
-            return;
-        }
+        if (!currentUser && !guestData) return;
 
         btnNext.textContent = "Procesando...";
         btnNext.disabled = true;
 
-        let finalName = (currentUser && currentUser.displayName) ? currentUser.displayName : (guestData ? guestData.name : "Cliente");
-        let finalMail = (currentUser && currentUser.email) ? currentUser.email : (guestData ? guestData.email : "");
+        let finalName = (currentUser && currentUser.displayName) ? currentUser.displayName : "Cliente";
+        let finalMail = (currentUser && currentUser.email) ? currentUser.email : "";
         let finalUid = currentUser ? currentUser.uid : "guest";
-
         const isVip = currentUser && currentUser.uid !== "guest";
         const precioFinalReserva = isVip ? bookingData.totalVip : bookingData.totalRegular;
 
-        let serviciosResumen = "";
-        let fechaResumen = "";
-        let proResumen = "";
-
-        if (bookingData.mode === 'together') {
-            let pName = bookingData.professional.includes("Cualquiera") ? "Cualquiera" : bookingData.professional;
-            serviciosResumen = bookingData.services.join(", ");
-            fechaResumen = `${bookingData.date} a las ${bookingData.time}`;
-            proResumen = pName;
-        } else {
-            serviciosResumen = "Paquete Multi-Turno: " + bookingData.services.join(" + ");
-            fechaResumen = bookingData.appointments.map(a => `${a.service} el ${a.date} (${a.time}) con ${a.pro}`).join(" || ");
-            proResumen = "Varios Profesionales";
-        }
-
-        const baseData = {
-            uid: finalUid,
-            clientName: finalName,
-            clientEmail: finalMail,
-            created_at: new Date(),
-            status: "pendiente"
-        };
+        const baseData = { uid: finalUid, clientName: finalName, clientEmail: finalMail, created_at: new Date(), status: "pendiente" };
 
         try {
             if (bookingData.mode === 'together') {
                 let pName = bookingData.professional.includes("Cualquiera") ? "Cualquiera" : bookingData.professional;
                 await addDoc(collection(db, "turnos"), {
-                    ...baseData,
-                    services: bookingData.services,
-                    total: precioFinalReserva,
-                    date: bookingData.date,
-                    time: bookingData.time,
-                    pro: pName,
-                    type: 'pack'
+                    ...baseData, services: bookingData.services, total: precioFinalReserva,
+                    date: bookingData.date, time: bookingData.time, pro: pName, type: 'pack'
                 });
             } else {
                 const promises = bookingData.appointments.map(appt => {
-                    const preciosServicio = PRICES_DB[appt.service] || { vip: 0, regular: 0 };
-                    let precioIndividual = isVip ? preciosServicio.vip : preciosServicio.regular;
-                    if (precioIndividual === null) precioIndividual = 0; 
-
                     return addDoc(collection(db, "turnos"), {
-                        ...baseData,
-                        services: [appt.service],
-                        total: precioIndividual,
-                        date: appt.date,
-                        time: appt.time,
-                        pro: appt.pro,
-                        type: 'single_from_pack'
+                        ...baseData, services: [appt.service], total: 0, 
+                        date: appt.date, time: appt.time, pro: appt.pro, type: 'single_from_pack'
                     });
                 });
                 await Promise.all(promises);
             }
 
-            // GESTIÓN CLIENTES
-            if (currentUser) {
-                try {
-                    const clientRef = doc(db, "Clientes", currentUser.uid);
-                    const clientSnap = await getDoc(clientRef);
-                    if (clientSnap.exists()) {
-                        await updateDoc(clientRef, { Cortes_Totales: increment(1) });
-                    } else {
-                        await setDoc(clientRef, {
-                            Nombre: currentUser.displayName || finalName,
-                            Email: currentUser.email || finalMail,
-                            Cortes_Totales: 1,
-                            Fecha_Registro: new Date()
-                        });
-                    }
-                } catch (e) { console.error(e); }
-            }
-
             // EMAILJS
-            const templateParams = {
-                to_name: finalName,
-                to_email: finalMail,
-                service_list: serviciosResumen,
-                date_info: fechaResumen,
-                professional: proResumen,
-                total_price: `$${precioFinalReserva}`,
-                message: "Gracias por confiar en el Staff de TOKZ."
-            };
+            let serviciosResumen = bookingData.mode === 'together' ? bookingData.services.join(", ") : "Multi-Turno";
+            await emailjs.send(EMAIL_SERVICE_ID, EMAIL_TEMPLATE_ID, {
+                to_name: finalName, to_email: finalMail, service_list: serviciosResumen,
+                date_info: bookingData.date + " " + bookingData.time, professional: bookingData.professional,
+                total_price: "$" + precioFinalReserva, message: "Gracias por confiar en TOKZ."
+            });
 
-            await emailjs.send(EMAIL_SERVICE_ID, EMAIL_TEMPLATE_ID, templateParams);
-            
-
-            // --- ABRIR CALENDARIO ---
+            // GOOGLE CALENDAR
             if (bookingData.mode === 'together') {
-                let pName = bookingData.professional.includes("Cualquiera") ? "Staff Tokz" : bookingData.professional;
                 abrirLinkGoogleCalendar({
-                    fecha: bookingData.date,
-                    hora: bookingData.time,
-                    barbero: pName,
-                    servicio: bookingData.services.join(" + ")
+                    fecha: bookingData.date, hora: bookingData.time,
+                    barbero: bookingData.professional, servicio: bookingData.services.join(" + ")
                 });
-            } else {
-                // Si son turnos separados, abrimos el del primero
-                const primerTurno = bookingData.appointments[0];
-                if (primerTurno) {
-                    abrirLinkGoogleCalendar({
-                        fecha: primerTurno.date,
-                        hora: primerTurno.time,
-                        barbero: primerTurno.pro,
-                        servicio: primerTurno.service
-                    });
-                }
+            } else if(bookingData.appointments.length > 0) {
+                abrirLinkGoogleCalendar({
+                    fecha: bookingData.appointments[0].date, hora: bookingData.appointments[0].time,
+                    barbero: bookingData.appointments[0].pro, servicio: bookingData.appointments[0].service
+                });
             }
-            
 
             alert(`¡Reserva confirmada ${finalName}!`);
             modal.classList.add('hidden');
@@ -706,216 +551,57 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         } catch (e) {
             console.error("Error reserva:", e);
-            alert("Hubo un error al procesar la reserva.");
+            alert("Error al procesar reserva.");
             btnNext.textContent = "Reintentar";
             btnNext.disabled = false;
         }
     }
 
-    function recalculateTotal() {
-        const tienePrecioAconsultar = bookingData.services.some(serviceName => {
-            const precioItem = PRICES_DB[serviceName]; 
-            return precioItem && precioItem.vip === null;
-        });
-
+    function updateUI() {
+        // Calcular precio
         const totalVip = bookingData.totalVip;
         const totalRegular = bookingData.totalRegular;
         let displayPrice = totalRegular;
-        let showCrossed = false;
+        if (currentUser) displayPrice = totalVip;
+        if(totalPriceEl) totalPriceEl.textContent = "$" + displayPrice;
 
-        if (currentUser && currentUser.uid !== "guest") {
-            displayPrice = totalVip;
-            if (totalRegular > totalVip) showCrossed = true;
-        }
-
-        const totalEl = document.getElementById('total-price');
-        
-        if (totalEl) {
-            if (tienePrecioAconsultar) {
-                if (displayPrice > 0) {
-                     totalEl.innerHTML = `<span style="font-size: 0.9em;">$${displayPrice.toLocaleString()} + A consultar</span>`;
-                } else {
-                     totalEl.textContent = "A consultar en local";
-                }
-            } 
-            else {
-                if (showCrossed) {
-                    totalEl.innerHTML = `
-                        <span style="text-decoration: line-through; color: #888; font-size: 0.8em; margin-right: 5px;">$${totalRegular.toLocaleString()}</span>
-                        <span style="color: #AE0E30;">$${displayPrice.toLocaleString()}</span>
-                    `;
-                } else {
-                    totalEl.textContent = `$${displayPrice.toLocaleString()}`;
-                }
-            }
-        }
-    }
-
-    // ==========================================
-    // UI UPDATES
-    // ==========================================
-    function updateUI() {
-        recalculateTotal();
+        // Validar botón siguiente
         let ok = false;
-
         if (currentStep === 1) ok = bookingData.services.length > 0;
         else if (currentStep === 2) ok = true;
-        else if (currentStep === 3) ok = bookingData.time !== null && bookingData.date !== null;
+        else if (currentStep === 3) ok = bookingData.time !== null;
         else ok = true;
-
-        if (currentStep !== 4 && btnNext) {
-            btnNext.style.display = 'block';
-        }
 
         if (btnNext) btnNext.disabled = !ok;
 
-        const footerTotal = document.querySelector('.total-display');
-        if (footerTotal) footerTotal.style.opacity = (currentStep === 4) ? '0' : '1';
-
         if (currentStep === 4) {
-            if (btnNext) {
-                btnNext.textContent = "Confirmar Reserva";
-                btnNext.style.backgroundColor = "#AE0E30";
-            }
+            if(btnNext) btnNext.textContent = "Confirmar Reserva";
         } else if (currentStep === 3 && bookingData.mode === 'separate' && serviceIndex < bookingData.services.length - 1) {
-            if (btnNext) {
-                btnNext.textContent = `Siguiente Turno`;
-                btnNext.style.backgroundColor = "#333";
-            }
+            if(btnNext) btnNext.textContent = `Siguiente Turno`;
         } else {
-            if (btnNext) {
-                btnNext.textContent = "Siguiente";
-                btnNext.style.backgroundColor = "#AE0E30";
-            }
+            if(btnNext) btnNext.textContent = "Siguiente";
         }
+        
+        if (currentStep === 4) renderFinalStep();
     }
-
-    const generateSummaryHTML = (name, isVip) => {
-        const safeName = name || "Cliente";
-
-        let resumenHTML = '';
-        const proNameDisplay = bookingData.professional;
-        const precioLista = bookingData.totalRegular;
-        const precioFinal = isVip ? bookingData.totalVip : bookingData.totalRegular;
-
-        const tienePrecioAconsultar = bookingData.services.some(serviceName => {
-            const precioItem = PRICES_DB[serviceName]; 
-            return precioItem && precioItem.vip === null;
-        });
-
-        if (bookingData.mode === 'separate') {
-            let itemsHTML = bookingData.appointments.map(appt => `
-                <li style="margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px;">
-                    <strong style="color: #fff; display:block;">${appt.service}</strong>
-                    <span style="color: #aaa; font-size: 0.85rem;">
-                        📅 ${appt.date.split('-').reverse().join('/')} &nbsp;|&nbsp; ⏰ ${appt.time} &nbsp;|&nbsp; 💈 ${appt.pro}
-                    </span>
-                </li>
-            `).join('');
-            resumenHTML = `<ul style="list-style: none; padding: 0; margin: 15px 0; text-align: left;">${itemsHTML}</ul>`;
-        } else {
-            const dateFormatted = bookingData.date ? bookingData.date.split('-').reverse().join('/') : 'Sin fecha';
-            resumenHTML = `
-                <div style="padding: 15px; text-align: left; margin: 15px 0;">
-                    <p style="color: #AE0E30; font-size: 0.8rem; text-transform: uppercase; font-weight: bold; margin-bottom: -15px;">Servicios (${bookingData.services.length}):</p>
-                    <p style="color: white; margin-bottom: 10px; font-weight: 500;">${bookingData.services.join(' + ')}</p>
-                    <div style="display: flex; gap: 10px; font-size: 0.9rem; color: #ccc;">
-                        <span>📅 ${dateFormatted}</span>
-                        <span>⏰ ${bookingData.time}</span>
-                    </div>
-                    <p style="color: #888; font-size: 0.9rem; margin-top: 5px;">💈 Barbero: <span style="color: #ddd;">${proNameDisplay}</span></p>
-                </div>
-            `;
-        }
-
-        let precioHTML = '';
-
-        if (tienePrecioAconsultar) {
-            const textoPrecio = precioFinal > 0 ? `$${precioFinal.toLocaleString()} + A consultar` : "A definir en local";
-            precioHTML = `
-               <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 20px;">
-                   <span style="color: white; font-size: 1.8rem; font-weight: bold;">${textoPrecio}</span>
-                   <span style="color: #888; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Total Estimado</span>
-               </div>
-           `;
-        } else if (isVip && precioFinal < precioLista) {
-            precioHTML = `
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 20px;">
-                    <span style="text-decoration: line-through; color: #666; font-size: 1.1rem; margin-bottom: -5px;">$${precioLista.toLocaleString()}</span>
-                    <span style="color: #4CAF50; font-size: 2.2rem; font-weight: bold; line-height: 1.2;">$${precioFinal.toLocaleString()}</span>
-                    <span style="color: #4CAF50; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; font-weight: bold;">Precio Socio</span>
-                </div>
-            `;
-        } else {
-            precioHTML = `
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 20px;">
-                    <span style="color: white; font-size: 2.2rem; font-weight: bold;">$${precioFinal.toLocaleString()}</span>
-                    <span style="color: #888; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Total Final</span>
-                </div>
-            `;
-        }
-
-        let emailMsg = '';
-        if (!isVip && guestData) {
-            emailMsg = `
-                <div style="margin-top: 15px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 6px; border: 1px dashed #444;">
-                    <p style="color: #aaa; font-size: 0.8rem; margin: 0;">Enviaremos la información de la reserva a:</p>
-                    <p style="color: #fff; font-size: 0.95rem; margin: 3px 0 0 0; font-weight: 500;">${guestData.email}</p>
-                </div>
-            `;
-        }
-
-        return `
-            <div class="user-summary" style="text-align: center;">
-                <h3 style="color: white; margin: 5px 0 15px 0;">¡Hola, <span style="color: #AE0E30;">${safeName}</span>!</h3>
-                <p style="color: #aaa; font-size: 0.9rem; margin-bottom: -20px;">Este es el resumen de tu reserva:</p>
-                ${resumenHTML}
-                <div style="border-top: 1px solid #333; margin-top: 15px; padding-top: 10px;">
-                    ${precioHTML}
-                </div>
-                ${emailMsg}
-                <p style="color: #555; font-size: 0.75rem; margin-top: 20px;">
-                    ${isVip
-                ? '(Si no sos vos, <a href="/pages/login.html" style="color:#666;">cerrá sesión e iniciá de nuevo.</a>)'
-                : '(Revisá bien los datos antes de confirmar)'}
-                </p>
-            </div>
-        `;
-    };
 
     function renderFinalStep() {
         const finalStepContainer = document.getElementById('step-3');
         if (!finalStepContainer) return;
-
         finalStepContainer.innerHTML = '';
-
         const contentWrapper = document.createElement('div');
-        contentWrapper.className = 'booking-form';
-
+        
         if (currentUser) {
+            contentWrapper.innerHTML = `<h2 style="color:white;text-align:center;">Revisá y Confirmá</h2><p style="color:#aaa;text-align:center;">${bookingData.services.join('+')} con ${bookingData.professional}</p>`;
+            btnNext.style.display = 'block';
+        } else {
             contentWrapper.innerHTML = `
-                <h2 class="step-title" style="text-align:center; color:white; margin-bottom:20px;">Revisá y Confirmá</h2>
-                ${generateSummaryHTML(currentUser.displayName, true)}
-            `;
-            if (btnNext) {
-                btnNext.style.display = 'block';
-                btnNext.textContent = "Confirmar Reserva";
-                btnNext.disabled = false;
-            }
-        }
-        else {
-            contentWrapper.innerHTML = `
-                <div style="text-align: center; padding: 30px 10px;">
-                    <h3 style="color: #AE0E30; margin-bottom: 15px;">🔒 Inicio de Sesión Requerido</h3>
-                    <p style="color: #ccc; margin-bottom: 25px;">
-                        Para asegurar tu turno, necesitamos que ingreses a tu cuenta.
-                    </p>
-                    <a href="/pages/login.html" class="cta-button" style="display: inline-block; text-decoration: none; background: #AE0E30; color: white; padding: 12px 25px; border-radius: 5px; font-weight: bold;">
-                        Iniciar Sesión / Registrarme
-                    </a>
-                </div>
-            `;
-            if (btnNext) btnNext.style.display = 'none';
+                <div style="text-align:center;">
+                    <h3 style="color:#AE0E30;">Iniciá Sesión</h3>
+                    <p style="color:#ccc;">Necesitás una cuenta para reservar.</p>
+                    <a href="/pages/login.html" class="cta-button">Ir al Login</a>
+                </div>`;
+            btnNext.style.display = 'none';
         }
         finalStepContainer.appendChild(contentWrapper);
     }
@@ -926,18 +612,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (i + 1 === currentStep) { s.classList.remove('hidden'); s.classList.add('active'); }
             else { s.classList.add('hidden'); s.classList.remove('active'); }
         });
-
-        let visualStepLimit = currentStep;
-        if (currentStep === 2) visualStepLimit = 1;
-        if (currentStep === 3) visualStepLimit = 2;
-        if (currentStep === 4) visualStepLimit = 3;
-
-        dots.forEach(d => {
-            const n = parseInt(d.getAttribute('data-step'));
-            d.classList.toggle('active', n <= visualStepLimit);
-        });
-
-        if (currentStep === 4) renderFinalStep();
         if (btnBack) btnBack.classList.toggle('hidden', currentStep === 1);
         updateUI();
     }
