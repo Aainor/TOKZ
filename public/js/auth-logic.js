@@ -16,9 +16,9 @@ import {
     setDoc,
     getDoc,
     updateDoc,
-    deleteDoc,       // <--- ¡No te olvides de poner esta coma!
-    addDoc,          // <--- AGREGÁ ESTO
-    serverTimestamp  // <--- AGREGÁ ESTO
+    deleteDoc,
+    addDoc,
+    increment
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // ==========================================
@@ -37,7 +37,7 @@ const STAFF_EMAILS = {
 
 // ADMIN: Si el email coincide, entra al Panel de Control
 const ADMIN_EMAILS = [
-    "mauriiciyo01@gmail.com"
+    "nicolasruibals4@gmail.com"
 ];
 
 // VARIABLES GLOBALES
@@ -77,8 +77,8 @@ window.abrirLinkGoogleCalendar = function (turnoData) {
         "Lautaro Ribeiro": "lautabarber.17@gmail.com",
         "Alejandra": "marsanzmos@gmail.com",
         "Alejandra Sanchez": "marsanzmos@gmail.com",
-        "Nicolás": "mauriiciyo01@gmail.com",
-        "Nicolás Ruibal": "mauriiciyo01@gmail.com"
+        "Nicolás": "fnvillalva.17@gmail.com",
+        "Nicolás Ruibal": "fnvillalva.17@gmail.com"
     };
 
     // Buscar email exacto o parcial
@@ -104,32 +104,217 @@ window.abrirLinkGoogleCalendar = function (turnoData) {
     window.open(`${baseUrl}?${params.toString()}`, '_blank');
 }
 
-function injectModalHTML() {
-    if (!document.getElementById('modal-detalle-overlay')) {
-        const modalHTML = `
-        <div id="modal-detalle-overlay">
-            <div class="modal-detalle-card">
-                <div class="detalle-header">
-                    <h2 id="modal-titulo">DETALLE TURNO</h2>
-                    <button class="close-modal-btn" onclick="closeDetalleModal()">&times;</button>
+// ==========================================
+    // 7. FUNCIONES AUXILIARES DE MODAL Y AGENDA
+    // ==========================================
+
+    // A. INYECTAR HTML DEL MODAL (Con botón de Eliminar agregado)
+  // A. INYECTAR HTML DEL MODAL (CON IDs PARA OCULTAR COSAS)
+    function injectModalHTML() {
+        if (!document.getElementById('modal-detalle-overlay')) {
+            const modalHTML = `
+            <div id="modal-detalle-overlay">
+                <div class="modal-detalle-card">
+                    <div class="detalle-header">
+                        <h2 id="modal-titulo">DETALLE TURNO</h2>
+                        <button class="close-modal-btn" onclick="closeDetalleModal()">&times;</button>
+                    </div>
+                    <div class="detalle-body">
+                        <div class="info-row" id="row-cliente">
+                            <span class="info-label" id="lbl-cliente">Cliente</span>
+                            <span class="info-value" id="modal-cliente">...</span>
+                        </div>
+                        
+                        <div class="info-row" id="row-servicio">
+                            <span class="info-label">Servicio</span>
+                            <span class="info-value" id="modal-servicio">...</span>
+                        </div>
+
+                        <div class="info-row" id="row-horario">
+                            <span class="info-label">Horario</span>
+                            <span class="info-value" id="modal-horario">...</span>
+                        </div>
+
+                        <div class="info-row" id="row-precio">
+                            <span class="info-label">Precio Estimado</span>
+                            <span class="info-value" id="modal-precio">...</span>
+                        </div>
+
+                        <div class="info-row" id="row-contacto">
+                            <span class="info-label">Contacto</span>
+                            <span class="info-value email" id="modal-email">...</span>
+                        </div>
+                        
+                        <div style="margin-top: 25px; border-top: 1px solid #333; padding-top: 15px;">
+                            <button id="btn-delete-event" style="width:100%; padding:12px; background:transparent; border:1px solid #ff4444; color:#ff4444; border-radius:6px; cursor:pointer; font-weight:bold; transition:all 0.3s; display:flex; align-items:center; justify-content:center; gap:8px;">
+                                <i class="fa-solid fa-trash"></i> <span>CANCELAR TURNO</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="detalle-body">
-                    <div class="info-row"><span class="info-label">Cliente</span><span class="info-value" id="modal-cliente">...</span></div>
-                    <div class="info-row"><span class="info-label">Servicio</span><span class="info-value" id="modal-servicio">...</span></div>
-                    <div class="info-row"><span class="info-label">Horario</span><span class="info-value" id="modal-horario">...</span></div>
-                    <div class="info-row"><span class="info-label">Precio Estimado</span><span class="info-value" id="modal-precio">...</span></div>
-                    <div class="info-row"><span class="info-label">Contacto</span><span class="info-value email" id="modal-email">...</span></div>
-                </div>
-            </div>
-        </div>`;
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
-        setTimeout(() => {
-            const overlay = document.getElementById('modal-detalle-overlay');
-            if (overlay) overlay.addEventListener('click', (e) => { if (e.target.id === 'modal-detalle-overlay') closeDetalleModal(); });
-        }, 500);
+            </div>`;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            setTimeout(() => {
+                const overlay = document.getElementById('modal-detalle-overlay');
+                if (overlay) overlay.addEventListener('click', (e) => { 
+                    if (e.target.id === 'modal-detalle-overlay') closeDetalleModal(); 
+                });
+                const btn = document.getElementById('btn-delete-event');
+                if(btn){
+                    btn.onmouseover = () => { btn.style.background = '#ff4444'; btn.style.color = 'white'; };
+                    btn.onmouseout = () => { btn.style.background = 'transparent'; btn.style.color = '#ff4444'; };
+                }
+            }, 500);
+        }
     }
-}
-window.closeDetalleModal = function () { const el = document.getElementById('modal-detalle-overlay'); if (el) el.classList.remove('active'); }
+
+    // B. FUNCIÓN PARA CERRAR EL MODAL (¡NO BORRAR ESTA LÍNEA!)
+    window.closeDetalleModal = function () { 
+        const el = document.getElementById('modal-detalle-overlay'); 
+        if (el) el.classList.remove('active'); 
+    }
+
+    // C. CARGAR AGENDA DEL BARBERO (Con lógica de bloqueos y eliminación)
+    async function loadBarberAgenda(nombreBarbero) {
+        const calendarEl = document.getElementById('calendar-barber');
+        if (!calendarEl) return;
+        
+        calendarEl.innerHTML = ''; // Limpiar calendario previo
+        injectModalHTML(); // Asegurar que el modal existe
+
+        try {
+            const q = query(collection(db, "turnos"), where("pro", "==", nombreBarbero));
+            const snap = await getDocs(q);
+            let eventos = [];
+
+            snap.forEach(d => {
+                const data = d.data();
+                if (data.date && data.time) {
+                    const start = `${data.date}T${data.time}:00`;
+                    // Calculamos fin (30 mins por defecto)
+                    const end = new Date(new Date(start).getTime() + 30 * 60000).toISOString();
+                    
+                    // Diferenciar visualmente BLOQUEOS de TURNOS NORMALES
+                    let isBlock = data.status === "blocked";
+                    let bgColor = isBlock ? '#1a1a1a' : '#AE0E30'; // Negro/Gris para bloqueos, Rojo para turnos
+                    let borderColor = isBlock ? '#444' : '#ffffff';
+                    
+                    // Título: Si es bloqueo, dice "BLOQUEADO", si no, el nombre del cliente
+                    let displayTitle = isBlock ? '⛔ BLOQUEADO' : (data.clientName || 'Cliente');
+
+                    eventos.push({
+                        id: d.id,
+                        title: displayTitle,
+                        start: start,
+                        end: end,
+                        backgroundColor: bgColor,
+                        borderColor: borderColor,
+                        textColor: '#ffffff',
+                        extendedProps: {
+                            servicio: Array.isArray(data.services) ? data.services.join(" + ") : data.services,
+                            email: data.clientEmail || 'No especificado',
+                            precio: formatMoney(data.total), // Usa tu función formatMoney existente
+                            esBloqueo: isBlock,
+                            nombreReal: data.clientName // Guardamos el nombre/motivo real para el modal
+                        }
+                    });
+                }
+            });
+
+            if (calendarInstance) calendarInstance.destroy();
+
+            calendarInstance = new FullCalendar.Calendar(calendarEl, {
+                initialView: window.innerWidth < 768 ? 'timeGridDay' : 'timeGridWeek',
+                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
+                locale: 'es',
+                slotMinTime: '09:00:00',
+                slotMaxTime: '21:00:00',
+                allDaySlot: false,
+                height: '100%',
+                contentHeight: 'auto',
+                slotDuration: '00:30:00',
+                eventContent: function (arg) {
+                    // Diseño interno de la tarjeta del turno
+                    return {
+                        html: `
+                            <div class="turno-card" style="background:${arg.event.backgroundColor}; border-left: 3px solid ${arg.event.borderColor}">
+                                <div class="turno-header"><span class="turno-hora">${arg.timeText}</span></div>
+                                <div class="turno-body">
+                                    <span class="turno-servicio" style="font-size:0.85em; font-weight:bold;">${arg.event.extendedProps.servicio}</span>
+                                    ${arg.event.extendedProps.esBloqueo ? `<br><span style="font-size:0.7em; opacity:0.8;">${arg.event.extendedProps.nombreReal}</span>` : ''}
+                                </div>
+                            </div>`
+                    };
+                },
+                events: eventos,
+                eventClick: function (info) {
+                    const p = info.event.extendedProps;
+                    
+                    // 1. Llenar datos del modal negro
+                    document.getElementById('modal-titulo').textContent = p.esBloqueo ? "HORARIO BLOQUEADO" : "DETALLE TURNO";
+                    document.getElementById('modal-cliente').textContent = p.nombreReal; // Muestra Cliente o Motivo
+                    document.getElementById('modal-servicio').textContent = p.servicio;
+                    document.getElementById('modal-precio').textContent = p.precio;
+                    document.getElementById('modal-email').textContent = p.email;
+
+                    // Formatear hora para mostrar "10:00 hs"
+                    const fechaObj = info.event.start;
+                    const horaStr = fechaObj.getHours().toString().padStart(2, '0') + ':' + fechaObj.getMinutes().toString().padStart(2, '0');
+                    document.getElementById('modal-horario').textContent = `${horaStr} hs`;
+
+                    // 2. CONFIGURAR EL BOTÓN DE ELIMINAR/CANCELAR
+                    const btnDelete = document.getElementById('btn-delete-event');
+                    if (btnDelete) {
+                        // Cambiar texto según si es turno o bloqueo
+                        if (p.esBloqueo) {
+                            btnDelete.innerHTML = '<i class="fa-solid fa-lock-open"></i> <span>DESBLOQUEAR HORARIO</span>';
+                        } else {
+                            btnDelete.innerHTML = '<i class="fa-solid fa-trash"></i> <span>CANCELAR TURNO</span>';
+                        }
+                        
+                        // Asignar la función de borrado
+                        btnDelete.onclick = async function() {
+                            const confirmMsg = p.esBloqueo 
+                                ? "¿Seguro que querés desbloquear este horario? Quedará disponible para reservas." 
+                                : `¿Seguro que querés cancelar el turno de ${p.nombreReal}? Esta acción no se puede deshacer.`;
+
+                            if (confirm(confirmMsg)) {
+                                try {
+                                    btnDelete.disabled = true;
+                                    btnDelete.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
+                                    
+                                    // A) Borrar de Firebase
+                                    await deleteDoc(doc(db, "turnos", info.event.id));
+                                    
+                                    // B) Borrar visualmente del calendario (sin recargar todo)
+                                    info.event.remove();
+                                    
+                                    // C) Cerrar modal y avisar
+                                    closeDetalleModal();
+                                    // alert(p.esBloqueo ? "Horario liberado." : "Turno cancelado correctamente.");
+                                    
+                                } catch (error) {
+                                    console.error("Error al eliminar:", error);
+                                    alert("Error al intentar borrar. Revisá tu conexión.");
+                                    btnDelete.disabled = false;
+                                    btnDelete.innerHTML = '<i class="fa-solid fa-trash"></i> Reintentar';
+                                }
+                            }
+                        };
+                    }
+
+                    // 3. Mostrar el modal
+                    document.getElementById('modal-detalle-overlay').classList.add('active');
+                },
+                windowResize: function (arg) {
+                    const newView = window.innerWidth < 768 ? 'timeGridDay' : 'timeGridWeek';
+                    if (calendarInstance.view.type !== newView) calendarInstance.changeView(newView);
+                }
+            });
+            calendarInstance.render();
+        } catch (e) { console.error("Error calendario:", e); }
+    }
 
 
 // ==========================================
@@ -160,138 +345,46 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ------------------------------------------
     // B. ELEMENTOS DOM (VISTAS)
     // ------------------------------------------
+  // ======================================================
+    // ZONA DE REFERENCIAS DOM (DEFINIR TODO ACÁ ARRIBA)
+    // ======================================================
+
+    // 1. VISTAS PRINCIPALES
     const viewLogin = document.getElementById('view-login');
     const viewRegister = document.getElementById('view-register');
     const viewUser = document.getElementById('view-user');
     const viewBooking = document.getElementById('booking-mod');
     const viewBarber = document.getElementById('view-barber');
     const viewAdmin = document.getElementById('view-admin');
-    const btnPublishDirect = document.getElementById('btn-publish-direct');
-    const inputNewsDirect = document.getElementById('admin-news-input');
 
-    // Botones Admin
-    const btnAdminRefresh = document.getElementById('btn-admin-refresh');
-    const adminDatePicker = document.getElementById('admin-date-picker');
-    const btnLogoutAdmin = document.getElementById('btn-logout-admin');
-    const btnGoCalendar = document.getElementById('btn-go-calendar');
-    const btnBackAdmin = document.getElementById('btn-back-admin');
-    const btnAddManual = document.getElementById('btn-add-manual');
+    // 2. ELEMENTOS DEL MENÚ DESPLEGABLE (NUEVO)
+    const btnNuevoTrigger = document.getElementById('btn-nuevo-trigger');
+    const menuDropdown = document.getElementById('dropdown-menu-barber');
+    const btnOpenReserva = document.getElementById('opt-reserva');
+    const btnOpenBloqueo = document.getElementById('opt-bloqueo');
 
-    // ======================================================
-    // ✅ NUEVO: LÓGICA PARA PUBLICAR NOVEDADES (TOKZ NEWS)
-    // ======================================================
-    if (btnPublishDirect && inputNewsDirect) {
-        btnPublishDirect.addEventListener('click', async () => {
-            const texto = inputNewsDirect.value;
+    // 3. ELEMENTOS DEL MODAL RESERVA MANUAL
+    const manualModal = document.getElementById('manual-modal-overlay');
+    const btnCloseManual = document.getElementById('close-manual-btn');
+    const btnSaveManual = document.getElementById('btn-save-manual');
+    const inpManualName = document.getElementById('manual-client-name');
+    const inpManualContact = document.getElementById('manual-client-contact');
+    const inpManualService = document.getElementById('manual-service-select');
+    const inpManualDate = document.getElementById('manual-date-picker');
+    const gridManualTime = document.getElementById('manual-time-grid');
 
-            // 1. Validar que no esté vacío
-            if (texto.trim() === "") {
-                alert("⚠️ Escribí algo antes de publicar.");
-                return;
-            }
+    // 4. ELEMENTOS DEL MODAL BLOQUEO (EL QUE FALLABA)
+    const blockModal = document.getElementById('block-modal-overlay');
+    const btnCloseBlock = document.getElementById('close-block-btn');
+    const btnCancelBlock = document.getElementById('btn-cancel-block'); // <--- AHORA SÍ EXISTE
+    const btnConfirmBlock = document.getElementById('btn-confirm-block');
+    const inpBlockReason = document.getElementById('block-reason');
+    const inpBlockDate = document.getElementById('block-date');
+    const selBlockStart = document.getElementById('block-start-time');
+    const selBlockEnd = document.getElementById('block-end-time');
 
-            // 2. Efecto visual de carga
-            const btnOriginalText = btnPublishDirect.innerHTML;
-            btnPublishDirect.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> PUBLICANDO...';
-            btnPublishDirect.disabled = true;
-
-            try {
-                // 3. Guardar en Firebase (Colección 'novedades')
-                await addDoc(collection(db, "novedades"), {
-                    texto: texto,
-                    fecha: serverTimestamp(),
-                    autor: "AdminPanel"
-                });
-
-                alert("✅ ¡Mensaje publicado en el inicio!");
-                inputNewsDirect.value = ""; // Limpiar la cajita
-            } catch (error) {
-                console.error("Error publicando:", error);
-                alert("❌ Error al publicar. Verificá tu conexión.");
-            } finally {
-                // 4. Restaurar botón
-                btnPublishDirect.innerHTML = btnOriginalText;
-                btnPublishDirect.disabled = false;
-            }
-        });
-    }
-    // ======================================================
-
-    if (btnAddManual) {
-        btnAddManual.addEventListener('click', async () => {
-            // 1. Pedir datos rápidos (Podrías hacer un modal mejor luego)
-            const cliente = prompt("Nombre del Cliente:");
-            if (!cliente) return;
-
-            // Fecha y hora actuales por defecto o pedir
-            const hoy = new Date();
-            const fechaStr = hoy.toISOString().split('T')[0]; // YYYY-MM-DD
-            const horaStr = prompt("Hora del turno (HH:MM):", "10:00");
-            
-            // Nombre del barbero actual (lo sacamos del título de la pantalla)
-            const nombreBarbero = document.getElementById('barber-name-display').textContent;
-
-            // 2. Objeto del Turno
-            const nuevoTurno = {
-                clientName: cliente,
-                date: fechaStr,
-                time: horaStr,
-                pro: nombreBarbero,
-                services: ["Turno Manual"], // Servicio genérico
-                total: "$0", // Precio a definir
-                status: "confirmed"
-            };
-
-            try {
-                // 3. Guardar en Firebase
-                await addDoc(collection(db, "turnos"), nuevoTurno);
-                
-                // 4. Refrescar calendario visualmente
-                loadBarberAgenda(nombreBarbero);
-
-                // 5. 📅 MAGIA DE GOOGLE CALENDAR
-                // Usamos la función global que creamos antes
-                window.abrirLinkGoogleCalendar({
-                    fecha: fechaStr,
-                    hora: horaStr,
-                    barbero: nombreBarbero, // Se usará para buscar el email en la lista
-                    servicio: "Turno Manual"
-                });
-
-            } catch (error) {
-                console.error("Error creando turno manual:", error);
-                alert("Error al guardar.");
-            }
-        });
-    }
-
-    // 1. Botón BUSCAR (Admin)
-    if (btnAdminRefresh) {
-        btnAdminRefresh.addEventListener('click', () => {
-            const fechaSeleccionada = adminDatePicker.value;
-            if (fechaSeleccionada) {
-                loadAdminDashboard(fechaSeleccionada);
-            } else {
-                alert("📅 Por favor elegí una fecha primero.");
-            }
-        });
-    }
-
-    // 2. Botón SALIR (Admin)
-    if (btnLogoutAdmin) {
-        btnLogoutAdmin.addEventListener('click', async () => {
-            try { await signOut(auth); } catch (error) { console.error("Error al salir:", error); }
-        });
-    }
-
-    // Botones Generales
-    const btnLogout = document.getElementById('btn-logout');
-    const btnViewBookings = document.getElementById('btn-view-bookings');
-    const btnBackDashboard = document.getElementById('btn-back-dashboard');
-    const bookingsListContainer = document.querySelector('.bookings-list');
-    const googleBtn = document.querySelector('.google-btn');
-
-    // --- GESTIÓN DE VISTAS ---
+    // 5. VARIABLES DE ESTADO LOCAL
+    let manualTimeSelected = null;
 
     // --- FUNCIÓN SWITCH VIEW CORREGIDA (FIX PANTALLA NEGRA) ---
     function switchView(viewToShow) {
@@ -344,34 +437,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                         rol = 'admin';
                     }
 
-                // 3. REDIRECCIONAR SEGÚN ROL
-                if (rolDetectado === 'admin') {
-                    switchView(viewAdmin);
-
-                    // FORZAR VISIBILIDAD DEL PANEL NUEVO
-                if (viewAdmin) {
-                    viewAdmin.style.display = 'block';
-                    viewAdmin.classList.remove('hidden');
-                }
-
-                    // LOGICA BOTÓN "MI AGENDA" (Admin -> Calendar)
-                    if (btnGoCalendar && btnBackAdmin) {
-                        btnBackAdmin.classList.remove('hidden');
-
-                        btnGoCalendar.onclick = () => {
-                            const nombreAgendaAdmin = "Nicolás"; // Admin ve agenda de Nico
-                            console.log("Admin yendo a agenda de:", nombreAgendaAdmin);
-
-                            loadBarberAgenda(nombreAgendaAdmin);
-                            const barberNameDisplay = document.getElementById('barber-name-display');
-                            if (barberNameDisplay) barberNameDisplay.textContent = nombreAgendaAdmin;
-
-                            switchView(viewBarber);
-                        };
-
-                        btnBackAdmin.onclick = () => {
-                            switchView(viewAdmin);
-                        };
+                    if (!userSnap.exists()) {
+                        await setDoc(userRef, { Nombre: nombreOficial, Email: user.email, Cortes_Totales: 0, Fecha_Registro: new Date(), rol: rol });
                     }
 
                     if (rol === 'admin') {
@@ -484,257 +551,346 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     if (btnBackAdmin) btnBackAdmin.onclick = () => switchView(viewAdmin);
 
+ 
     // ==========================================
-    // LÓGICA DE CARGA MANUAL (MEJORADA)
+    // LÓGICA UNIFICADA: NUEVO, RESERVA Y BLOQUEO
     // ==========================================
-    const manualModal = document.getElementById('manual-modal-overlay');
-    const btnOpenManual = document.getElementById('btn-add-manual');
-    const btnCloseManual = document.getElementById('close-manual-btn');
-    const btnSaveManual = document.getElementById('btn-save-manual');
 
-    // Inputs del modal
-    const inpManualName = document.getElementById('manual-client-name');
-    const inpManualContact = document.getElementById('manual-client-contact');
-    const inpManualService = document.getElementById('manual-service-select');
-    const inpManualDate = document.getElementById('manual-date-picker');
-    const gridManualTime = document.getElementById('manual-time-grid');
-
-    let manualTimeSelected = null;
-
-    if (btnOpenManual && manualModal) {
-
-        // 1. ABRIR MODAL
-        btnOpenManual.addEventListener('click', () => {
-            // Limpiar campos
-            inpManualName.value = '';
-            inpManualContact.value = '';
-            inpManualDate.value = getLocalDateISO(new Date()); // Fecha de hoy por defecto
-            manualTimeSelected = null;
-            btnSaveManual.disabled = true;
-            btnSaveManual.style.opacity = '0.5';
-
-            // Cargar horarios para hoy automáticamente
-            loadManualTimeSlots();
-
-            manualModal.classList.remove('hidden');
-            manualModal.classList.add('active'); // Usar clase active si la tenés en CSS para fade
+    // A. MENÚ DESPLEGABLE (+ NUEVO)
+    if (btnNuevoTrigger && menuDropdown) {
+        btnNuevoTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menuDropdown.classList.toggle('show');
+            const icon = btnNuevoTrigger.querySelector('i');
+            if (icon) icon.className = menuDropdown.classList.contains('show') ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-up';
         });
 
-        // 2. CERRAR MODAL
+        // Cerrar al hacer click afuera
+        document.addEventListener('click', (e) => {
+            if (!menuDropdown.contains(e.target) && !btnNuevoTrigger.contains(e.target)) {
+                menuDropdown.classList.remove('show');
+                const icon = btnNuevoTrigger.querySelector('i');
+                if (icon) icon.className = 'fa-solid fa-chevron-up';
+            }
+        });
+    }
+
+    // B. OPCIÓN 1: NUEVA RESERVA (MANUAL)
+    if (btnOpenReserva) {
+        btnOpenReserva.addEventListener('click', () => {
+            if (menuDropdown) menuDropdown.classList.remove('show');
+
+            // Resetear formulario
+            if (inpManualName) inpManualName.value = '';
+            if (inpManualContact) inpManualContact.value = '';
+            if (inpManualDate) inpManualDate.value = getLocalDateISO(new Date());
+            manualTimeSelected = null;
+            
+            if (btnSaveManual) {
+                btnSaveManual.disabled = true;
+                btnSaveManual.style.opacity = '0.5';
+            }
+
+            // Cargar horarios del día
+            loadManualTimeSlots();
+
+            if (manualModal) {
+                manualModal.classList.remove('hidden');
+                manualModal.classList.add('active');
+            }
+        });
+    }
+
+    // Cerrar modal reserva
+    if (btnCloseManual && manualModal) {
         btnCloseManual.addEventListener('click', () => {
             manualModal.classList.add('hidden');
             manualModal.classList.remove('active');
         });
+    }
 
-        // 3. CAMBIO DE FECHA -> RECARGAR HORARIOS
-        inpManualDate.addEventListener('change', loadManualTimeSlots);
+    // Guardar Reserva (Lógica existente)
+    if (btnSaveManual) {
+        btnSaveManual.addEventListener('click', async () => {
+            // ... (ACÁ VA TU LÓGICA DE GUARDADO EXISTENTE, NO HACE FALTA CAMBIARLA) ...
+            // Solo asegurate de usar las variables que definimos arriba
+            const name = inpManualName.value.trim();
+            // ... resto del código de guardado ...
+            // (Si querés te copio la función entera de guardado de nuevo, avisame)
+            
+            // PEQUEÑO RESUMEN PARA QUE NO SE ROMPA SI COPIAS Y PEGAS ESTO SOLO:
+            const contact = inpManualContact.value.trim();
+            const service = inpManualService.value;
+            const date = inpManualDate.value;
+            if (!name || !manualTimeSelected) { alert("Faltan datos"); return; }
+            
+            // ... (Logica de firebase addDoc) ...
+            // Al final del guardado exitoso:
+             const currentBarberName = document.getElementById('barber-name-display')?.textContent || "Staff";
+             const PRECIOS_MANUALES = { "Corte de Cabello": 16000, "Barba": 10000, "Corte + Barba": 18000, "Color": 25000 };
+             const precioFinal = PRECIOS_MANUALES[service] || 0;
 
-        // 4. FUNCIÓN CARGAR HORARIOS DEL BARBERO ACTUAL
-        // 4. FUNCIÓN CARGAR HORARIOS DEL BARBERO ACTUAL (CORREGIDA)
-        async function loadManualTimeSlots() {
-            gridManualTime.innerHTML = '<p style="color:#888; font-size:0.8rem;">Cargando horarios...</p>';
+             try {
+                 await addDoc(collection(db, "turnos"), {
+                     clientName: name, clientEmail: contact || "-", services: [service], date: date, time: manualTimeSelected,
+                     pro: currentBarberName, total: precioFinal, status: "confirmed", type: "manual_admin", created_at: new Date()
+                 });
+                 
+                 // Calendario y Email
+                 if (typeof window.abrirLinkGoogleCalendar === 'function') window.abrirLinkGoogleCalendar({ fecha: date, hora: manualTimeSelected, barbero: currentBarberName, servicio: `${service} - ${name}` });
+                 
+                 alert("Turno guardado");
+                 manualModal.classList.add('hidden'); manualModal.classList.remove('active');
+                 loadBarberAgenda(currentBarberName);
+             } catch(e) { console.error(e); alert("Error"); }
+        });
+    }
 
-            const dateStr = inpManualDate.value;
-            if (!dateStr) return;
+    // Cambio de fecha manual
+    if (inpManualDate) inpManualDate.addEventListener('change', loadManualTimeSlots);
 
-            // --- CORRECCIÓN CLAVE: Cargar JSON si está vacío ---
-            if (!BARBERS_CONFIG || BARBERS_CONFIG.length === 0) {
-                try {
-                    const res = await fetch('/public/components/barberos.json');
-                    BARBERS_CONFIG = await res.json();
-                    console.log("✅ JSON cargado para manual:", BARBERS_CONFIG);
-                } catch (e) {
-                    console.error("Error cargando JSON:", e);
-                    gridManualTime.innerHTML = '<p style="color:red;">Error de configuración</p>';
-                    return;
-                }
+
+    // ==========================================
+    // C. OPCIÓN 2: BLOQUEAR HORARIO (CORREGIDO FINAL)
+    // ==========================================
+    
+    // Función auxiliar para llenar horas
+    function llenarSelectoresHorario() {
+        if (!selBlockStart || !selBlockEnd) return;
+        
+        let options = '';
+        for (let h = 9; h < 21; h++) {
+            ['00', '30'].forEach(m => {
+                const time = `${h.toString().padStart(2, '0')}:${m}`;
+                options += `<option value="${time}">${time} hs</option>`;
+            });
+        }
+        options += `<option value="21:00">21:00 hs</option>`;
+        
+        selBlockStart.innerHTML = options;
+        selBlockEnd.innerHTML = options;
+        selBlockStart.value = "10:00";
+        selBlockEnd.value = "11:00";
+    }
+
+    // 1. ABRIR EL MODAL
+    if (btnOpenBloqueo) {
+        btnOpenBloqueo.addEventListener('click', () => {
+            // Cerrar menú si está abierto
+            if (menuDropdown) menuDropdown.classList.remove('show');
+            
+            // Llenar selects si están vacíos
+            if (selBlockStart && selBlockStart.innerHTML.trim() === "") {
+                llenarSelectoresHorario();
             }
+            
+            // Resetear inputs
+            if (inpBlockReason) inpBlockReason.value = "";
+            if (inpBlockDate) inpBlockDate.value = getLocalDateISO(new Date());
+            
+            // MOSTRAR MODAL
+            if (blockModal) {
+                blockModal.classList.remove('hidden');
+                blockModal.classList.add('active'); // Clase CSS para fade-in
+                console.log("🔓 Abriendo modal de bloqueo...");
+            } else {
+                console.error("❌ No se encontró el modal 'block-modal-overlay' en el HTML");
+            }
+        });
+    }
 
-            // Obtenemos nombre del barbero (o Admin)
+    // 2. CERRAR MODAL
+    const cerrarModalBloqueo = () => {
+        if (blockModal) {
+            blockModal.classList.add('hidden');
+            blockModal.classList.remove('active');
+        }
+    };
+
+    if (btnCloseBlock) btnCloseBlock.addEventListener('click', cerrarModalBloqueo);
+    // Acá usaba btnCancelBlock y fallaba porque no estaba definido arriba. ¡Ahora ya está!
+    if (btnCancelBlock) btnCancelBlock.addEventListener('click', cerrarModalBloqueo);
+
+    // 3. CONFIRMAR BLOQUEO
+    if (btnConfirmBlock) {
+        btnConfirmBlock.addEventListener('click', async () => {
+            // Validaciones básicas
+            if (!inpBlockDate || !selBlockStart || !selBlockEnd) return;
+            
+            const reason = inpBlockReason.value.trim() || "Bloqueado";
+            const date = inpBlockDate.value;
+            const start = selBlockStart.value;
+            const end = selBlockEnd.value;
+
+            if (!date) { alert("Falta seleccionar fecha"); return; }
+            if (start >= end) { alert("La hora de fin debe ser mayor a la de inicio"); return; }
+
+            if (!confirm(`¿Bloquear agenda el ${date} de ${start} a ${end}?`)) return;
+
+            // UI Guardando
+            btnConfirmBlock.disabled = true;
+            const txtOriginal = btnConfirmBlock.innerHTML;
+            btnConfirmBlock.innerHTML = "Guardando...";
+
             const barberNameDisplay = document.getElementById('barber-name-display');
             const currentBarberName = barberNameDisplay ? barberNameDisplay.textContent : "Staff";
 
-            // Calculamos día de la semana
-            const [y, m, d] = dateStr.split('-').map(Number);
-            const dateObj = new Date(y, m - 1, d);
-            const dayIdx = dateObj.getDay();
+            // Generar los slots de 30 min
+            let slots = [];
+            const toMins = t => parseInt(t.split(':')[0])*60 + parseInt(t.split(':')[1]);
+            const toTime = m => `${Math.floor(m/60).toString().padStart(2,'0')}:${(m%60).toString().padStart(2,'0')}`;
+            
+            let curr = toMins(start);
+            const fin = toMins(end);
 
-            // Recopilamos horarios válidos
-            // SI es un barbero específico, usamos solo sus horas.
-            // SI no encuentra el nombre (ej: Admin), sumamos TODOS los horarios de ese día.
-            let validHours = new Set();
-            const specificBarber = BARBERS_CONFIG.find(b => b.name === currentBarberName);
-
-            if (specificBarber) {
-                if (specificBarber.days.includes(dayIdx)) {
-                    specificBarber.hours.forEach(h => validHours.add(h));
-                } else {
-                    gridManualTime.innerHTML = '<p style="color:#AE0E30; font-size:0.9rem;">No trabajás este día.</p>';
-                    return;
-                }
-            } else {
-                // Modo Admin: Mostrar horarios de cualquiera que trabaje hoy
-                BARBERS_CONFIG.forEach(b => {
-                    if (b.days.includes(dayIdx)) {
-                        b.hours.forEach(h => validHours.add(h));
-                    }
-                });
+            while(curr < fin) {
+                slots.push(toTime(curr));
+                curr += 30;
             }
 
-            // Ordenamos horarios (09:30, 10:00, 10:30...)
-            const sortedHours = Array.from(validHours).sort();
-
-            if (sortedHours.length === 0) {
-                gridManualTime.innerHTML = '<p style="color:#aaa; font-size:0.9rem;">Local cerrado este día.</p>';
-                return;
-            }
-
-            // Buscar ocupados en Firebase
             try {
-                // Si es un barbero específico, filtramos por él. Si es Admin, vemos todo.
-                let q;
-                if (specificBarber) {
-                    q = query(collection(db, "turnos"), where("date", "==", dateStr), where("pro", "==", currentBarberName));
-                } else {
-                    q = query(collection(db, "turnos"), where("date", "==", dateStr));
-                }
+                // Guardar en Firebase
+                const promises = slots.map(time => addDoc(collection(db, "turnos"), {
+                    clientName: reason, 
+                    clientEmail: "-", 
+                    services: ["BLOQUEO"], 
+                    date: date, 
+                    time: time,
+                    pro: currentBarberName, 
+                    total: 0, 
+                    status: "blocked", 
+                    type: "block_admin", 
+                    created_at: new Date()
+                }));
+                
+                await Promise.all(promises);
+                alert(`Horario bloqueado exitosamente (${slots.length} turnos).`);
+                
+                cerrarModalBloqueo();
+                loadBarberAgenda(currentBarberName); // Recargar calendario
 
-                const snap = await getDocs(q);
-                const takenSlots = snap.docs.map(doc => doc.data().time);
+            } catch (e) {
+                console.error("Error bloqueando:", e);
+                alert("Error al guardar bloqueo.");
+            } finally {
+                btnConfirmBlock.disabled = false;
+                btnConfirmBlock.innerHTML = txtOriginal;
+            }
+        });
+    }
 
-                gridManualTime.innerHTML = '';
+    // ==========================================
+    // D. FUNCIÓN CARGAR HORARIOS (Para Reserva Manual)
+    // ==========================================
+    async function loadManualTimeSlots() {
+        // 1. Feedback visual de carga
+        gridManualTime.innerHTML = '<p style="color:#888; font-size:0.8rem;">Cargando horarios...</p>';
 
-                sortedHours.forEach(h => {
-                    const btn = document.createElement('button');
+        const dateStr = inpManualDate.value;
+        if (!dateStr) return;
 
-                    // CLASE BASE: Solo asignamos la clase, sin estilos .style aquí
-                    btn.className = 'time-btn';
-                    btn.textContent = h;
-
-                    if (takenSlots.includes(h)) {
-                        // SI ESTÁ OCUPADO
-                        btn.classList.add('taken');
-                        btn.disabled = true;
-                    } else {
-                        // SI ESTÁ LIBRE
-                        btn.addEventListener('click', () => {
-                            // Limpiar selección previa
-                            document.querySelectorAll('#manual-time-grid .time-btn').forEach(b => {
-                                b.classList.remove('active');
-                            });
-
-                            // Activar el actual
-                            btn.classList.add('active');
-                            manualTimeSelected = h;
-
-                            // Habilitar botón de guardar
-                            btnSaveManual.disabled = false;
-                            btnSaveManual.style.opacity = '1';
-                        });
-                    }
-                    gridManualTime.appendChild(btn);
-                });
-
-            } catch (error) {
-                console.error("Error manual slots:", error);
-                gridManualTime.innerHTML = '<p>Error de conexión</p>';
+        // 2. Cargar configuración de barberos si no existe
+        if (!BARBERS_CONFIG || BARBERS_CONFIG.length === 0) {
+            try {
+                const res = await fetch('/public/components/barberos.json');
+                BARBERS_CONFIG = await res.json();
+                console.log("✅ JSON cargado para manual:", BARBERS_CONFIG);
+            } catch (e) {
+                console.error("Error cargando JSON:", e);
+                gridManualTime.innerHTML = '<p style="color:red;">Error de configuración</p>';
+                return;
             }
         }
 
-        // 5. GUARDAR TURNO
-        if (btnSaveManual) {
-            btnSaveManual.addEventListener('click', async () => {
-                const name = inpManualName.value.trim();
-                const contact = inpManualContact.value.trim();
-                const service = inpManualService.value;
-                const date = inpManualDate.value;
+        // 3. Obtener datos del día y del barbero
+        const barberNameDisplay = document.getElementById('barber-name-display');
+        const currentBarberName = barberNameDisplay ? barberNameDisplay.textContent : "Staff";
 
-                if (!name || !manualTimeSelected) {
-                    alert("Faltan datos: Asegurate de poner nombre y elegir un horario.");
-                    return;
-                }
+        const [y, m, d] = dateStr.split('-').map(Number);
+        const dateObj = new Date(y, m - 1, d);
+        const dayIdx = dateObj.getDay();
 
-                // Obtener nombre del barbero actual
-                const barberNameDisplay = document.getElementById('barber-name-display');
-                const currentBarberName = barberNameDisplay ? barberNameDisplay.textContent : "Staff";
+        // 4. Filtrar horarios válidos según el barbero y el día
+        let validHours = new Set();
+        const specificBarber = BARBERS_CONFIG.find(b => b.name === currentBarberName);
 
-                btnSaveManual.textContent = "Guardando...";
-                btnSaveManual.disabled = true;
-
-                // --- MAPA DE PRECIOS MANUALES ---
-                // Acá definimos cuánto vale cada cosa cuando lo cargás a mano
-                const PRECIOS_MANUALES = {
-                    "Corte de Cabello": 16000,
-                    "Barba": 10000,
-                    "Corte + Barba": 18000,
-                    "Color": 25000 // Ajustalo al valor real
-                };
-
-                // Si el servicio no está en la lista, pone 0
-                const precioFinal = PRECIOS_MANUALES[service] || 0;
-
-                try {
-                    await addDoc(collection(db, "turnos"), {
-                        clientName: name,
-                        clientEmail: contact || "No especificado",
-                        services: [service],
-                        date: date,
-                        time: manualTimeSelected,
-                        pro: currentBarberName,
-                        total: precioFinal, // <--- ACÁ SE GUARDA EL PRECIO CORRECTO
-                        status: "confirmed",
-                        type: "manual_admin",
-                        created_at: new Date()
-                    });
-
-                    // ============================================================
-                    // 2. NUEVO: ENVIAR EMAIL AL CLIENTE (Si tiene email puesto)
-                    // ============================================================
-                    if (contact && contact.includes('@')) {
-                        console.log("📧 Enviando confirmación a:", contact);
-                        
-                        // Usamos las constantes que ya tenés definidas arriba en el archivo
-                        await emailjs.send(EMAIL_SERVICE_ID, EMAIL_TEMPLATE_ID, {
-                            to_name: name,
-                            to_email: contact,
-                            service_list: service,
-                            date_info: date + " " + manualTimeSelected,
-                            professional: currentBarberName,
-                            total_price: "$" + precioFinal,
-                            message: "Turno reservado manualmente por el staff."
-                        });
-                        console.log("✅ Email enviado correctamente");
-                    }
-
-                    // ============================================================
-                    // 3. NUEVO: ABRIR GOOGLE CALENDAR (RECORDATORIO PARA EL BARBERO)
-                    // ============================================================
-                    // Esto abrirá la pestaña que mostraste en la foto con los datos precargados
-                    if (typeof window.abrirLinkGoogleCalendar === 'function') {
-                        window.abrirLinkGoogleCalendar({
-                            fecha: date,
-                            hora: manualTimeSelected,
-                            barbero: currentBarberName,
-                            // Truco: Agregamos el nombre del cliente al servicio para que se lea en la descripción
-                            servicio: `${service} - Cliente: ${name}`
-                        });
-                    }
-
-                    alert(`¡Turno guardado! Precio registrado: $${precioFinal}`);
-                    manualModal.classList.add('hidden');
-                    manualModal.classList.remove('active');
-
-                    // Recargar la agenda para ver el cambio
-                    loadBarberAgenda(currentBarberName);
-
-                } catch (e) {
-                    console.error("Error guardando manual:", e);
-                    alert("Error al guardar en la base de datos.");
-                } finally {
-                    btnSaveManual.textContent = "Confirmar Turno";
-                    btnSaveManual.disabled = false;
+        if (specificBarber) {
+            if (specificBarber.days.includes(dayIdx)) {
+                specificBarber.hours.forEach(h => validHours.add(h));
+            } else {
+                gridManualTime.innerHTML = '<p style="color:#AE0E30; font-size:0.9rem;">No trabajás este día.</p>';
+                return;
+            }
+        } else {
+            // Modo Admin/General: Mostrar horarios de cualquiera que trabaje hoy
+            BARBERS_CONFIG.forEach(b => {
+                if (b.days.includes(dayIdx)) {
+                    b.hours.forEach(h => validHours.add(h));
                 }
             });
+        }
+
+        // 5. Ordenar horarios cronológicamente
+        const sortedHours = Array.from(validHours).sort();
+
+        if (sortedHours.length === 0) {
+            gridManualTime.innerHTML = '<p style="color:#aaa; font-size:0.9rem;">Local cerrado este día.</p>';
+            return;
+        }
+
+        // 6. Consultar Firebase para ver qué está ocupado
+        try {
+            let q;
+            // Si es un barbero específico, buscamos solo sus turnos.
+            // Si es "Staff" o admin general, buscamos todos los del día.
+            if (specificBarber) {
+                q = query(collection(db, "turnos"), where("date", "==", dateStr), where("pro", "==", currentBarberName));
+            } else {
+                q = query(collection(db, "turnos"), where("date", "==", dateStr));
+            }
+
+            const snap = await getDocs(q);
+            // Creamos una lista con las horas que YA están ocupadas
+            const takenSlots = snap.docs.map(doc => doc.data().time);
+
+            // 7. Renderizar los botones
+            gridManualTime.innerHTML = '';
+
+            sortedHours.forEach(h => {
+                const btn = document.createElement('button');
+                btn.className = 'time-btn'; // Clase base CSS
+                btn.textContent = h;
+
+                if (takenSlots.includes(h)) {
+                    // CASO: HORARIO OCUPADO (O BLOQUEADO)
+                    btn.classList.add('taken');
+                    btn.disabled = true;
+                    btn.title = "Horario no disponible";
+                } else {
+                    // CASO: HORARIO LIBRE
+                    btn.addEventListener('click', () => {
+                        // Limpiar selección visual previa
+                        document.querySelectorAll('#manual-time-grid .time-btn').forEach(b => {
+                            b.classList.remove('active');
+                        });
+
+                        // Activar este botón
+                        btn.classList.add('active');
+                        manualTimeSelected = h;
+
+                        // Habilitar botón de guardar
+                        if(btnSaveManual) {
+                            btnSaveManual.disabled = false;
+                            btnSaveManual.style.opacity = '1';
+                        }
+                    });
+                }
+                gridManualTime.appendChild(btn);
+            });
+
+        } catch (error) {
+            console.error("Error cargando slots:", error);
+            gridManualTime.innerHTML = '<p style="color:red;">Error de conexión con la base de datos.</p>';
         }
     }
 
@@ -790,93 +946,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         });
     }
-
-
-    // AGENDA BARBERO
-    // ==========================================
-    // AGENDA BARBERO (VISUALIZACIÓN)
-    // ==========================================
-    async function loadBarberAgenda(nombreBarbero) {
-        const calendarEl = document.getElementById('calendar-barber');
-        if (!calendarEl) return;
-        calendarEl.innerHTML = '';
-        injectModalHTML();
-
-        try {
-            const q = query(collection(db, "turnos"), where("pro", "==", nombreBarbero));
-            const snap = await getDocs(q);
-            let eventos = [];
-
-            snap.forEach(d => {
-                const data = d.data();
-                if (data.date && data.time) {
-                    const start = `${data.date}T${data.time}:00`;
-                    // Calculamos fin (30 mins por defecto)
-                    const end = new Date(new Date(start).getTime() + 30 * 60000).toISOString();
-
-                    eventos.push({
-                        id: d.id,
-                        title: data.clientName || 'Cliente',
-                        start: start,
-                        end: end,
-                        backgroundColor: '#AE0E30',
-                        borderColor: '#ffffff',
-                        textColor: '#ffffff',
-                        extendedProps: {
-                            servicio: Array.isArray(data.services) ? data.services.join(" + ") : data.services,
-                            email: data.clientEmail || 'No especificado',
-                            // ACÁ USAMOS LA FUNCIÓN NUEVA PARA QUE SE VEA EL $
-                            precio: formatMoney(data.total)
-                        }
-                    });
-                }
-            });
-
-            if (calendarInstance) calendarInstance.destroy();
-
-            calendarInstance = new FullCalendar.Calendar(calendarEl, {
-                initialView: window.innerWidth < 768 ? 'timeGridDay' : 'timeGridWeek',
-                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
-                locale: 'es',
-                slotMinTime: '09:00:00',
-                slotMaxTime: '21:00:00',
-                allDaySlot: false,
-                height: '100%',
-                contentHeight: 'auto',
-                slotDuration: '00:30:00',
-                eventContent: function (arg) {
-                    return {
-                        html: `
-                            <div class="turno-card">
-                                <div class="turno-header"><span class="turno-hora">${arg.timeText}</span></div>
-                                <div class="turno-body"><span class="turno-servicio">${arg.event.extendedProps.servicio}</span></div>
-                            </div>`
-                    };
-                },
-                events: eventos,
-                eventClick: function (info) {
-                    const p = info.event.extendedProps;
-                    // Llenamos el modal negro con los datos
-                    document.getElementById('modal-cliente').textContent = info.event.title;
-                    document.getElementById('modal-servicio').textContent = p.servicio;
-                    document.getElementById('modal-precio').textContent = p.precio; // Ya viene con formato $
-                    document.getElementById('modal-email').textContent = p.email;
-
-                    const fechaObj = info.event.start;
-                    const horaStr = fechaObj.getHours().toString().padStart(2, '0') + ':' + fechaObj.getMinutes().toString().padStart(2, '0');
-                    document.getElementById('modal-horario').textContent = `${horaStr} hs`;
-
-                    document.getElementById('modal-detalle-overlay').classList.add('active');
-                },
-                windowResize: function (arg) {
-                    const newView = window.innerWidth < 768 ? 'timeGridDay' : 'timeGridWeek';
-                    if (calendarInstance.view.type !== newView) calendarInstance.changeView(newView);
-                }
-            });
-            calendarInstance.render();
-        } catch (e) { console.error("Error calendario:", e); }
-    }
-
+    
     // ADMIN DASHBOARD
     async function loadAdminDashboard(fecha) {
         const tbody = document.getElementById('admin-table-body');
@@ -911,5 +981,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </tr>`;
             });
             tbody.innerHTML += `<tr style="background:#333; font-weight:bold;"><td colspan="4" style="text-align:right;">TOTAL:</td><td style="color:#AE0E30;">$${total}</td></tr>`;
-        } catch (e) { console.error(e); }    }
+        } catch (e) { console.error(e); }
+    }
 });

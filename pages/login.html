@@ -132,10 +132,21 @@
                 <i class="fa-solid fa-lock"></i> Panel Admin
             </button>
 
-            <button id="btn-add-manual" class="btn-barber"
-                style="background:#AE0E30; color:white; border:1px solid #AE0E30; margin-top:10px;">
-                + Agregar Turno Manual
-            </button>
+            <div class="dropdown-container-barber" style="width: 100%; margin-top: 10px; position: relative;">
+                <button id="btn-nuevo-trigger" class="btn-barber" style="background:#AE0E30; color:white; border:1px solid #AE0E30; width: 100%; justify-content: space-between;">
+                  <span>+ Nuevo</span>
+                    <i class="fa-solid fa-chevron-up"></i>
+                </button>
+                
+                <div id="dropdown-menu-barber" class="dropdown-menu-hidden">
+                    <div id="opt-reserva" class="dropdown-item">
+                        <i class="fa-regular fa-calendar"></i> <span>Reserva</span>
+                    </div>
+                    <div id="opt-bloqueo" class="dropdown-item">
+                        <i class="fa-solid fa-ban"></i> <span>Bloquear horario</span>
+                    </div>
+                </div>
+            </div>
 
             <button id="btn-refresh-barber" class="btn-barber btn-barber-refresh">
                 <i class="fa-solid fa-rotate-right"></i> Actualizar
@@ -281,7 +292,51 @@
     </div>
     </div>
 
+    <div id="block-modal-overlay" class="modal-overlay hidden">
+        <div class="modal-box manual-box" style="border-top: 3px solid #666;"> <div class="modal-header">
+                <h3>Bloquear Horario</h3>
+                <button id="close-block-btn" class="close-btn">×</button>
+            </div>
 
+            <div class="manual-form-body">
+                
+                <label><i class="fa-solid fa-tag"></i> Motivo / Etiqueta:</label>
+                <input type="text" id="block-reason" placeholder="Ej: Almuerzo, Médico, Franco..." class="input-manual">
+
+                <label><i class="fa-regular fa-calendar"></i> Fecha:</label>
+                <input type="date" id="block-date" class="input-manual">
+
+                <div style="display: flex; gap: 15px; margin-top: 15px;">
+                    <div style="flex: 1;">
+                        <label style="margin-top:0;">Desde las:</label>
+                        <select id="block-start-time" class="input-manual">
+                            </select>
+                    </div>
+                    <div style="flex: 1; display:flex; align-items:flex-end; padding-bottom:10px; justify-content:center; color:#666;">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="margin-top:0;">Hasta las:</label>
+                        <select id="block-end-time" class="input-manual">
+                            </select>
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px; font-size: 0.8rem; color: #aaa; display: flex; gap: 10px; align-items: center;">
+                    <i class="fa-solid fa-triangle-exclamation" style="color: #ffcc00;"></i>
+                    <p style="margin:0;">Esto ocupará todos los turnos en ese rango para que nadie pueda reservar.</p>
+                </div>
+
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                <button id="btn-cancel-block" class="btn-modal btn-cancel" style="flex: 1;">Cancelar</button>
+                <button id="btn-confirm-block" class="btn-modal btn-confirm" style="flex: 1; background-color: #333; border: 1px solid #555;">
+                    <i class="fa-solid fa-lock"></i> Bloquear
+                </button>
+            </div>
+        </div>
+    </div>
 
     <div id="manual-modal-overlay" class="modal-overlay hidden">
         <div class="modal-box manual-box">

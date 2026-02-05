@@ -1694,3 +1694,78 @@ body {
     /* Un rojo un poco más oscuro al pasar el mouse */
     cursor: pointer;
 }
+
+/* =========================================
+   ESTILOS NUEVO DROPDOWN (AGENDA PRO STYLE)
+   ========================================= */
+.dropdown-container-barber {
+    position: relative;
+    display: block;
+}
+
+/* El menú flotante */
+.dropdown-menu-hidden {
+    display: none; /* Oculto por defecto */
+    position: absolute;
+    bottom: 110%; /* Abre hacia ARRIBA para no salirse de pantalla en móvil */
+    left: 0;
+    width: 100%;
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+    z-index: 1000;
+    padding: 5px 0;
+    overflow: hidden;
+}
+
+/* Clase para mostrarlo con JS */
+.dropdown-menu-hidden.show {
+    display: block;
+    animation: slideUp 0.2s ease-out;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Items del menú */
+.dropdown-item {
+    padding: 12px 15px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: #AE0E30; /* Rojo al pasar el mouse */
+}
+
+.dropdown-item i {
+    width: 20px;
+    text-align: center;
+    color: #ccc;
+}
+
+.dropdown-item:hover i {
+    color: white;
+}
+
+/* =========================================
+   FIX Z-INDEX: MODAL BLOQUEO (ENCIMA DE TODO)
+   =========================================  */
+#block-modal-overlay {
+    z-index: 200000 !important; /* Tiene que ser mayor a 99999 (view-barber) */
+}
+
+/* Asegurar que la cajita del modal también quede arriba */
+#block-modal-overlay .modal-box {
+    z-index: 200001;
+    position: relative;
+}
