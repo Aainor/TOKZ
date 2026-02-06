@@ -23,25 +23,25 @@
         <p>Elegí quién se encarga de tu estilo. #ConfiaEnTuBarber</p>
         <div class="team-grid">
 
-            <div class="barber-card" onclick="selectBarber(this, 'jonathan')">
+            <div class="barber-card" data-id="jonathan" onclick="selectBarber(this, 'jonathan')">
                 <img class="ale-img" src="/public/img/barbers/jhonny.webp" alt="Barbero">
                 <h3>Jonathan Rimada</h3>
                 <p>Low Fade</p>
             </div>
 
-            <div class="barber-card" onclick="selectBarber(this, 'alejandra')">
+            <div class="barber-card" data-id="alejandra" onclick="selectBarber(this, 'alejandra')">
                 <img class="ale-img" src="/public/img/barbers/ale.webp" alt="Barbero">
                 <h3>Alejandra Sanchez</h3>
                 <p>Damas y Niños</p>
             </div>
 
-            <div class="barber-card active" onclick="selectBarber(this, 'nicolas')">
+            <div class="barber-card active" data-id="nicolas" onclick="selectBarber(this, 'nicolas')">
                 <img class="nico-img" src="/public/img/barbers/nico.webp" alt="Barbero">
                 <h3>Nicolás Ruibal</h3>
                 <p>Experto en Barbas</p>
             </div>
 
-            <div class="barber-card" onclick="selectBarber(this, 'lautaro')">
+            <div class="barber-card" data-id="lautaro" onclick="selectBarber(this, 'lautaro')">
                 <img src="/public/img/barbers/lauty.webp" alt="Barbero">
                 <h3>Lautaro Ribeiro</h3>
                 <p>Diseños y Low Fade</p>
@@ -144,8 +144,24 @@
                     <h5 id="current-service-title" style="color: #D32F2F; margin-bottom: 15px;"></h5>
 
                     <div class="date-selector-container" style="margin-bottom: 20px;">
-                        <label style="color:white; display:block; margin-bottom:5px;">Fecha del turno:</label>
-                        <input type="date" id="date-picker" class="input-fecha-pro">
+
+                        <div class="calendar-header-row">
+                            <span id="calendar-month-year" class="month-title">Febrero 2026</span>
+                            <button id="btn-open-full-calendar" class="btn-other-dates">
+                                📅 Mes completo
+                            </button>
+                        </div>
+
+                        <div class="scroller-container-wrapper">
+                            <button id="scroll-left-btn" class="nav-arrow">&lt;</button>
+
+                            <div class="custom-calendar-wrapper">
+                                <div id="custom-date-scroller" class="date-scroller"></div>
+                            </div>
+
+                            <button id="scroll-right-btn" class="nav-arrow">&gt;</button>
+                        </div>
+
                     </div>
 
                     <div class="pro-selector" style="margin-bottom: 20px;">
@@ -191,8 +207,8 @@
 
     <div id="footer-placeholder"></div>
     <script src="/public/js/main.js"></script>
-   <script type="module" src="/public/js/turnos.js"></script>
-    
+    <script type="module" src="/public/js/turnos.js"></script>
+
     <script src="/public/js/prices.js"></script>
     <script src="/public/js/guard.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -203,6 +219,28 @@
             emailjs.init("mqEKc7hr2XQkSspXp");
         })();
     </script>
+
+    <div id="full-calendar-modal" class="modal-overlay hidden" style="z-index: 3000;">
+        <div class="calendar-card">
+            <div class="calendar-top">
+                <h3>Seleccioná una fecha</h3>
+                <button id="close-full-cal-btn" class="close-btn">×</button>
+            </div>
+
+            <div class="month-nav">
+                <button id="prev-month-btn" class="nav-month-btn">&lt;</button>
+                <span id="full-cal-month-year">Febrero 2026</span>
+                <button id="next-month-btn" class="nav-month-btn">&gt;</button>
+            </div>
+
+            <div class="weekdays-grid">
+                <span>Do</span><span>Lu</span><span>Ma</span><span>Mi</span><span>Ju</span><span>Vi</span><span>Sá</span>
+            </div>
+
+            <div id="full-days-grid" class="days-grid">
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

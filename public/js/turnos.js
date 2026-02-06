@@ -53,8 +53,8 @@ function abrirLinkGoogleCalendar(turnoData) {
         if (nombreKey) emailBarbero = EMAILS_BARBEROS[nombreKey];
     }
 
-    const fechaLimpia = turnoData.fecha.replace(/-/g, ''); 
-    const horaLimpia = turnoData.hora.replace(/:/g, '') + '00'; 
+    const fechaLimpia = turnoData.fecha.replace(/-/g, '');
+    const horaLimpia = turnoData.hora.replace(/:/g, '') + '00';
     const fechasGoogle = `${fechaLimpia}T${horaLimpia}/${fechaLimpia}T${horaLimpia}`;
 
     const baseUrl = "https://calendar.google.com/calendar/render";
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // --- ELEMENTOS DOM ---
     const modal = document.getElementById('booking-modal');
-    const openBtn = document.querySelector('#reserva .cta-button'); 
+    const openBtn = document.querySelector('#reserva .cta-button');
     const closeBtn = document.getElementById('close-modal-btn');
     const btnNext = document.getElementById('btn-next');
     const btnBack = document.getElementById('btn-back');
@@ -122,10 +122,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error("Error cargando barberos, usando backup:", e);
             // Backup por si falla el JSON
             BARBERS_CONFIG = [
-                {id: "jonathan", name: "Jonathan", days: [1,2,3,4,5,6], hours: ["10:00","18:00"]},
-                {id: "lautaro", name: "Lautaro", days: [2,3,4,5,6], hours: ["10:00","18:00"]},
-                {id: "alejandra", name: "Alejandra", days: [2,3,4,5,6], hours: ["10:00","18:00"]},
-                {id: "nicolas", name: "Nicolás", days: [4,5,6], hours: ["14:00","19:00"]}
+                { id: "jonathan", name: "Jonathan", days: [1, 2, 3, 4, 5, 6], hours: ["10:00", "18:00"] },
+                { id: "lautaro", name: "Lautaro", days: [2, 3, 4, 5, 6], hours: ["10:00", "18:00"] },
+                { id: "alejandra", name: "Alejandra", days: [2, 3, 4, 5, 6], hours: ["10:00", "18:00"] },
+                { id: "nicolas", name: "Nicolás", days: [4, 5, 6], hours: ["14:00", "19:00"] }
             ];
             populateBarberSelect(BARBERS_CONFIG);
         }
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             option.textContent = barber.name;
             proSelect.appendChild(option);
         });
-        
+
         // Seleccionar el primero por defecto
         if (proSelect.options.length > 0) {
             proSelect.selectedIndex = 0;
@@ -150,13 +150,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // --- FILTRO DE COLOR (ALEJANDRA) ---
     function filtrarBarberosPorServicio() {
-        const SERVICIOS_COLOR = ["Claritos", "Color Global", "Franja"]; 
+        const SERVICIOS_COLOR = ["Claritos", "Color Global", "Franja"];
         const tieneColor = bookingData.services.some(srv => SERVICIOS_COLOR.includes(srv));
 
         if (tieneColor) {
             const soloAlejandra = BARBERS_CONFIG.filter(b => b.name.toLowerCase().includes("alejandra"));
             if (soloAlejandra.length > 0) populateBarberSelect(soloAlejandra);
-            else populateBarberSelect(BARBERS_CONFIG); 
+            else populateBarberSelect(BARBERS_CONFIG);
         } else {
             populateBarberSelect(BARBERS_CONFIG);
         }
@@ -168,6 +168,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         datePicker.min = getLocalDateISO(new Date());
         datePicker.value = getLocalDateISO(new Date());
         bookingData.date = datePicker.value;
+        renderCustomCalendar();
     }
 
     // --- AUTH ---
@@ -289,7 +290,192 @@ document.addEventListener('DOMContentLoaded', async () => {
         bookingData.mode = mode;
         updateUI();
     }
+    // --- VARIABLES GLOBALES DEL CALENDARIO FULL ---
+    let currentModalDate = new Date(); // Para navegar meses en el modal
 
+    // --- RENDERIZAR TIRA HORIZONTAL ---
+    function renderCustomCalendar() {
+        const scroller = document.getElementById('custom-date-scroller');
+        const monthLabel = document.getElementById('calendar-month-year');
+        const openFullBtn = document.getElementById('btn-open-full-calendar');
+        const leftBtn = document.getElementById('scroll-left-btn');
+        const rightBtn = document.getElementById('scroll-right-btn');
+
+        if (!scroller) return;
+
+        scroller.innerHTML = '';
+
+        // Configurar fecha de inicio (si hay una seleccionada, usamos esa, si no, hoy)
+        let startDate = new Date();
+        if (bookingData.date) {
+            const parts = bookingData.date.split('-');
+            startDate = new Date(parts[0], parts[1] - 1, parts[2]);
+        }
+
+        const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        const diasSemana = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+
+        // Etiqueta del mes
+        if (monthLabel) monthLabel.textContent = `${meses[startDate.getMonth()]} ${startDate.getFullYear()}`;
+
+        // Generar tira de 30 días a partir de la fecha actual (o seleccionada)
+        // NOTA: Para que sea más cómodo, siempre empezamos a generar desde "Hoy" en la tira, 
+        // pero scrolleamos hasta la seleccionada.
+        const today = new Date();
+        const daysToGenerate = 60; // 2 meses de fechas
+
+        for (let i = 0; i < daysToGenerate; i++) {
+            const dateObj = new Date(today);
+            dateObj.setDate(today.getDate() + i);
+
+            const isoDate = getLocalDateISO(dateObj);
+            const dayName = diasSemana[dateObj.getDay()];
+            const dayNumber = dateObj.getDate();
+
+            const card = document.createElement('div');
+            card.className = `date-card ${isoDate === bookingData.date ? 'selected' : ''}`;
+            card.id = `date-card-${isoDate}`; // ID para scroll automático
+            card.innerHTML = `
+            <span class="day-name">${dayName}</span>
+            <span class="day-number">${dayNumber}</span>
+        `;
+
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.date-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+
+                bookingData.date = isoDate;
+                bookingData.time = null;
+                if (monthLabel) monthLabel.textContent = `${meses[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+                renderTimeSlots();
+            });
+
+            scroller.appendChild(card);
+        }
+
+        // --- LOGICA DE FLECHAS TIRA HORIZONTAL ---
+        // Clonamos para eliminar listeners viejos
+        if (leftBtn) {
+            const newLeft = leftBtn.cloneNode(true);
+            leftBtn.parentNode.replaceChild(newLeft, leftBtn);
+            newLeft.addEventListener('click', () => scroller.scrollBy({ left: -200, behavior: 'smooth' }));
+        }
+        if (rightBtn) {
+            const newRight = rightBtn.cloneNode(true);
+            rightBtn.parentNode.replaceChild(newRight, rightBtn);
+            newRight.addEventListener('click', () => scroller.scrollBy({ left: 200, behavior: 'smooth' }));
+        }
+
+        // Scroll automático al día seleccionado
+        if (bookingData.date) {
+            setTimeout(() => {
+                const selectedEl = document.getElementById(`date-card-${bookingData.date}`);
+                if (selectedEl) {
+                    const scrollPos = selectedEl.offsetLeft - scroller.offsetLeft - 50; // Centrar un poco
+                    scroller.scrollTo({ left: scrollPos, behavior: 'smooth' });
+                }
+            }, 100);
+        }
+
+        // --- BOTÓN PARA ABRIR EL CALENDARIO FULL ---
+        if (openFullBtn) {
+            const newBtn = openFullBtn.cloneNode(true);
+            openFullBtn.parentNode.replaceChild(newBtn, openFullBtn);
+            newBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                openFullCalendarModal();
+            });
+        }
+    }
+    // --- LÓGICA DEL CALENDARIO FULL (MODAL) ---
+
+    function openFullCalendarModal() {
+        const modal = document.getElementById('full-calendar-modal');
+        if (!modal) return;
+
+        // Sincronizar fecha del modal con la seleccionada o hoy
+        if (bookingData.date) {
+            const [y, m, d] = bookingData.date.split('-').map(Number);
+            currentModalDate = new Date(y, m - 1, d);
+        } else {
+            currentModalDate = new Date();
+        }
+
+        renderFullMonthGrid();
+        modal.classList.remove('hidden');
+
+        // Eventos Cerrar
+        document.getElementById('close-full-cal-btn').onclick = () => modal.classList.add('hidden');
+
+        // Eventos Navegación Mes
+        document.getElementById('prev-month-btn').onclick = () => {
+            currentModalDate.setMonth(currentModalDate.getMonth() - 1);
+            renderFullMonthGrid();
+        };
+        document.getElementById('next-month-btn').onclick = () => {
+            currentModalDate.setMonth(currentModalDate.getMonth() + 1);
+            renderFullMonthGrid();
+        };
+    }
+
+    function renderFullMonthGrid() {
+        const grid = document.getElementById('full-days-grid');
+        const label = document.getElementById('full-cal-month-year');
+
+        const year = currentModalDate.getFullYear();
+        const month = currentModalDate.getMonth();
+
+        const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        label.textContent = `${meses[month]} ${year}`;
+
+        grid.innerHTML = '';
+
+        // Primer día del mes y total de días
+        const firstDayIndex = new Date(year, month, 1).getDay(); // 0 Dom - 6 Sab
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        // Días previos vacíos
+        for (let i = 0; i < firstDayIndex; i++) {
+            const emptyDiv = document.createElement('div');
+            emptyDiv.className = 'calendar-day-btn empty';
+            grid.appendChild(emptyDiv);
+        }
+
+        const today = new Date();
+        const todayISO = getLocalDateISO(today);
+
+        // Generar días
+        for (let i = 1; i <= daysInMonth; i++) {
+            const dateObj = new Date(year, month, i);
+            const isoDate = getLocalDateISO(dateObj);
+
+            const btn = document.createElement('button');
+            btn.className = 'calendar-day-btn';
+            btn.textContent = i;
+
+            // Estilos
+            if (isoDate === todayISO) btn.classList.add('today');
+            if (isoDate === bookingData.date) btn.classList.add('selected');
+
+            // Deshabilitar días pasados
+            if (dateObj < new Date(today.setHours(0, 0, 0, 0))) {
+                btn.disabled = true;
+            } else {
+                btn.onclick = () => {
+                    // SELECCIONAR FECHA
+                    bookingData.date = isoDate;
+                    bookingData.time = null;
+
+                    // Actualizar UI
+                    document.getElementById('full-calendar-modal').classList.add('hidden');
+                    renderCustomCalendar(); // Actualizar la tira horizontal
+                    renderTimeSlots();      // Cargar horarios
+                };
+            }
+
+            grid.appendChild(btn);
+        }
+    }
     // ==========================================
     // LÓGICA CALENDARIO (CORREGIDA)
     // ==========================================
@@ -297,23 +483,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!timeGridContainer) return;
         timeGridContainer.innerHTML = '<p style="color:white; text-align:center;">Cargando...</p>';
 
-        const selectedDateStr = datePicker.value;
+        // CORRECCIÓN: Usamos la variable global, no el input HTML
+        const selectedDateStr = bookingData.date;
+
         if (!selectedDateStr) {
-            timeGridContainer.innerHTML = '<p style="color:white;">Seleccioná una fecha.</p>';
+            timeGridContainer.innerHTML = '<p style="color:white; text-align:center;">Seleccioná una fecha.</p>';
             return;
         }
 
         // 1. LEER BARBERO SELECCIONADO EN EL MOMENTO
         const proId = proSelect.value;
         const currentProName = proSelect.options[proSelect.selectedIndex]?.text || "Cualquiera";
-        
+
         // 2. BUSCAR EN CONFIGURACIÓN
         const barber = BARBERS_CONFIG.find(b => b.id === proId) || BARBERS_CONFIG[0];
 
         // 3. CALCULO DE DÍA (FIX ZONA HORARIA)
         const [y, m, d] = selectedDateStr.split('-').map(Number);
-        const fechaLocal = new Date(y, m - 1, d); 
-        const dayOfWeek = fechaLocal.getDay(); 
+        const fechaLocal = new Date(y, m - 1, d);
+        const dayOfWeek = fechaLocal.getDay();
 
         if (!barber.days.includes(dayOfWeek)) {
             timeGridContainer.innerHTML = `<p style="color:#888; width:100%; text-align:center;">No trabaja este día.</p>`;
@@ -329,7 +517,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const querySnapshot = await getDocs(q);
             const dbTakenSlots = querySnapshot.docs.map(doc => doc.data().time);
-            
+
             // Filtrar turnos locales si estamos en modo separado
             const localTakenSlots = bookingData.appointments
                 .filter(appt => appt.date === selectedDateStr && appt.pro === currentProName)
@@ -337,7 +525,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const allTakenTimes = [...dbTakenSlots, ...localTakenSlots];
             const DURACION_TURNO = 45;
-            
+
             // Convertir a minutos para comparar
             const rangosOcupados = allTakenTimes.map(timeStr => {
                 const [h, m] = timeStr.split(':').map(Number);
@@ -399,7 +587,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             timeGridContainer.innerHTML = '<p style="color:red;">Error de conexión.</p>';
         }
     }
-    
+
     // EVENT LISTENERS DEL CALENDARIO
     if (proSelect) proSelect.addEventListener('change', () => {
         bookingData.professional = proSelect.options[proSelect.selectedIndex].text;
@@ -479,44 +667,44 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateStep();
     });
 
-   function prepareCalendarStep() {
-    bookingData.time = null;
-    
-    // 1. Buscamos el selector y su caja para ocultarla
-    const proSelect = document.getElementById('pro-select');
-    const selectorContainer = proSelect ? proSelect.closest('.pro-selector') : null;
+    function prepareCalendarStep() {
+        bookingData.time = null;
 
-    // 2. LEEMOS EL NOMBRE REAL DIRECTAMENTE DEL SELECTOR (La única fuente de verdad)
-    // Esto asegura que si el select dice "Alejandra", leamos "Alejandra"
-    const nombreSeleccionado = proSelect ? proSelect.options[proSelect.selectedIndex].text : "";
+        // 1. Buscamos el selector y su caja para ocultarla
+        const proSelect = document.getElementById('pro-select');
+        const selectorContainer = proSelect ? proSelect.closest('.pro-selector') : null;
 
-    if (bookingData.mode === 'separate') {
-        if (selectorContainer) selectorContainer.style.display = 'block';
-        const srvName = bookingData.services[serviceIndex];
-        if (serviceTitle) {
-            serviceTitle.textContent = `Agendando: ${srvName} (${serviceIndex + 1}/${bookingData.services.length})`;
-            serviceTitle.style.display = 'block';
-        }
-    } else {
-        // MODO NORMAL:
-        // Si el nombre no es "Cualquiera"
-        if (nombreSeleccionado && !nombreSeleccionado.includes("Cualquiera")) {
-            // OCULTAMOS el selector que ya no sirve
-            if (selectorContainer) selectorContainer.style.display = 'none';
-            
-            // ACTUALIZAMOS EL TÍTULO CON EL NOMBRE QUE ACABAMOS DE LEER
+        // 2. LEEMOS EL NOMBRE REAL DIRECTAMENTE DEL SELECTOR (La única fuente de verdad)
+        // Esto asegura que si el select dice "Alejandra", leamos "Alejandra"
+        const nombreSeleccionado = proSelect ? proSelect.options[proSelect.selectedIndex].text : "";
+
+        if (bookingData.mode === 'separate') {
+            if (selectorContainer) selectorContainer.style.display = 'block';
+            const srvName = bookingData.services[serviceIndex];
             if (serviceTitle) {
+                serviceTitle.textContent = `Agendando: ${srvName} (${serviceIndex + 1}/${bookingData.services.length})`;
                 serviceTitle.style.display = 'block';
-                serviceTitle.innerHTML = `Turno con <span style="color: #AE0E30;">${nombreSeleccionado}</span>`;
             }
         } else {
-            if (selectorContainer) selectorContainer.style.display = 'block';
-            if (serviceTitle) serviceTitle.textContent = "Elegí profesional y horario";
+            // MODO NORMAL:
+            // Si el nombre no es "Cualquiera"
+            if (nombreSeleccionado && !nombreSeleccionado.includes("Cualquiera")) {
+                // OCULTAMOS el selector que ya no sirve
+                if (selectorContainer) selectorContainer.style.display = 'none';
+
+                // ACTUALIZAMOS EL TÍTULO CON EL NOMBRE QUE ACABAMOS DE LEER
+                if (serviceTitle) {
+                    serviceTitle.style.display = 'block';
+                    serviceTitle.innerHTML = `Turno con <span style="color: #AE0E30;">${nombreSeleccionado}</span>`;
+                }
+            } else {
+                if (selectorContainer) selectorContainer.style.display = 'block';
+                if (serviceTitle) serviceTitle.textContent = "Elegí profesional y horario";
+            }
         }
+        renderCustomCalendar();
+        renderTimeSlots();
     }
-    
-    renderTimeSlots();
-}
     async function finalizarReserva() {
         if (!currentUser && !guestData) return;
 
@@ -541,7 +729,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             } else {
                 const promises = bookingData.appointments.map(appt => {
                     return addDoc(collection(db, "turnos"), {
-                        ...baseData, services: [appt.service], total: 0, 
+                        ...baseData, services: [appt.service], total: 0,
                         date: appt.date, time: appt.time, pro: appt.pro, type: 'single_from_pack'
                     });
                 });
@@ -562,7 +750,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     fecha: bookingData.date, hora: bookingData.time,
                     barbero: bookingData.professional, servicio: bookingData.services.join(" + ")
                 });
-            } else if(bookingData.appointments.length > 0) {
+            } else if (bookingData.appointments.length > 0) {
                 abrirLinkGoogleCalendar({
                     fecha: bookingData.appointments[0].date, hora: bookingData.appointments[0].time,
                     barbero: bookingData.appointments[0].pro, servicio: bookingData.appointments[0].service
@@ -589,7 +777,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const totalRegular = bookingData.totalRegular;
         let displayPrice = totalRegular;
         if (currentUser) displayPrice = totalVip;
-        if(totalPriceEl) totalPriceEl.textContent = "$" + displayPrice;
+        if (totalPriceEl) totalPriceEl.textContent = "$" + displayPrice;
 
         // Validar botón siguiente
         let ok = false;
@@ -601,13 +789,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (btnNext) btnNext.disabled = !ok;
 
         if (currentStep === 4) {
-            if(btnNext) btnNext.textContent = "Confirmar Reserva";
+            if (btnNext) btnNext.textContent = "Confirmar Reserva";
         } else if (currentStep === 3 && bookingData.mode === 'separate' && serviceIndex < bookingData.services.length - 1) {
-            if(btnNext) btnNext.textContent = `Siguiente Turno`;
+            if (btnNext) btnNext.textContent = `Siguiente Turno`;
         } else {
-            if(btnNext) btnNext.textContent = "Siguiente";
+            if (btnNext) btnNext.textContent = "Siguiente";
         }
-        
+
         if (currentStep === 4) renderFinalStep();
     }
 
@@ -616,7 +804,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!finalStepContainer) return;
         finalStepContainer.innerHTML = '';
         const contentWrapper = document.createElement('div');
-        
+
         if (currentUser) {
             contentWrapper.innerHTML = `<h2 style="color:white;text-align:center;">Revisá y Confirmá</h2><p style="color:#aaa;text-align:center;">${bookingData.services.join('+')} con ${bookingData.professional}</p>`;
             btnNext.style.display = 'block';
@@ -654,7 +842,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderServicesFromJSON();
 });
 
-window.selectBarber = function(element, barberId) {
+window.selectBarber = function (element, barberId) {
     // 1. Efecto visual
     const cards = document.querySelectorAll('.barber-card');
     cards.forEach(card => card.classList.remove('active'));
@@ -664,7 +852,7 @@ window.selectBarber = function(element, barberId) {
     const proSelect = document.getElementById('pro-select');
     if (proSelect) {
         proSelect.value = barberId;
-        
+
         // Disparamos el evento para que el sistema interno se entere del cambio
         proSelect.dispatchEvent(new Event('change'));
 
