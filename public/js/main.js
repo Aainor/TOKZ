@@ -1,31 +1,10 @@
 function checkPromoOffset() {
     const promoBar = document.getElementById('promoBar');
     const header = document.querySelector('header');
-    const brandIntro = document.querySelector('.brand-intro');
-    const topMenu = document.querySelector('.intro-nav-links-top');
-
-    const baseTopPosition = 50; 
-
     if (promoBar && getComputedStyle(promoBar).display !== 'none') {
-        const barHeight = promoBar.offsetHeight;
-        
-        // Empujamos el header y el menú (que ahora contiene el acceso)
-        if (header) header.style.top = `${barHeight}px`;
-        if (topMenu) topMenu.style.top = `${baseTopPosition + barHeight}px`;
-        
-        if (brandIntro) {
-            brandIntro.style.paddingTop = `${80 + barHeight}px`;
-            brandIntro.style.transition = 'padding-top 0.4s ease'; 
-        }
-
-    } else {
-        // Restaurar posiciones originales si no hay barra
-        if (header) header.style.top = '0px';
-        if (topMenu) topMenu.style.top = `${baseTopPosition}px`;
-        
-        if (brandIntro) {
-            brandIntro.style.paddingTop = '80px'; 
-        }
+        // 1. La barra fluye con el contenido (se va al scrollear)
+        promoBar.style.position = 'relative'; 
+        promoBar.style.zIndex = '1001'; // Aseguramos que esté arriba de todo
     }
 }
 
@@ -37,63 +16,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (closeBtn && promoBar) {
         closeBtn.addEventListener('click', () => {
-            // 1. La barra se va hacia arriba
+            // Animación simple: subir opacidad y deslizar
+            promoBar.style.transition = 'all 0.4s ease';
             promoBar.style.transform = 'translateY(-100%)';
+            promoBar.style.marginTop = `-${promoBar.offsetHeight}px`; 
             
-            // 2. Elementos que deben subir SIMULTÁNEAMENTE
-            const header = document.querySelector('header');
-            const topMenu = document.querySelector('.intro-nav-links-top');
-            const brandIntro = document.querySelector('.brand-intro');
-
-            if (header) {
-                header.style.transition = 'top 0.4s ease'; 
-                header.style.top = '0px';
-            }
-            
-            if (topMenu) {
-                topMenu.style.top = '30px'; 
-            }
-
-            if (brandIntro) {
-                brandIntro.style.paddingTop = '80px';
-            }
-
-            // 3. Esperar a que termine la animación antes de ocultar
             setTimeout(() => {
                 promoBar.style.display = 'none';
+                promoBar.style.marginTop = '0'; 
+                promoBar.style.transform = 'none';
             }, 400); 
         });
-    }
-
-    // --- numeros ---
-    const counterSection = document.getElementById('counter-section');
-    if (counterSection) {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    const counters = entry.target.querySelectorAll('.counter');
-                    counters.forEach((counter) => {
-                        const target = +counter.getAttribute('data-target');
-                        const increment = target / 50; 
-                        
-                        const updateCounter = () => {
-                            const c = +counter.innerText.replace('+', '');
-                            if (c < target) {
-                                counter.innerText = `${Math.ceil(c + increment)}`;
-                                setTimeout(updateCounter, 30);
-                            } else {
-                                counter.innerText = target;
-                                if (target > 10) counter.innerText = "+" + target;
-                            }
-                        };
-                        updateCounter();
-                    });
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.5 });
-        
-        observer.observe(counterSection);
     }
 });
 

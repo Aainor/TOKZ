@@ -10,7 +10,6 @@
 body {
     background-image: url('/public/img/texturas/binding-dark.png');
     background-repeat: repeat;
-    padding-top: 90px;
 }
 
 .servicios-wrapper {
@@ -233,10 +232,6 @@ body {
 }
 
 @media (max-width: 768px) {
-
-    body {
-        padding-top: 70px !important;
-    }
 
     .full-page-container {
         padding: 20px;

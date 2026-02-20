@@ -28,229 +28,29 @@
 
     <div id="header-placeholder"></div>
     <main>
-        <section class="brand-intro" id="inicio">
-            <nav class="intro-nav-links intro-nav-links-top">
-                <div class="nav-menu-group">
-                    <a href="#inicio" class="active">Inicio</a>
-                    <a href="#sobreNosotros">¿Qué es TOKZ?</a>
-                    <a href="#servicios">Servicios</a>
-                    <a href="#turnos">Turnos</a>
-                    <a href="#multimedia">Multimedia</a>
-                    <a href="#educacion">Educación</a>
-                    <a href="#redes">Redes Sociales</a>
-                </div>
-
-                <a href="/pages/login.html" class="access-btn-highlight">
-                    <i class="fa-solid fa-user"></i> Acceso
-                </a>
-            </nav>
-            <div class="intro-content">
-                <img src="/public/img/logos/Imagen3.png" alt="TOKZ Barber Logo" class="big-logo">
-
-                <section class="reviews-section reviews-prominent">
-                    <div class="google-header">
-                        <div class="google-info">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg"
-                                alt="Google" class="google-logo">
-                            <div class="rating-block">
-                                <span class="stars-header">★★★★★</span>
-                                <span class="score">4.9</span>
-                                <span class="count">83 reseñas</span>
-                            </div>
-                        </div>
-                        <a href="https://search.google.com/local/writereview?placeid=ChIJb6-NA9ArvZURYUNQQQle9oE"
-                            target="_blank" class="write-btn">Escribí tu reseña</a>
-                    </div>
-
-                    <div class="reviews-container">
-                        <button class="nav-btn prev-btn" id="prevBtn">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="15 18 9 12 15 6"></polyline>
-                            </svg>
-                        </button>
-
-                        <div class="reviews-wrapper">
-                            <div class="reviews-track" id="track">
-                                <div class="review-card">
-                                    <div class="review-header">
-                                        <div class="user-info">
-                                            <div class="avatar-p">
-                                                <img src="https://lh3.googleusercontent.com/a-/ALV-UjV4nGVwt0E4ZSjGZlEKgqZJHo4b0iW1YOE9KIiIsjNK6rBSVLM=w90-h90-p-rp-mo-br100"
-                                                    alt="C" onerror="this.style.display='none'">
-                                            </div>
-                                            <div class="details">
-                                                <h3>Hernan Ponce</h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="stars">★★★★★</div>
-                                    <p class="review-text">Excelente el servicio y la calidez humana en cada barbero y
-                                        peluquero. Super recomendable.</p>
-                                    <button class="read-more-btn hide-on-mobile" onclick="toggleReview(this)">Ver
-                                        más</button>
-                                </div>
-                                <div class="review-card">
-                                    <div class="review-header">
-                                        <div class="user-info">
-                                            <div class="avatar-p"><img
-                                                    src="https://lh3.googleusercontent.com/a-/ALV-UjXpvnMN0mNK2Sf15kjdbjeivXHZw56YBLsaLyeFckqVFQKIeNc=w90-h90-p-rp-mo-br100"
-                                                    alt="C" onerror="this.style.display='none'"></div>
-                                            <div class="details">
-                                                <h3>Patricio Ares</h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="stars">★★★★★</div>
-                                    <p class="review-text">Experiencia siempre barbara, la mejor atención y excelente,
-                                        la comodidad y el trato.</p>
-                                </div>
-                                <div class="review-card">
-                                    <div class="review-header">
-                                        <div class="user-info">
-                                            <div class="avatar-p"><img
-                                                    src="https://lh3.googleusercontent.com/a-/ALV-UjUSKpUCy9wV42RPyJdaxLc5votukPt4L1yUKTA4z10z-a2Z75hGyQ=w90-h90-p-rp-mo-br100"
-                                                    alt="C" onerror="this.style.display='none'"></div>
-                                            <div class="details">
-                                                <h3>Micaela Quiroga</h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="stars">★★★★★</div>
-                                    <p class="review-text">La mejor barber lejos tienen una paciencia con los chicos q
-                                        no se ve en ningún lado.</p>
-                                </div>
-                                <div class="review-card">
-                                    <div class="review-header">
-                                        <div class="user-info">
-                                            <div class="avatar" style="background: #1b3577;">L</div>
-                                            <div class="details">
-                                                <h3>Luciano Cabañas</h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="stars">★★★★★</div>
-                                    <p class="review-text">Desde que entras sos un amigo más, siempre buena atención,
-                                        buena onda y los mejores cortes.</p>
-                                    <button class="read-more-btn hide-on-mobile" onclick="toggleReview(this)">Ver
-                                        más</button>
-                                </div>
-                                <div class="review-card">
-                                    <div class="review-header">
-                                        <div class="user-info">
-                                            <div class="avatar-p"><img
-                                                    src="https://lh3.googleusercontent.com/a-/ALV-UjXyWTsFKhdos_IXixf3FXua3VCIUhexZKyD9uLLopCc1LVoiRQ=w90-h90-p-rp-mo-br100"
-                                                    alt="C" onerror="this.style.display='none'"></div>
-                                            <div class="details">
-                                                <h3>Magno Gon</h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="stars">★★★★★</div>
-                                    <p class="review-text">Muy buen lugar, hermoso estéticamente y la buena onda de los
-                                        chicos nunca falla.
-                                        El dueño Nicolás Ruibal (Barbero del lugar) hizo la perfecta combinación entre
-                                        los estético y la buena onda 😎</p>
-                                    <button class="read-more-btn" onclick="toggleReview(this)">Ver más</button>
-                                </div>
-                                <div class="review-card">
-                                    <div class="review-header">
-                                        <div class="user-info">
-                                            <div class="avatar" style="background: #06a978;">F</div>
-                                            <div class="details">
-                                                <h3>Facundo Jaimez</h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="stars">★★★★★</div>
-                                    <p class="review-text">La mejor Barbería que he visto con unos buenos cortes 😎</p>
-                                </div>
-                                <div class="review-card">
-                                    <div class="review-header">
-                                        <div class="user-info">
-                                            <div class="avatar-p">
-                                                <img src="https://lh3.googleusercontent.com/a-/ALV-UjVVRKqL2ANpCaqzUJtJC2Q4pLqmy0n0clPiqU5ulzaTwPNJsdn81g=w90-h90-p-rp-mo-ba2-br100"
-                                                    alt="C" onerror="this.style.display='none'">
-                                            </div>
-                                            <div class="details">
-                                                <h3>Silvio Gonzalez</h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="stars">★★★★★</div>
-                                    <p class="review-text">Los mejores ! Hace años que me atiendo con ellos y sin duda
-                                        la mejor atención tanto en lo profesional
-                                        como personal cada uno de los integrantes del equipo !
-                                        Siempre agradecido con mis amigos de TOKZ BARBER!💈</p>
-                                    <button class="read-more-btn" onclick="toggleReview(this)">Ver más</button>
-                                </div>
-                            </div>
-                            <div class="progress-container">
-                                <div class="progress-bar" id="progressBar"></div>
-                            </div>
-                        </div>
-
-                        <button class="nav-btn next-btn" id="nextBtn">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="9 18 15 12 9 6"></polyline>
-                            </svg>
-                        </button>
-                    </div>
-                </section>
-            </div>
-        </section>
-
-        <section id="sobreNosotros" class="about-vip-section">
+        <section id="tokz" class="about-vip-section">
             <div class="vip-background-slider">
-                <img src="/public/img/IMAGENES/barberia/Barb local (1).webp" class="bg-slide active"
+                <img src="/public/img/IMAGENES/barberia/BARBERIA-LugaresdeTRABAJO2.webp" class="bg-slide active"
                     alt="Ambiente TOKZ">
-                <img src="/public/img/IMAGENES/barberia/Barb local (2).webp" class="bg-slide" alt="Detalle VIP">
                 <img src="/public/img/IMAGENES/horizontales/hori (4).webp" class="bg-slide" alt="Detalle VIP">
-                <img src="/public/img/IMAGENES/barberia/Barb local (5).webp" class="bg-slide" alt="Detalle VIP">
+                <img src="/public/img/IMAGENES/barberia/BARBERIA-SPOT-NICO-ALE-LAUTI.webp" class="bg-slide" alt="Detalle VIP">
             </div>
 
             <div class="about-overlay vip-overlay">
                 <div class="container about-content-centered vip-content fade-in">
-                    <span class="vip-tag"> <strong> TOKZ BARBER | Barberia en constante Evolución. </strong> </span>
-                    <h1 class="vip-title">Del living de casa<br>al corazón de Guernica.</h1>
+                    <span class="vip-tag"> TOKZ  | Desde el año 2019 </span>
+                    <h1 class="vip-title">Tu corte es nuestra prioridad,<br>el detalle es nuestra marca.</h1>
                     <div class="vip-separator"></div>
                     <div class="vip-body-text">
-                        <p>Lo que empezó en 2019 como un sueño de Nicolas Ruibal en el living de su casa,
-                            hoy es el latido del estilo en el centro de Guernica. En TOKZ BARBER, nacimos
-                            con una sola silla y una convicción: siempre se puede crecer. </p>
-                        <p> Desde nuestra llegada en 2020 frente a la plaza Belisario Roldan,
-                            nos dedicamos a cuidar la imagen de nuestra comunidad a través de
-                            la mejora constante. Para nosotros, cada corte es un compromiso,
-                            porque nuestro trabajo habla por nosotros. </p>
-
+                        <p>Siete años perfeccionando la técnica para darte el corte que buscás. <br> 
+                            Sin vueltas: buena atención, ambiente de primera y un equipo de profesionales que sabe lo que hace, acá en Guernica.</p>
                     </div>
-                    <a href="#multimedia" class="cta-button vip-btn">Ver Galería</a>
-                </div>
-            </div>
-        </section>
-
-        <section class="stats-static-bar">
-            <div class="container" style="padding: 20px;">
-                <div class="stats-grid fade-in" id="counter-section">
-                    <div class="stat-item">
-                        <strong class="counter" data-target="40">0</strong>
-                        <span>Cortes Diarios</span>
+                    <div class="hero-buttons">
+                        <a href="#servicios" class="cta-button vip-btn active">SERVICIOS</a>
+                        <a href="#turnos" class="cta-button vip-btn active">RESERVÁ TU LUGAR</a>
+                        <a href="#educacion" class="cta-button vip-btn active">EDUCACIÓN</a>
                     </div>
-                    <div class="stat-item">
-                        <strong class="counter" data-target="20">0</strong>
-                        <span>Reservas Online</span>
-                    </div>
-                    <div class="stat-item">
-                        <strong class="counter" data-target="85">0</strong>
-                        <span>Egresados</span>
-                    </div>
-                    <div class="stat-item">
-                        <strong class="counter" data-target="3">0</strong>
-                        <span>Barberos Profesionales</span>
-                    </div>
-                    <div class="stat-item">
-                        <strong class="counter" data-target="2">0</strong>
-                        <span>Barbero Jr</span>
-                    </div>
+                    
                 </div>
             </div>
         </section>
@@ -486,7 +286,7 @@
         <section id="tokz-blog" class="blog-section fade-in">
             <div class="blog-container">
                 <div class="blog-header-main">
-                    <span class="vip-tag">TOKZ NEWS</span>
+                    <span class="vip-tag news">TOKZ NEWS</span>
                     <h2>Novedades y Avisos</h2>
                     <p>Información oficial de la barbería.</p>
                 </div>
@@ -600,11 +400,9 @@
     <script src="/public/js/main.js"></script>
     <script type="module" src="/public/js/back.js"></script>
     <script src="/public/js/scroll.js"></script>
-    <script src="/public/js/swipe.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
     <script src="/public/js/sobre_nosotros.js"></script>
-    <script src="/public/js/seeMore.js"></script>
     <script type="module" src="/public/js/auth-logic.js"></script>
     <script src="/public/js/prices.js"></script>
     <script src="/public/js/guard.js"></script>

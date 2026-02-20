@@ -14,6 +14,9 @@ body {
     color: var(--edu-light);
     font-family: var(--uppercase);
     line-height: 1.6;
+}
+
+#main {
     padding: 40px;
 }
 
