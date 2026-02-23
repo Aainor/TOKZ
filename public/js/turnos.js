@@ -695,7 +695,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // ACTUALIZAMOS EL TÍTULO CON EL NOMBRE QUE ACABAMOS DE LEER
                 if (serviceTitle) {
                     serviceTitle.style.display = 'block';
-                    serviceTitle.innerHTML = `Turno con <span style="color: #AE0E30;">${nombreSeleccionado}</span>`;
+                    serviceTitle.innerHTML = `Turno con <span style="color: #CC0000;">${nombreSeleccionado}</span>`;
                 }
             } else {
                 if (selectorContainer) selectorContainer.style.display = 'block';
@@ -811,7 +811,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             contentWrapper.innerHTML = `
                 <div style="text-align:center;">
-                    <h3 style="color:#AE0E30;">Iniciá Sesión</h3>
+                    <h3 style="color:#CC0000;">Iniciá Sesión</h3>
                     <p style="color:#ccc;">Necesitás una cuenta para reservar.</p>
                     <a href="/pages/login.html" class="cta-button">Ir al Login</a>
                 </div>`;

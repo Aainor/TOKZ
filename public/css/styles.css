@@ -2,7 +2,7 @@
 
 :root {
     --darkcolor: black;
-    --redcolor: #AE0E30;
+    --redcolor: #CC0000;
     --lightcolor: white;
     --bg: black;
     --bg-card: #151515;
@@ -2104,6 +2104,22 @@ footer {
         font-size: 0.95rem !important;
         line-height: 1.5 !important;
     }
+
+    .edu-image-wrapper {
+        width: 100% !important;
+        height: auto !important;
+        display: block !important;
+        margin-top: 20px;
+    }
+
+    .edu-image-wrapper img {
+        width: 100% !important;
+        height: 500px !important;
+        object-position: 0 100% !important;
+        object-fit: cover !important;
+        filter: brightness(1);
+        border-bottom: 4px solid var(--redcolor);
+    }
 }
 
 /* educacion*/
@@ -2159,7 +2175,7 @@ footer {
     width: 100%;
     height: 600px;
     object-fit: cover;
-    object-position: top center;
+    object-position: 0 50%;
     border-bottom: 5px solid var(--redcolor);
     filter: brightness(0.9);
     transition: transform 0.4s ease, filter 0.4s ease;

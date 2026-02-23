@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div style="text-align:center; padding:50px; color:white;">
                     <h2>🔒 Acceso Restringido</h2>
                     <p>Necesitas iniciar sesión para ver la agenda.</p>
-                    <a href="/pages/login.html" style="color:#AE0E30; text-decoration:underline;">Ir al Login</a>
+                    <a href="/pages/login.html" style="color:#CC0000; text-decoration:underline;">Ir al Login</a>
                 </div>
              `;
         }
@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function getColorByPro(proName) {
     if (!proName) return '#777';
     const name = proName.toLowerCase();
-    if (name.includes('nico')) return '#AE0E30';
+    if (name.includes('nico')) return '#CC0000';
     if (name.includes('jonatan') || name.includes('jhonny')) return '#E91E63';
     if (name.includes('ale')) return '#9C27B0';
     if (name.includes('lau')) return '#2196F3';

@@ -4,7 +4,7 @@
 :root {
     --color-bg-main: #050505;
     --color-bg-card: rgba(20, 20, 20, 0.6);
-    --redcolor: #AE0E30;
+    --redcolor: #CC0000;
     --color-text-gray: white;
     --font-primary: 'Montserrat', sans-serif;
     --font-heading: 'Playfair Display', serif;
@@ -677,8 +677,8 @@ a:focus {
 }
 
 .fc-button-active {
-    background-color: #AE0E30 !important;
-    border-color: #AE0E30 !important;
+    background-color: #CC0000 !important;
+    border-color: #CC0000 !important;
     color: white !important;
 }
 
@@ -1476,7 +1476,7 @@ body {
 }
 
 .dashboard-back-arrow:hover {
-    color: #AE0E30 !important;
+    color: #CC0000 !important;
     /* Rojo Tokz al pasar el mouse */
     transform: scale(1.1);
 }
@@ -1497,7 +1497,7 @@ body {
     width: 90%;
     max-width: 400px;
     background: #0a0a0a;
-    border: 1px solid #AE0E30;
+    border: 1px solid #CC0000;
     /* Borde Rojo */
     box-shadow: 0 0 30px rgba(174, 14, 48, 0.15);
     padding: 25px;
@@ -1535,7 +1535,7 @@ body {
 
 .manual-form-body label {
     display: block;
-    color: #AE0E30;
+    color: #CC0000;
     font-size: 0.75rem;
     font-weight: bold;
     text-transform: uppercase;
@@ -1556,7 +1556,7 @@ body {
 }
 
 .input-manual:focus {
-    border-color: #AE0E30;
+    border-color: #CC0000;
 }
 
 /* Grilla de Horarios Manual */
@@ -1585,8 +1585,8 @@ body {
 }
 
 .time-btn-manual.active {
-    background: #AE0E30;
-    border-color: #AE0E30;
+    background: #CC0000;
+    border-color: #CC0000;
     font-weight: bold;
 }
 
@@ -1647,14 +1647,14 @@ body {
 
 /* Hover en disponibles */
 .time-btn:hover:not(:disabled) {
-    border-color: #AE0E30;
+    border-color: #CC0000;
     box-shadow: 0 0 8px rgba(174, 14, 48, 0.3);
 }
 
 /* 2. ESTADO SELECCIONADO (Relleno Rojo) */
 .time-btn.active {
-    background-color: #AE0E30;
-    border-color: #AE0E30;
+    background-color: #CC0000;
+    border-color: #CC0000;
     color: white;
     font-weight: bold;
     box-shadow: 0 0 10px rgba(174, 14, 48, 0.6);
@@ -1744,7 +1744,7 @@ body {
 }
 
 .dropdown-item:hover {
-    background-color: #AE0E30; /* Rojo al pasar el mouse */
+    background-color: #CC0000; /* Rojo al pasar el mouse */
 }
 
 .dropdown-item i {

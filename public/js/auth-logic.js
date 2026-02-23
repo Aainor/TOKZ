@@ -197,7 +197,7 @@ window.abrirLinkGoogleCalendar = function (turnoData) {
                     
                     // Diferenciar visualmente BLOQUEOS de TURNOS NORMALES
                     let isBlock = data.status === "blocked";
-                    let bgColor = isBlock ? '#1a1a1a' : '#AE0E30'; // Negro/Gris para bloqueos, Rojo para turnos
+                    let bgColor = isBlock ? '#1a1a1a' : '#CC0000'; // Negro/Gris para bloqueos, Rojo para turnos
                     let borderColor = isBlock ? '#444' : '#ffffff';
                     
                     // Título: Si es bloqueo, dice "BLOQUEADO", si no, el nombre del cliente
@@ -818,7 +818,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (specificBarber.days.includes(dayIdx)) {
                 specificBarber.hours.forEach(h => validHours.add(h));
             } else {
-                gridManualTime.innerHTML = '<p style="color:#AE0E30; font-size:0.9rem;">No trabajás este día.</p>';
+                gridManualTime.innerHTML = '<p style="color:#CC0000; font-size:0.9rem;">No trabajás este día.</p>';
                 return;
             }
         } else {
@@ -926,7 +926,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         myTurnos.sort((a, b) => new Date(a.date) - new Date(b.date));
         myTurnos.forEach(t => {
             bookingsListContainer.innerHTML += `
-            <div class="booking-item" style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:15px; border-radius:8px; margin-bottom:10px; border-left:3px solid #AE0E30;">
+            <div class="booking-item" style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:15px; border-radius:8px; margin-bottom:10px; border-left:3px solid #CC0000;">
                 <div style="text-align:left;">
                     <h4 style="color:white; margin:0;">${Array.isArray(t.services) ? t.services.join(" + ") : t.services}</h4>
                     <small style="color:#aaa;">📅 ${t.date} - ${t.time} | 💈 ${t.pro}</small>
@@ -980,7 +980,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <td style="color:#4CAF50; font-weight:bold;">$${price}</td>
                 </tr>`;
             });
-            tbody.innerHTML += `<tr style="background:#333; font-weight:bold;"><td colspan="4" style="text-align:right;">TOTAL:</td><td style="color:#AE0E30;">$${total}</td></tr>`;
+            tbody.innerHTML += `<tr style="background:#333; font-weight:bold;"><td colspan="4" style="text-align:right;">TOTAL:</td><td style="color:#CC0000;">$${total}</td></tr>`;
         } catch (e) { console.error(e); }
     }
 });
