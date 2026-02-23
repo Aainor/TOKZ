@@ -2115,7 +2115,7 @@ footer {
     .edu-image-wrapper img {
         width: 100% !important;
         height: 500px !important;
-        object-position: 0 100% !important;
+        object-position: 0 70% !important;
         object-fit: cover !important;
         filter: brightness(1);
         border-bottom: 4px solid var(--redcolor);
