@@ -1409,22 +1409,23 @@ footer {
     }
 
     .hero-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 0.1px; 
+        display: flex;
+        flex-direction: column;
+        gap: 0.1px;
     }
 
 
     .hero-buttons a:nth-child(2) {
-        order: 1; /* RESERVÁ TU LUGAR pasa arriba de todo */
+        order: 1;
+        /* RESERVÁ TU LUGAR pasa arriba de todo */
     }
 
     .hero-buttons a:nth-child(1) {
-        order: 2; 
+        order: 2;
     }
 
     .hero-buttons a:nth-child(3) {
-        order: 3; 
+        order: 3;
     }
 
     .service-buttons {
@@ -2312,109 +2313,248 @@ footer {
     border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.blog-container { 
-    max-width: 700px; 
-    margin: 0 auto; 
+.blog-container {
+    max-width: 700px;
+    margin: 0 auto;
 }
 
-.blog-header-main { 
-    text-align: center; 
-    margin-bottom: 40px; 
+.blog-header-main {
+    text-align: center;
+    margin-bottom: 40px;
 }
 
 .blog-header-main h2 {
-    font-family: var(--uppercase); 
+    font-family: var(--uppercase);
     color: var(--lightcolor);
-    font-size: 38px; 
+    font-size: 38px;
     margin-bottom: 15px;
 }
 
-.blog-header-main p { 
-    color: #999; 
+.blog-header-main p {
+    color: #999;
 }
 
 .feed-wrapper {
-    display: flex; 
+    display: flex;
     flex-direction: column;
-    border-radius: 15px; 
+    border-radius: 15px;
     overflow: hidden;
-    border: 1px solid #2f3336; 
+    border: 1px solid #2f3336;
     min-height: 100px;
 }
 
 .tokz-post {
-    display: flex; 
-    padding: 20px; 
+    display: flex;
+    padding: 20px;
     border-bottom: 1px solid #2f3336;
-    background-color: var(--bg); 
+    background-color: var(--bg);
     transition: background 0.2s ease;
 }
 
-.tokz-post:hover { 
-    background-color: #080808; 
+.tokz-post:hover {
+    background-color: #080808;
 }
 
-.tokz-post:last-child { 
-    border-bottom: none; 
+.tokz-post:last-child {
+    border-bottom: none;
 }
 
-.post-side { 
-    margin-right: 15px; 
-    flex-shrink: 0; 
+.post-side {
+    margin-right: 15px;
+    flex-shrink: 0;
 }
 
 .post-avatar {
-    width: 48px; 
-    height: 48px; 
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    object-fit: cover; 
+    object-fit: cover;
     border: 1px solid var(--redcolor);
 }
 
-.post-body { 
-    flex: 1; 
+.post-body {
+    flex: 1;
 }
 
-.post-user-info { 
-    margin-bottom: 4px; 
-    color: #71767b; 
-    font-size: 15px; 
+.post-user-info {
+    margin-bottom: 4px;
+    color: #71767b;
+    font-size: 15px;
 }
 
-.post-user-info strong { 
-    color: var(--lightcolor); 
-    margin-right: 5px; 
+.post-user-info strong {
+    color: var(--lightcolor);
+    margin-right: 5px;
 }
 
 .post-user-info small {
-    background-color: #2f3336; 
-    color: white; 
+    background-color: #2f3336;
+    color: white;
     padding: 2px 6px;
-    border-radius: 4px; 
-    font-size: 10px; 
-    margin-left: 5px; 
+    border-radius: 4px;
+    font-size: 10px;
+    margin-left: 5px;
     vertical-align: middle;
 }
 
 .post-text {
-    color: #e7e9ea; 
-    font-size: 15px; 
+    color: #e7e9ea;
+    font-size: 15px;
     line-height: 1.5;
-    margin-bottom: 12px; 
+    margin-bottom: 12px;
     margin-top: 0;
-    text-align: left; /* Asegura que el texto esté a la izquierda estilo Twitter */
+    text-align: left;
+    /* Asegura que el texto esté a la izquierda estilo Twitter */
 }
 
 .post-footer-date {
-    margin-top: 10px; 
-    font-size: 12px; 
+    margin-top: 10px;
+    font-size: 12px;
     color: #71767b;
-    border-top: 1px solid #2f3336; 
+    border-top: 1px solid #2f3336;
     padding-top: 10px;
 }
 
 /* Responsive para el Blog */
 @media (max-width: 600px) {
-    .blog-header-main h2 { font-size: 28px; }
-    .tokz-post { padding: 15px; }
+    .blog-header-main h2 {
+        font-size: 28px;
+    }
+
+    .tokz-post {
+        padding: 15px;
+    }
+}
+
+/* Fondo negro real */
+#tokz-blog {
+    background: #000;
+    color: #fff;
+    padding: 100px 0 60px 0;
+}
+
+/* Header centrado */
+.tokz-blog-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 60px auto;
+}
+
+
+.tokz-blog-title {
+    font-size: 46px;
+    font-weight: 800;
+    margin: 20px 0 10px 0;
+}
+
+.tokz-blog-subtitle {
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 20px;
+}
+
+
+.tokz-blog-description {
+    font-size: 16px;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 40px;
+}
+
+
+.tokz-blog-image img {
+    width: 100%;
+    max-width: 600px;
+    border-bottom: 4px solid #e10600;
+}
+
+
+.tokz-loading {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    padding: 20px;
+}
+
+/* Feed estilo “blog/twitter” */
+.feed-wrapper {
+    width: 100%;
+}
+
+.tweet-card {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 12px;
+    margin: 0 auto 12px auto;
+    position: relative;
+}
+
+.tweet-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.tweet-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    object-fit: cover;
+    border: 2px solid #CC0000;
+    flex: 0 0 auto;
+}
+
+.tweet-head-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.tweet-title {
+    font-size: 14px;
+    color: #fff;
+    font-weight: 700;
+    margin: 0;
+}
+
+.tweet-handle {
+    font-size: 12px;
+    color: #777;
+    margin: 0;
+}
+
+.tweet-text {
+    font-size: 14px;
+    color: #ddd;
+    margin: 10px 0 0 0;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.tweet-text p {
+    margin: 0 0 10px 0;
+}
+
+.tweet-text ul,
+.tweet-text ol {
+    margin: 0 0 10px 20px;
+}
+
+.tweet-text a {
+    color: #CC0000;
+    text-decoration: none;
+}
+
+.tweet-text a:hover {
+    text-decoration: underline;
+}
+
+.tweet-date {
+    font-size: 10px;
+    color: #666;
+    margin-top: 8px;
+    display: block;
 }

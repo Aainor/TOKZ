@@ -33,23 +33,23 @@ body {
 .category-section {
     margin-bottom: 60px;
     display: grid;
-    grid-template-columns: 280px 1fr; 
-    gap: 40px; 
+    grid-template-columns: 280px 1fr;
+    gap: 40px;
     margin-bottom: 60px;
-    align-items: start; 
+    align-items: start;
 }
 
-.category-section p{
+.category-section p {
     font-size: 14px;
 }
 
-.category-section p a{
+.category-section p a {
     color: var(--redcolor);
     text-decoration: none;
     font-weight: bold;
 }
 
-.category-section p a:hover{
+.category-section p a:hover {
     color: var(--lightcolor);
 }
 
@@ -61,7 +61,7 @@ body {
     border-bottom: 1px solid #333;
     padding-bottom: 15px;
     margin-bottom: 0px;
-    grid-column: 1 / -1; 
+    grid-column: 1 / -1;
 }
 
 .services-grid.full-width-grid {
@@ -96,8 +96,8 @@ body {
 }
 
 .payment-info i {
-    flex-shrink: 0;  
-    margin-top: 2px; 
+    flex-shrink: 0;
+    margin-top: 2px;
 }
 
 .logoIMG {
@@ -122,14 +122,14 @@ body {
     flex-direction: column;
     flex-grow: 1;
     padding: 15px;
-    padding-bottom: 15px !important; 
+    padding-bottom: 15px !important;
     overflow: hidden;
-    justify-content: flex-start; 
+    justify-content: flex-start;
 }
 
 .price-details {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     align-items: center;
     margin-top: auto;
     width: 100%;
@@ -138,15 +138,15 @@ body {
 
 .old-price {
     font-size: 14px;
-    color: #888; 
-    text-decoration: line-through; 
+    color: #888;
+    text-decoration: line-through;
     margin-bottom: 2px;
     font-weight: 400;
 }
 
 .promo-price {
     font-size: 20px;
-    color: var(--redcolor); 
+    color: var(--redcolor);
     font-weight: 700;
     line-height: 1.2;
 }
@@ -159,7 +159,7 @@ body {
 
 .main-image-box {
     width: 100%;
-    height: 220px; 
+    height: 220px;
     overflow: hidden;
 }
 
@@ -174,18 +174,18 @@ body {
 .thumbnails-row {
     display: flex;
     gap: 5px;
-    padding: 8px 15px 0 15px; 
+    padding: 8px 15px 0 15px;
     height: 50px;
     background-color: #fff;
 }
 
 
 .thumb {
-    flex: 1; 
+    flex: 1;
     height: 100%;
     cursor: pointer;
     opacity: 0.6;
-    border-bottom: 3px solid transparent; 
+    border-bottom: 3px solid transparent;
     transition: all 0.2s;
 }
 
@@ -196,9 +196,10 @@ body {
     border-radius: 2px;
 }
 
-.thumb:hover, .thumb.active {
+.thumb:hover,
+.thumb.active {
     opacity: 1;
-    border-bottom: 3px solid var(--redcolor); 
+    border-bottom: 3px solid var(--redcolor);
 }
 
 @media (max-width: 1240px) {
@@ -208,26 +209,26 @@ body {
     }
 }
 
-@media (max-width: 900px) { 
+@media (max-width: 900px) {
 
     .category-section {
-        grid-template-columns: 1fr; 
+        grid-template-columns: 1fr;
         gap: 30px;
     }
 
     .category-header {
-        grid-column: auto; 
+        grid-column: auto;
     }
 
     .category-section p {
-        grid-column: auto; 
-        position: static;  
+        grid-column: auto;
+        position: static;
         padding-right: 0;
-        margin-bottom: -10px; 
+        margin-bottom: -10px;
     }
 
     .services-grid.full-width-grid {
-        grid-column: auto; 
+        grid-column: auto;
     }
 }
 
@@ -239,7 +240,7 @@ body {
     }
 
     .services-grid.full-width-grid {
-        grid-template-columns: 1fr; 
+        grid-template-columns: 1fr;
         gap: 40px;
     }
 
@@ -248,10 +249,10 @@ body {
     }
 
     .payment-info {
-        width: 90%;         
-        max-width: 400px;   
-        margin: 0 auto;     
-        padding: 15px;      
-        text-align: left;   
+        width: 90%;
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 15px;
+        text-align: left;
     }
 }

@@ -21,12 +21,11 @@
             flex-direction: column;
             margin: 0;
             padding: 20px 0;
-            /* Agregué padding para que no se corte en pantallas chicas */
         }
 
         .admin-box {
             width: 90%;
-            max-width: 500px;
+            max-width: 520px;
             padding: 30px;
             border: 1px solid #333;
             border-radius: 10px;
@@ -35,28 +34,105 @@
             text-align: center;
             display: flex;
             flex-direction: column;
-            /* Para ordenar el contenido */
         }
 
-        textarea {
+        .logo-admin {
+            width: 80px;
+            margin-bottom: 15px;
+            align-self: center;
+        }
+
+        h2 {
+            color: white;
+            margin: 5px 0 15px 0;
+            font-size: 22px;
+        }
+
+        p {
+            color: #777;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
+        /* INPUT TITULO */
+        input {
             width: 100%;
-            height: 100px;
             background: #000;
             border: 1px solid #333;
             color: white;
-            padding: 15px;
+            padding: 12px 15px;
             font-family: inherit;
-            resize: none;
             border-radius: 5px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             font-size: 16px;
             box-sizing: border-box;
         }
 
-        textarea:focus {
+        input:focus {
             outline: 1px solid #CC0000;
         }
 
+        /* EDITOR RICH TEXT (TIPO GMAIL) */
+        .editor-wrap {
+            width: 100%;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            background: #000;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 10px;
+            border-bottom: 1px solid #333;
+            background: #0b0b0b;
+        }
+
+        .tool-btn {
+            background: #111;
+            border: 1px solid #333;
+            color: #ddd;
+            cursor: pointer;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tool-btn:hover {
+            border-color: #555;
+            transform: translateY(-1px);
+        }
+
+        .tool-btn:active {
+            transform: translateY(0px);
+        }
+
+        .editor {
+            min-height: 150px;
+            padding: 14px;
+            color: #fff;
+            font-size: 16px;
+            text-align: left;
+            outline: none;
+            line-height: 1.6;
+            /* clave para espacios/sangrías y saltos */
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .editor:empty:before {
+            content: attr(data-placeholder);
+            color: #666;
+        }
+
+        /* BOTÓN PUBLICAR */
         .btn-main {
             width: 100%;
             padding: 15px;
@@ -84,36 +160,16 @@
             transform: none;
         }
 
-        .logo-admin {
-            width: 80px;
-            margin-bottom: 15px;
-            align-self: center;
-        }
-
-        h2 {
-            color: white;
-            margin: 5px 0 15px 0;
-            font-size: 22px;
-        }
-
-        p {
-            color: #777;
-            font-size: 12px;
-            margin-bottom: 15px;
-        }
-
-        /* ESTILOS NUEVOS PARA LA LISTA DE TWEETS */
+        /* FEED */
         .news-feed {
             text-align: left;
             margin-top: 10px;
-            max-height: 300px;
-            /* Altura máxima con scroll */
+            max-height: 340px;
             overflow-y: auto;
             border-top: 1px solid #333;
             padding-top: 15px;
         }
 
-        /* Personalizar barra de scroll */
         .news-feed::-webkit-scrollbar {
             width: 6px;
         }
@@ -126,20 +182,78 @@
         .tweet-card {
             background: #1a1a1a;
             border: 1px solid #333;
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 12px;
             margin-bottom: 10px;
             position: relative;
             animation: fadeIn 0.5s ease;
         }
 
+        /* HEADER del tweet: foto + titulo + handle */
+        .tweet-head {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding-right: 70px;
+            /* espacio para botones edit/delete */
+        }
+
+        .tweet-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 999px;
+            object-fit: cover;
+            border: 2px solid #CC0000;
+            flex: 0 0 auto;
+        }
+
+        .tweet-head-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .tweet-title {
+            font-size: 14px;
+            color: #fff;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .tweet-handle {
+            font-size: 12px;
+            color: #777;
+            margin: 0;
+        }
+
+        /* Contenido: render HTML del editor */
         .tweet-text {
             font-size: 14px;
             color: #ddd;
-            margin: 0;
-            padding-right: 25px;
-            /* Espacio para el botón borrar */
-            line-height: 1.4;
+            margin: 10px 0 0 0;
+            padding-right: 70px;
+            line-height: 1.6;
+            /* respeta saltos/espacios en HTML también */
+            white-space: pre-wrap;
+        }
+
+        /* estilos básicos dentro del contenido HTML */
+        .tweet-text p {
+            margin: 0 0 10px 0;
+        }
+
+        .tweet-text ul,
+        .tweet-text ol {
+            margin: 0 0 10px 20px;
+        }
+
+        .tweet-text a {
+            color: #CC0000;
+            text-decoration: none;
+        }
+
+        .tweet-text a:hover {
+            text-decoration: underline;
         }
 
         .tweet-date {
@@ -149,21 +263,34 @@
             display: block;
         }
 
-        .btn-delete {
+        .btn-delete,
+        .btn-edit {
             position: absolute;
-            top: 5px;
-            right: 5px;
+            top: 8px;
             background: none;
             border: none;
             color: #666;
             cursor: pointer;
-            padding: 5px;
+            padding: 6px;
             font-size: 14px;
             transition: 0.2s;
         }
 
+        .btn-delete {
+            right: 8px;
+        }
+
+        .btn-edit {
+            right: 38px;
+        }
+
         .btn-delete:hover {
             color: #CC0000;
+            transform: scale(1.1);
+        }
+
+        .btn-edit:hover {
+            color: #fff;
             transform: scale(1.1);
         }
 
@@ -177,6 +304,64 @@
 
         .back-link:hover {
             color: #CC0000;
+        }
+
+        /* MODAL EDICIÓN */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 9999;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-card {
+            width: 100%;
+            max-width: 560px;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 18px;
+            box-shadow: 0 0 20px rgba(174, 14, 48, 0.25);
+        }
+
+        .modal-title {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: #fff;
+            text-align: left;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            background: #222;
+            border: 1px solid #333;
+            color: #ddd;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.2s;
+            font-size: 12px;
+        }
+
+        .btn-secondary:hover {
+            background: #2a2a2a;
         }
 
         @keyframes fadeIn {
@@ -196,11 +381,45 @@
 <body>
 
     <div class="admin-box">
+        <!-- Logo del panel -->
         <img src="../public/img/logos/Imagen3.png" alt="Tokz" class="logo-admin">
+
         <h2>Publicar Novedad</h2>
         <p>Escribí el mensaje y aparecerá en el inicio.</p>
 
-        <textarea id="newsText" placeholder="Ej: ¡Este finde abrimos hasta las 22hs! 💈"></textarea>
+        <!-- TÍTULO EDITABLE (antes "Tokz Barber") -->
+        <input id="newsTitle" type="text" placeholder="Título (editable). Ej: Promo de febrero 💈">
+
+        <!-- EDITOR tipo Gmail -->
+        <div class="editor-wrap">
+            <div class="editor-toolbar">
+                <button class="tool-btn" type="button" data-cmd="bold"><i class="fa-solid fa-bold"></i></button>
+                <button class="tool-btn" type="button" data-cmd="italic"><i class="fa-solid fa-italic"></i></button>
+                <button class="tool-btn" type="button" data-cmd="underline"><i
+                        class="fa-solid fa-underline"></i></button>
+
+                <button class="tool-btn" type="button" data-cmd="insertUnorderedList"><i
+                        class="fa-solid fa-list-ul"></i></button>
+                <button class="tool-btn" type="button" data-cmd="insertOrderedList"><i
+                        class="fa-solid fa-list-ol"></i></button>
+
+                <button class="tool-btn" type="button" data-cmd="outdent"><i class="fa-solid fa-outdent"></i></button>
+                <button class="tool-btn" type="button" data-cmd="indent"><i class="fa-solid fa-indent"></i></button>
+
+                <button class="tool-btn" type="button" data-cmd="justifyLeft"><i
+                        class="fa-solid fa-align-left"></i></button>
+                <button class="tool-btn" type="button" data-cmd="justifyCenter"><i
+                        class="fa-solid fa-align-center"></i></button>
+                <button class="tool-btn" type="button" data-cmd="justifyRight"><i
+                        class="fa-solid fa-align-right"></i></button>
+
+                <button class="tool-btn" type="button" id="btnLink"><i class="fa-solid fa-link"></i></button>
+                <button class="tool-btn" type="button" id="btnClear"><i class="fa-solid fa-eraser"></i></button>
+            </div>
+
+            <div id="newsEditor" class="editor" contenteditable="true"
+                data-placeholder="Escribí tu novedad acá... (podés usar párrafos, sangrías, listas, etc.)"></div>
+        </div>
 
         <button id="btnPublicar" class="btn-main"><i class="fa-solid fa-paper-plane"></i> PUBLICAR AHORA</button>
 
@@ -212,26 +431,181 @@
         <a href="../index.html" class="back-link">← Volver al inicio</a>
     </div>
 
+    <!-- MODAL EDICIÓN -->
+    <div id="editModal" class="modal" aria-hidden="true">
+        <div class="modal-card">
+            <h4 class="modal-title">Editar publicación</h4>
+
+            <input id="editTitle" type="text" placeholder="Título (editable)">
+
+            <div class="editor-wrap" style="margin-bottom:0;">
+                <div class="editor-toolbar" id="editToolbar">
+                    <button class="tool-btn" type="button" data-cmd="bold"><i class="fa-solid fa-bold"></i></button>
+                    <button class="tool-btn" type="button" data-cmd="italic"><i class="fa-solid fa-italic"></i></button>
+                    <button class="tool-btn" type="button" data-cmd="underline"><i
+                            class="fa-solid fa-underline"></i></button>
+
+                    <button class="tool-btn" type="button" data-cmd="insertUnorderedList"><i
+                            class="fa-solid fa-list-ul"></i></button>
+                    <button class="tool-btn" type="button" data-cmd="insertOrderedList"><i
+                            class="fa-solid fa-list-ol"></i></button>
+
+                    <button class="tool-btn" type="button" data-cmd="outdent"><i
+                            class="fa-solid fa-outdent"></i></button>
+                    <button class="tool-btn" type="button" data-cmd="indent"><i class="fa-solid fa-indent"></i></button>
+
+                    <button class="tool-btn" type="button" data-cmd="justifyLeft"><i
+                            class="fa-solid fa-align-left"></i></button>
+                    <button class="tool-btn" type="button" data-cmd="justifyCenter"><i
+                            class="fa-solid fa-align-center"></i></button>
+                    <button class="tool-btn" type="button" data-cmd="justifyRight"><i
+                            class="fa-solid fa-align-right"></i></button>
+
+                    <button class="tool-btn" type="button" id="btnLinkEdit"><i class="fa-solid fa-link"></i></button>
+                    <button class="tool-btn" type="button" id="btnClearEdit"><i class="fa-solid fa-eraser"></i></button>
+                </div>
+
+                <div id="editEditor" class="editor" contenteditable="true" data-placeholder="Editá tu novedad..."></div>
+            </div>
+
+            <div class="modal-actions">
+                <button id="btnCancelEdit" class="btn-secondary">Cancelar</button>
+                <button id="btnSaveEdit" class="btn-main" style="margin-bottom:0;">Guardar cambios</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { db, collection, addDoc } from '../public/js/firebase.js';
 
-        // Importamos más herramientas de Firestore (onSnapshot para tiempo real y deleteDoc para borrar)
         import {
             serverTimestamp,
             query,
             orderBy,
             onSnapshot,
             doc,
-            deleteDoc
+            deleteDoc,
+            updateDoc
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const feedContainer = document.getElementById('newsFeed');
 
-        // 1. ESCUCHAR Y MOSTRAR NOTICIAS (TIEMPO REAL)
+        // FOTO NUEVA (avatar del tweet). Cambiá esta ruta si la nueva es otra.
+        const AVATAR_SRC = "/public/img/barbers/nico1.jpeg";
+
+        // Handle fijo según pediste
+        const HANDLE_TEXT = "@Nicolas TOKZ";
+
+        // ====== utilidades fecha ======
+        function pad2(n) {
+            return String(n).padStart(2, '0');
+        }
+
+        function formatFechaHHMM_DDMMYYYY(dateObj) {
+            const hh = pad2(dateObj.getHours());
+            const mm = pad2(dateObj.getMinutes());
+            const d = pad2(dateObj.getDate());
+            const m = pad2(dateObj.getMonth() + 1);
+            const y = dateObj.getFullYear();
+            return `${hh}:${mm} ${d}/${m}/${y}`;
+        }
+
+        // ====== Sanitizado mínimo para HTML (evita script/onerror/onclick) ======
+        function sanitizeHtml(html) {
+            const tpl = document.createElement('template');
+            tpl.innerHTML = html;
+
+            // eliminar scripts
+            tpl.content.querySelectorAll('script').forEach(s => s.remove());
+
+            // remover atributos on* (onclick, onerror, etc.)
+            tpl.content.querySelectorAll('*').forEach(el => {
+                [...el.attributes].forEach(attr => {
+                    if (attr.name.toLowerCase().startsWith('on')) {
+                        el.removeAttribute(attr.name);
+                    }
+                });
+            });
+
+            return tpl.innerHTML;
+        }
+
+        // ====== Toolbar handler (para cualquier toolbar/editor) ======
+        function bindToolbar(toolbarEl, editorEl, linkBtnEl, clearBtnEl) {
+            toolbarEl.querySelectorAll('[data-cmd]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const cmd = btn.getAttribute('data-cmd');
+                    editorEl.focus();
+                    document.execCommand(cmd, false, null);
+                });
+            });
+
+            linkBtnEl.addEventListener('click', () => {
+                editorEl.focus();
+                const url = prompt("Pegá el link (https://...):");
+                if (!url) return;
+                document.execCommand('createLink', false, url);
+            });
+
+            clearBtnEl.addEventListener('click', () => {
+                editorEl.focus();
+                // quita formato (pero mantiene texto)
+                document.execCommand('removeFormat', false, null);
+            });
+        }
+
+        // Editor principal
+        const newsTitle = document.getElementById('newsTitle');
+        const newsEditor = document.getElementById('newsEditor');
+
+        bindToolbar(
+            document.querySelector('.editor-toolbar'),
+            newsEditor,
+            document.getElementById('btnLink'),
+            document.getElementById('btnClear')
+        );
+
+        // Modal refs (edición)
+        const editModal = document.getElementById('editModal');
+        const editTitleInput = document.getElementById('editTitle');
+        const editEditor = document.getElementById('editEditor');
+        const btnCancelEdit = document.getElementById('btnCancelEdit');
+        const btnSaveEdit = document.getElementById('btnSaveEdit');
+
+        bindToolbar(
+            document.getElementById('editToolbar'),
+            editEditor,
+            document.getElementById('btnLinkEdit'),
+            document.getElementById('btnClearEdit')
+        );
+
+        let editingId = null;
+
+        function openEditModal(id, tituloActual, htmlActual) {
+            editingId = id;
+            editTitleInput.value = tituloActual || '';
+            editEditor.innerHTML = htmlActual || '';
+            editModal.classList.add('show');
+            editModal.setAttribute('aria-hidden', 'false');
+            setTimeout(() => editEditor.focus(), 50);
+        }
+
+        function closeEditModal() {
+            editingId = null;
+            editModal.classList.remove('show');
+            editModal.setAttribute('aria-hidden', 'true');
+        }
+
+        btnCancelEdit.addEventListener('click', closeEditModal);
+        editModal.addEventListener('click', (e) => {
+            if (e.target === editModal) closeEditModal();
+        });
+
+        // ====== FEED en tiempo real ======
         const q = query(collection(db, "novedades"), orderBy("fecha", "desc"));
 
         onSnapshot(q, (snapshot) => {
-            feedContainer.innerHTML = ''; // Limpiamos la lista antes de volver a pintar
+            feedContainer.innerHTML = '';
 
             if (snapshot.empty) {
                 feedContainer.innerHTML = '<div style="text-align: center; color: #555; padding: 20px;">No hay noticias publicadas.</div>';
@@ -242,36 +616,62 @@
                 const data = documento.data();
                 const id = documento.id;
 
-                // Formatear fecha
-                let fechaTexto = "Recién";
+                // Fecha publicación
+                let fechaPub = "Recién";
                 if (data.fecha) {
-                    fechaTexto = data.fecha.toDate().toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' });
+                    fechaPub = formatFechaHHMM_DDMMYYYY(data.fecha.toDate());
                 }
 
-                // Crear elemento HTML
+                // Fecha edición (si existe)
+                let fechaEdit = "";
+                if (data.fechaEdicion) {
+                    if (typeof data.fechaEdicion === "string") {
+                        fechaEdit = data.fechaEdicion;
+                    } else if (data.fechaEdicion.toDate) {
+                        fechaEdit = formatFechaHHMM_DDMMYYYY(data.fechaEdicion.toDate());
+                    }
+                }
+
+                // “Editado: ...” al lado de la fecha, y siempre HH:MM DD/MM/AAAA
+                const fechaLinea = `${fechaEdit ? `Editado: ${fechaEdit} · ` : ''}${fechaPub}`;
+
+                const titulo = (data.titulo && String(data.titulo).trim()) ? data.titulo : "Sin título";
+                const contenidoHtml = data.html || "";
+
                 const card = document.createElement('div');
                 card.className = 'tweet-card';
+
                 card.innerHTML = `
-                    <p class="tweet-text">${data.texto}</p>
-                    <span class="tweet-date">${fechaTexto}</span>
+                    <div class="tweet-head">
+                        <img class="tweet-avatar" src="${AVATAR_SRC}" alt="avatar">
+                        <div class="tweet-head-info">
+                            <p class="tweet-title">${titulo}</p>
+                            <p class="tweet-handle">${HANDLE_TEXT}</p>
+                        </div>
+                    </div>
+
+                    <div class="tweet-text">${contenidoHtml}</div>
+
+                    <span class="tweet-date">${fechaLinea}</span>
+
+                    <button class="btn-edit" title="Editar noticia"><i class="fa-solid fa-pen"></i></button>
                     <button class="btn-delete" title="Borrar noticia"><i class="fa-solid fa-trash"></i></button>
                 `;
 
-                // Agregar lógica al botón de borrar de ESTA tarjeta
                 const btnBorrar = card.querySelector('.btn-delete');
                 btnBorrar.addEventListener('click', () => borrarNoticia(id));
+
+                const btnEditar = card.querySelector('.btn-edit');
+                btnEditar.addEventListener('click', () => openEditModal(id, data.titulo, data.html));
 
                 feedContainer.appendChild(card);
             });
         });
 
-        // 2. FUNCIÓN PARA BORRAR
         async function borrarNoticia(id) {
             if (confirm("¿Estás seguro de que querés borrar esta noticia?")) {
                 try {
                     await deleteDoc(doc(db, "novedades", id));
-                    // No hace falta hacer nada más, onSnapshot actualizará la lista sola
-                    console.log("Noticia eliminada");
                 } catch (e) {
                     console.error("Error al borrar:", e);
                     alert("Error al borrar la noticia.");
@@ -279,13 +679,57 @@
             }
         }
 
-        // 3. LÓGICA DE PUBLICAR (Igual que antes)
+        // ====== Guardar edición ======
+        btnSaveEdit.addEventListener('click', async () => {
+            if (!editingId) return;
+
+            const nuevoTitulo = editTitleInput.value || '';
+            const html = sanitizeHtml(editEditor.innerHTML || '');
+
+            // Validación: que no esté vacío (sin texto)
+            const tmp = document.createElement('div');
+            tmp.innerHTML = html;
+            const textOnly = (tmp.textContent || '').trim();
+            if (textOnly === "") {
+                alert("⚠️ El contenido no puede estar vacío.");
+                return;
+            }
+
+            btnSaveEdit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+            btnSaveEdit.disabled = true;
+
+            try {
+                const ahora = new Date();
+                const fechaEditado = formatFechaHHMM_DDMMYYYY(ahora);
+
+                await updateDoc(doc(db, "novedades", editingId), {
+                    titulo: nuevoTitulo,
+                    html: html,
+                    fechaEdicion: fechaEditado
+                });
+
+                closeEditModal();
+            } catch (e) {
+                console.error("Error al editar:", e);
+                alert("❌ Hubo un error al guardar la edición.");
+            } finally {
+                btnSaveEdit.innerHTML = 'Guardar cambios';
+                btnSaveEdit.disabled = false;
+            }
+        });
+
+        // ====== Publicar ======
         document.getElementById('btnPublicar').addEventListener('click', async () => {
             const btn = document.getElementById('btnPublicar');
-            const input = document.getElementById('newsText');
-            const texto = input.value;
 
-            if (texto.trim() === "") {
+            const titulo = newsTitle.value || '';
+            const html = sanitizeHtml(newsEditor.innerHTML || '');
+
+            // Validación: que no esté vacío (sin texto)
+            const tmp = document.createElement('div');
+            tmp.innerHTML = html;
+            const textOnly = (tmp.textContent || '').trim();
+            if (textOnly === "") {
                 alert("⚠️ El mensaje no puede estar vacío.");
                 return;
             }
@@ -295,12 +739,15 @@
 
             try {
                 await addDoc(collection(db, "novedades"), {
-                    texto: texto,
+                    titulo: titulo,
+                    html: html,
                     fecha: serverTimestamp(),
-                    autor: "Admin"
+                    fechaEdicion: "" // vacío hasta que se edite
+                    // ✅ admin eliminado (no hay autor)
                 });
-                // No necesitamos alert, se verá abajo inmediatamente
-                input.value = "";
+
+                newsTitle.value = "";
+                newsEditor.innerHTML = "";
             } catch (e) {
                 console.error("Error: ", e);
                 alert("❌ Hubo un error al publicar.");
