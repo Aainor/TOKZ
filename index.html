@@ -42,11 +42,11 @@
 
             <div class="about-overlay vip-overlay">
                 <div class="container about-content-centered vip-content fade-in">
-                    <span class="vip-tag"> TOKZ | Desde el año 2019 </span>
-                    <h1 class="vip-title">Tu corte es nuestra prioridad,<br>el detalle es nuestra marca.</h1>
+                    <span class="vip-tag" id="txt-tokz-tag"> TOKZ | Desde el año 2019 </span>
+                    <h1 class="vip-title" id="txt-tokz-titulo">Tu corte es nuestra prioridad,<br>el detalle es nuestra marca.</h1>
                     <div class="vip-separator"></div>
                     <div class="vip-body-text">
-                        <p>Siete años perfeccionando la técnica para darte el corte que buscás. <br>
+                        <p id="txt-tokz-desc">Siete años perfeccionando la técnica para darte el corte que buscás. <br>
                             Sin vueltas: buena atención, ambiente de primera y un equipo de profesionales que sabe lo
                             que hace, acá en Guernica.</p>
                     </div>
@@ -474,9 +474,6 @@
             snapshot.forEach((doc) => {
                 const data = doc.data();
 
-                // ✅ Título editable (antes era "Tokz Barber")
-                const titulo = (data.titulo && String(data.titulo).trim()) ? data.titulo : "Tokz Barber";
-
                 // ✅ Contenido: nuevo -> html, viejo -> texto
                 const contenidoHtml = data.html
                     ? sanitizeHtml(data.html)
@@ -506,10 +503,9 @@
 
           <div class="post-body">
             <div class="post-user-info">
-              <strong>${escapeHtml(titulo)}</strong>
-
-              <!-- ✅ SOLO @Nicolas TOKZ (sin Admin, sin @tokzbarber) -->
-              <span>${HANDLE_TEXT}</span>
+              <div class="post-user-info">
+                <strong>Nicolás Ruibal</strong> 
+                <span>${HANDLE_TEXT}</span>
             </div>
 
             <!-- ✅ Render HTML (editor tipo Gmail) -->
@@ -543,25 +539,29 @@
                 const data = docSnap.data();
                 console.log("Datos recibidos:", data);
 
+                const setTexto = (id, valor) => {
+                    const el = document.getElementById(id);
+                    if (el && valor) {
+                        el.innerHTML = valor.replace(/\n/g, "<br>");
+                    }
+                };
+
                 // 1. BARRA PROMO
-                const promoBar = document.getElementById('txt-promo-dinamico');
-                if (promoBar && data.promo_texto) promoBar.innerHTML = data.promo_texto;
+                setTexto('txt-promo-dinamico', data.promo_texto);
 
-                // 2. SECCIÓN SERVICIOS
-                if (data.serv_titulo) document.getElementById('txt-serv-titulo').innerText = data.serv_titulo;
-                if (data.serv_desc) document.getElementById('txt-serv-desc').innerText = data.serv_desc;
+                // 2. SECCIÓN TOKZ 
+                setTexto('txt-tokz-tag', data.tokz_tag);
+                setTexto('txt-tokz-titulo', data.tokz_titulo);
+                setTexto('txt-tokz-desc', data.tokz_desc);
 
-                // 3. SECCIÓN TURNOS (BARBEROS)
-                if (data.turnos_titulo) document.getElementById('txt-turnos-titulo').innerText = data.turnos_titulo;
-                // Aquí actualizamos la descripción que faltaba
-                if (data.turnos_desc) document.getElementById('txt-turnos-desc').innerText = data.turnos_desc;
+                // 3. SECCIÓN SERVICIOS
+                setTexto('txt-serv-titulo', data.serv_titulo);
+                setTexto('txt-serv-desc', data.serv_desc);
 
                 // 4. SECCIÓN EDUCACIÓN
-                if (data.edu_titulo) document.getElementById('txt-edu-titulo').innerText = data.edu_titulo;
-                if (data.edu_desc) {
-                    // Usamos innerHTML por si querés poner saltos de linea <br>
-                    document.getElementById('txt-edu-desc').innerHTML = data.edu_desc.replace(/\n/g, "<br>");
-                }
+                setTexto('txt-edu-titulo', data.edu_titulo);
+                setTexto('txt-edu-desc', data.edu_desc);
+                
             }
         });
     </script>

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Admin - Tokz News</title>
-    <link rel="icon" href="../public/img/iconos/favicon.png" type="image/png">
+    <link rel="icon" href="/public/img/iconos/favicon.png" type="image/png">
     <link rel="stylesheet" href="../public/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
@@ -387,9 +387,6 @@
         <h2>Publicar Novedad</h2>
         <p>Escribí el mensaje y aparecerá en el inicio.</p>
 
-        <!-- TÍTULO EDITABLE (antes "Tokz Barber") -->
-        <input id="newsTitle" type="text" placeholder="Título (editable). Ej: Promo de febrero 💈">
-
         <!-- EDITOR tipo Gmail -->
         <div class="editor-wrap">
             <div class="editor-toolbar">
@@ -428,6 +425,7 @@
             <div style="text-align: center; color: #555; font-size: 12px;">Cargando historial...</div>
         </div>
 
+        <a href="/pages/login.html" class="back-link">← Volver al Panel de Control</a>
         <a href="../index.html" class="back-link">← Volver al inicio</a>
     </div>
 
@@ -435,8 +433,6 @@
     <div id="editModal" class="modal" aria-hidden="true">
         <div class="modal-card">
             <h4 class="modal-title">Editar publicación</h4>
-
-            <input id="editTitle" type="text" placeholder="Título (editable)">
 
             <div class="editor-wrap" style="margin-bottom:0;">
                 <div class="editor-toolbar" id="editToolbar">
@@ -555,8 +551,8 @@
         }
 
         // Editor principal
-        const newsTitle = document.getElementById('newsTitle');
         const newsEditor = document.getElementById('newsEditor');
+        
 
         bindToolbar(
             document.querySelector('.editor-toolbar'),
@@ -567,7 +563,6 @@
 
         // Modal refs (edición)
         const editModal = document.getElementById('editModal');
-        const editTitleInput = document.getElementById('editTitle');
         const editEditor = document.getElementById('editEditor');
         const btnCancelEdit = document.getElementById('btnCancelEdit');
         const btnSaveEdit = document.getElementById('btnSaveEdit');
@@ -583,7 +578,6 @@
 
         function openEditModal(id, tituloActual, htmlActual) {
             editingId = id;
-            editTitleInput.value = tituloActual || '';
             editEditor.innerHTML = htmlActual || '';
             editModal.classList.add('show');
             editModal.setAttribute('aria-hidden', 'false');
@@ -635,7 +629,6 @@
                 // “Editado: ...” al lado de la fecha, y siempre HH:MM DD/MM/AAAA
                 const fechaLinea = `${fechaEdit ? `Editado: ${fechaEdit} · ` : ''}${fechaPub}`;
 
-                const titulo = (data.titulo && String(data.titulo).trim()) ? data.titulo : "Sin título";
                 const contenidoHtml = data.html || "";
 
                 const card = document.createElement('div');
@@ -645,7 +638,6 @@
                     <div class="tweet-head">
                         <img class="tweet-avatar" src="${AVATAR_SRC}" alt="avatar">
                         <div class="tweet-head-info">
-                            <p class="tweet-title">${titulo}</p>
                             <p class="tweet-handle">${HANDLE_TEXT}</p>
                         </div>
                     </div>
@@ -662,7 +654,7 @@
                 btnBorrar.addEventListener('click', () => borrarNoticia(id));
 
                 const btnEditar = card.querySelector('.btn-edit');
-                btnEditar.addEventListener('click', () => openEditModal(id, data.titulo, data.html));
+                btnEditar.addEventListener('click', () => openEditModal(id, data.html));
 
                 feedContainer.appendChild(card);
             });
@@ -683,7 +675,6 @@
         btnSaveEdit.addEventListener('click', async () => {
             if (!editingId) return;
 
-            const nuevoTitulo = editTitleInput.value || '';
             const html = sanitizeHtml(editEditor.innerHTML || '');
 
             // Validación: que no esté vacío (sin texto)
@@ -703,7 +694,6 @@
                 const fechaEditado = formatFechaHHMM_DDMMYYYY(ahora);
 
                 await updateDoc(doc(db, "novedades", editingId), {
-                    titulo: nuevoTitulo,
                     html: html,
                     fechaEdicion: fechaEditado
                 });
@@ -722,7 +712,6 @@
         document.getElementById('btnPublicar').addEventListener('click', async () => {
             const btn = document.getElementById('btnPublicar');
 
-            const titulo = newsTitle.value || '';
             const html = sanitizeHtml(newsEditor.innerHTML || '');
 
             // Validación: que no esté vacío (sin texto)
@@ -739,14 +728,12 @@
 
             try {
                 await addDoc(collection(db, "novedades"), {
-                    titulo: titulo,
                     html: html,
                     fecha: serverTimestamp(),
                     fechaEdicion: "" // vacío hasta que se edite
                     // ✅ admin eliminado (no hay autor)
                 });
 
-                newsTitle.value = "";
                 newsEditor.innerHTML = "";
             } catch (e) {
                 console.error("Error: ", e);

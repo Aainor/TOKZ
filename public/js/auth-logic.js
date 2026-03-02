@@ -77,8 +77,8 @@ window.abrirLinkGoogleCalendar = function (turnoData) {
         "Lautaro Ribeiro": "lautabarber.17@gmail.com",
         "Alejandra": "marsanzmos@gmail.com",
         "Alejandra Sanchez": "marsanzmos@gmail.com",
-        "Nicolás": "fnvillalva.17@gmail.com",
-        "Nicolás Ruibal": "fnvillalva.17@gmail.com"
+        "Nicolás": "nicolasruibals4@gmail.com",
+        "Nicolás Ruibal": "nicolasruibals4@gmail.com"
     };
 
     // Buscar email exacto o parcial
@@ -473,22 +473,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ==========================================
     function initAdminLogic() {
         const configRef = doc(db, "configuracion", "textos_landing");
+        
         async function cargarDatosEditor() {
-            const inputPromo = document.getElementById('admin-promo');
-            if (!inputPromo) return;
             try {
                 const docSnap = await getDoc(configRef);
                 if (docSnap.exists()) {
                     const d = docSnap.data();
-                    document.getElementById('admin-promo').value = d.promo_texto || "";
-                    document.getElementById('admin-serv-titulo').value = d.serv_titulo || "";
-                    document.getElementById('admin-serv-desc').value = d.serv_desc || "";
-                    document.getElementById('admin-turnos-titulo').value = d.turnos_titulo || "";
-                    document.getElementById('admin-turnos-desc').value = d.turnos_desc || "";
-                    document.getElementById('admin-edu-titulo').value = d.edu_titulo || "";
-                    document.getElementById('admin-edu-desc').value = d.edu_desc || "";
+                    
+                    // Carga de datos con validación (si el input no existe, no hace nada)
+                    const setVal = (id, val) => {
+                        const el = document.getElementById(id);
+                        if (el) el.value = val || "";
+                    };
+
+                    setVal('admin-promo', d.promo_texto);
+                    setVal('admin-serv-titulo', d.serv_titulo);
+                    setVal('admin-serv-desc', d.serv_desc);
+                    
+                    // NUEVO: Sección Tokz
+                    setVal('admin-tokz-tag', d.tokz_tag);
+                    setVal('admin-tokz-titulo', d.tokz_titulo);
+                    setVal('admin-tokz-desc', d.tokz_desc);
+
+                    // Educación
+                    setVal('admin-edu-titulo', d.edu_titulo);
+                    setVal('admin-edu-desc', d.edu_desc);
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error("Error cargando datos del editor:", e); 
+            }
         }
         cargarDatosEditor();
 
@@ -497,24 +510,49 @@ document.addEventListener('DOMContentLoaded', async () => {
             const nuevoBtn = btnGuardarTodo.cloneNode(true);
             btnGuardarTodo.parentNode.replaceChild(nuevoBtn, btnGuardarTodo);
 
-            nuevoBtn.addEventListener('click', async () => {
+            nuevoBtn.addEventListener('click', async (e) => {
+                e.preventDefault(); // Cortamos cualquier comportamiento raro del navegador
+                
+                console.log("1. Botón accionado");
                 const txtOriginal = nuevoBtn.innerHTML;
                 nuevoBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
                 nuevoBtn.disabled = true;
-                const data = {
-                    promo_texto: document.getElementById('admin-promo').value,
-                    serv_titulo: document.getElementById('admin-serv-titulo').value,
-                    serv_desc: document.getElementById('admin-serv-desc').value,
-                    turnos_titulo: document.getElementById('admin-turnos-titulo').value,
-                    turnos_desc: document.getElementById('admin-turnos-desc').value,
-                    edu_titulo: document.getElementById('admin-edu-titulo').value,
-                    edu_desc: document.getElementById('admin-edu-desc').value
-                };
+                
                 try {
-                    await setDoc(configRef, data, { merge: true });
+                    console.log("2. Juntando la data del HTML...");
+                    // Función segura para sacar valores (a prueba de navegadores viejos)
+                    const getVal = (id) => {
+                        const el = document.getElementById(id);
+                        return el ? el.value : "";
+                    };
+
+                    const data = {
+                        promo_texto: getVal('admin-promo'),
+                        serv_titulo: getVal('admin-serv-titulo'),
+                        serv_desc: getVal('admin-serv-desc'),
+                        tokz_tag: getVal('admin-tokz-tag'),
+                        tokz_titulo: getVal('admin-tokz-titulo'),
+                        tokz_desc: getVal('admin-tokz-desc'),
+                        edu_titulo: getVal('admin-edu-titulo'),
+                        edu_desc: getVal('admin-edu-desc')
+                    };
+                    
+                    console.log("3. Data empaquetada:", data);
+                    console.log("4. Disparando a Firebase...");
+
+                    // Armamos una carrera: O Firebase guarda, o a los 10 segundos cortamos todo (Timeout)
+                    const guardarPromesa = setDoc(configRef, data, { merge: true });
+                    const limiteTiempo = new Promise((_, reject) => setTimeout(() => reject(new Error("Firebase no responde (Timeout de 10s)")), 10000));
+                    
+                    await Promise.race([guardarPromesa, limiteTiempo]);
+                    
+                    console.log("5. Éxito total");
                     alert("¡Cambios guardados correctamente en la web!");
-                } catch (e) { alert("Error al guardar."); }
-                finally {
+                } catch (error) { 
+                    console.error("❌ Error detectado en el proceso:", error);
+                    alert("Falló el guardado: " + error.message + ".\nFijate en la consola (F12)."); 
+                } finally {
+                    // Pase lo que pase, devolvemos el botón a la normalidad
                     nuevoBtn.innerHTML = txtOriginal;
                     nuevoBtn.disabled = false;
                 }
